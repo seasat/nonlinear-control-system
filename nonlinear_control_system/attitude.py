@@ -1,8 +1,29 @@
-
+import numpy as np
 
 class Attitude:
     def __init__(self) -> None:
         pass
+
+
+class DirectionCosineMatrix(Attitude):
+    def __init__(self, dcm: np.mat) -> None:
+        """
+        Initialize the DirectionCosineMatrix class with a direction cosine matrix.
+
+        :param dcm: A 3x3 direction cosine matrix.
+        """
+        super().__init__()
+        assert dcm.shape == (3, 3), "DCM must be a 3x3 matrix"
+
+        self.c11 = dcm[0, 0]
+        self.c12 = dcm[0, 1]
+        self.c13 = dcm[0, 2]
+        self.c21 = dcm[1, 0]
+        self.c22 = dcm[1, 1]
+        self.c23 = dcm[1, 2]
+        self.c31 = dcm[2, 0]
+        self.c32 = dcm[2, 1]
+        self.c33 = dcm[2, 2]
 
 
 class Quaternion(Attitude):
