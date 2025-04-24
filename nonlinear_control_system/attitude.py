@@ -203,3 +203,15 @@ class ModifiedRodriguezParameter(Attitude):
         self.sigma1 = e.e1 * np.tan(e.eigenangle / 4)
         self.sigma2 = e.e2 * np.tan(e.eigenangle / 4)
         self.sigma3 = e.e3 * np.tan(e.eigenangle / 4)
+
+    def __init__(self, q: Quaternion) -> None:
+        """
+        Initialize the ModifiedRodriguezParameter class with a quaternion.
+
+        :param quaternion: An instance of Quaternion.
+        """
+        super().__init__()
+        
+        self.sigma1 = q.q1 / (1 + q.q4)
+        self.sigma2 = q.q2 / (1 + q.q4)
+        self.sigma3 = q.q3 / (1 + q.q4)
