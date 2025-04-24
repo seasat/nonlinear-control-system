@@ -24,7 +24,7 @@ class Quaternion(Attitude):
         self.q3 = q3
         self.q4 = q4
     
-    def __init__(self, q1: Quaternion, q2: Quaternion) -> None:
+    def __init__(self, q1: "Quaternion", q2: "Quaternion") -> None:
         """
         Initialize the Quaternion class with two quaternions.
 
