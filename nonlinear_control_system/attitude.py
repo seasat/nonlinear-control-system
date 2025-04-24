@@ -122,3 +122,16 @@ class Quaternion(Attitude):
         self.q2 = e.e2 * np.sin(e.eigenangle / 2)
         self.q3 = e.e3 * np.sin(e.eigenangle / 2)
         self.q4 = np.cos(e.eigenangle / 2)
+    
+    def __init__(self, dcm: DirectionCosineMatrix) -> None:
+        """
+        Initialize the Quaternion class with a direction cosine matrix.
+
+        :param dcm: An instance of DirectionCosineMatrix.
+        """
+        super().__init__()
+        
+        self.q4 = np.sqrt(1 + dcm.c11 + dcm.c22 + dcm.c33) / 2
+        self.q1 = (dcm.c23 - dcm.c32) / (4 * self.q4)
+        self.q2 = (dcm.c31 - dcm.c13) / (4 * self.q4)
+        self.q3 = (dcm.c12 - dcm.c21) / (4 * self.q4)
