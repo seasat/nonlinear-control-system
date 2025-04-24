@@ -59,6 +59,19 @@ class EigenaxisRotation(Attitude):
         self.eigenangle = eigenangle
         (self.e1, self.e2, self.e3) = eigenaxis
 
+    def __init__(self, dcm: DirectionCosineMatrix) -> None:
+        """
+        Initialize the EigenaxisRotation class with a direction cosine matrix.
+
+        :param dcm: An instance of DirectionCosineMatrix.
+        """
+        super().__init__()
+        
+        self.eigenangle = np.arccos((dcm.c11 + dcm.c22 + dcm.c33 - 1) / 2)
+        self.e1 = (dcm.c23 - dcm.c32) / (2 * np.sin(self.eigenangle))
+        self.e2 = (dcm.c31 - dcm.c13) / (2 * np.sin(self.eigenangle))
+        self.e3 = (dcm.c12 - dcm.c21) / (2 * np.sin(self.eigenangle))
+
 
 class Quaternion(Attitude):
     def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
