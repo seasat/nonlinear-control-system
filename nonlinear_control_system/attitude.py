@@ -191,3 +191,15 @@ class ModifiedRodriguezParameter(Attitude):
         self.sigma1 = sigma1
         self.sigma2 = sigma2
         self.sigma3 = sigma3
+    
+    def __init__(self, e: EigenaxisRotation) -> None:
+        """
+        Initialize the ModifiedRodriguezParameter class with an eigenaxis rotation.
+
+        :param eigenaxis_rotation: An instance of EigenaxisRotation.
+        """
+        super().__init__()
+        
+        self.sigma1 = e.e1 * np.tan(e.eigenangle / 4)
+        self.sigma2 = e.e2 * np.tan(e.eigenangle / 4)
+        self.sigma3 = e.e3 * np.tan(e.eigenangle / 4)
