@@ -135,3 +135,19 @@ class Quaternion(Attitude):
         self.q1 = (dcm.c23 - dcm.c32) / (4 * self.q4)
         self.q2 = (dcm.c31 - dcm.c13) / (4 * self.q4)
         self.q3 = (dcm.c12 - dcm.c21) / (4 * self.q4)
+
+
+class ClassicalRodriguezParameter(Attitude):
+    def __init__(self, tau1: float, tau2: float, tau3: float) -> None:
+        """
+        Initialize the ClassicalRodriguezParameter class with classical Rodriguez parameters.
+
+        :param tau1: The first classical Rodriguez parameter.
+        :param tau2: The second classical Rodriguez parameter.
+        :param tau3: The third classical Rodriguez parameter.
+        """
+        super().__init__()
+        
+        self.tau1 = tau1
+        self.tau2 = tau2
+        self.tau3 = tau3
