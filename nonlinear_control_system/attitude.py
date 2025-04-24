@@ -88,3 +88,16 @@ class Quaternion(Attitude):
         self.q2 = q2
         self.q3 = q3
         self.q4 = q4
+
+    def __init__(self, e: EigenaxisRotation) -> None:
+        """
+        Initialize the Quaternion class with an eigenaxis rotation.
+
+        :param eigenaxis_rotation: An instance of EigenaxisRotation.
+        """
+        super().__init__()
+        
+        self.q1 = e.e1 * np.sin(e.eigenangle / 2)
+        self.q2 = e.e2 * np.sin(e.eigenangle / 2)
+        self.q3 = e.e3 * np.sin(e.eigenangle / 2)
+        self.q4 = np.cos(e.eigenangle / 2)
