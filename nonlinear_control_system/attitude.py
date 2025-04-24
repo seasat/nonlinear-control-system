@@ -163,3 +163,15 @@ class ClassicalRodriguezParameter(Attitude):
         self.tau1 = e.e1 * np.tan(e.eigenangle / 2)
         self.tau2 = e.e2 * np.tan(e.eigenangle / 2)
         self.tau3 = e.e3 * np.tan(e.eigenangle / 2)
+
+    def __init__(self, q: Quaternion) -> None:
+        """
+        Initialize the ClassicalRodriguezParameter class with a quaternion.
+
+        :param quaternion: An instance of Quaternion.
+        """
+        super().__init__()
+        
+        self.tau1 = q.q1 / q.q4
+        self.tau2 = q.q2 / q.q4
+        self.tau3 = q.q3 / q.q4
