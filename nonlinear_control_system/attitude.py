@@ -14,6 +14,7 @@ class DirectionCosineMatrix(Attitude):
         """
         super().__init__()
         assert dcm.shape == (3, 3), "DCM must be a 3x3 matrix"
+        assert np.isclose(dcm @ dcm.T, np.eye(3)).all(), "DCM must be orthogonal"
 
         self.c11 = dcm[0, 0]
         self.c12 = dcm[0, 1]
