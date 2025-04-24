@@ -43,6 +43,24 @@ class DirectionCosineMatrix(Attitude):
         self.c31 = e.e3 * e.e1 * (1 - np.cos(e.eigenangle)) + e.e2 * np.sin(e.eigenangle)
         self.c32 = e.e3 * e.e2 * (1 - np.cos(e.eigenangle)) - e.e1 * np.sin(e.eigenangle)
         self.c33 = np.cos(e.eigenangle) + e.e3**2 * (1 - np.cos(e.eigenangle))
+    
+    def __init__(self, q: Quaternion) -> None:
+        """
+        Initialize the DirectionCosineMatrix class with a quaternion.
+
+        :param quaternion: An instance of Quaternion.
+        """
+        super().__init__()
+        
+        self.c11 = 1 - 2 * (q.q2**2 + q.q3**2)
+        self.c12 = 2 * (q.q1 * q.q2 + q.q3 * q.q4)
+        self.c13 = 2 * (q.q1 * q.q3 - q.q2 * q.q4)
+        self.c21 = 2 * (q.q1 * q.q2 - q.q3 * q.q4)
+        self.c22 = 1 - 2 * (q.q1**2 + q.q3**2)
+        self.c23 = 2 * (q.q2 * q.q3 + q.q1 * q.q4)
+        self.c31 = 2 * (q.q1 * q.q3 + q.q2 * q.q4)
+        self.c32 = 2 * (q.q2 * q.q3 - q.q1 * q.q4)
+        self.c33 = 1 - 2 * (q.q1**2 + q.q2**2)
 
 
 class EigenaxisRotation(Attitude):
