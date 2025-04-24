@@ -84,6 +84,8 @@ class Quaternion(Attitude):
         :param q4: The fourth component of the quaternion.
         """
         super().__init__()
+        assert np.isclose(np.linalg.norm([q1, q2, q3, q4]), 1), "Quaternion must be a unit quaternion"
+        
         self.q1 = q1
         self.q2 = q2
         self.q3 = q3
