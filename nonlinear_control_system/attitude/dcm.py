@@ -1,6 +1,7 @@
 import numpy as np
 
 from attitude import Attitude
+from eigenaxis import EigenaxisRotation
 
 
 class DirectionCosineMatrix(Attitude):

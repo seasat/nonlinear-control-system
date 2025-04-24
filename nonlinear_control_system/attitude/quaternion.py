@@ -2,7 +2,7 @@ import numpy as np
 
 from attitude import Attitude
 from dcm import DirectionCosineMatrix
-from eignenaxis import EigenaxisRotation
+from eigenaxis import EigenaxisRotation
 from mrp import ModifiedRodriguezParameter
 
 
