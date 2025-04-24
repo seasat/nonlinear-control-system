@@ -175,3 +175,19 @@ class ClassicalRodriguezParameter(Attitude):
         self.tau1 = q.q1 / q.q4
         self.tau2 = q.q2 / q.q4
         self.tau3 = q.q3 / q.q4
+
+
+class ModifiedRodriguezParameter(Attitude):
+    def __init__(self, sigma1: float, sigma2: float, sigma3: float) -> None:
+        """
+        Initialize the ModifiedRodriguezParameter class with modified Rodriguez parameters.
+
+        :param sigma1: The first modified Rodriguez parameter.
+        :param sigma2: The second modified Rodriguez parameter.
+        :param sigma3: The third modified Rodriguez parameter.
+        """
+        super().__init__()
+        
+        self.sigma1 = sigma1
+        self.sigma2 = sigma2
+        self.sigma3 = sigma3
