@@ -135,6 +135,19 @@ class Quaternion(Attitude):
         self.q1 = (dcm.c23 - dcm.c32) / (4 * self.q4)
         self.q2 = (dcm.c31 - dcm.c13) / (4 * self.q4)
         self.q3 = (dcm.c12 - dcm.c21) / (4 * self.q4)
+    
+    def __init__(self, mrp: ModifiedRodriguezParameter) -> None:
+        """
+        Initialize the Quaternion class with modified Rodriguez parameters.
+
+        :param modified_rodriguez_parameter: An instance of ModifiedRodriguezParameter.
+        """
+        super().__init__()
+        
+        self.q4 = 1 - mrp.squared() / (1 + mrp.squared()) 
+        self.q1 = 2 * mrp.sigma1 / (1 + mrp.squared())
+        self.q2 = 2 * mrp.sigma2 / (1 + mrp.squared())
+        self.q3 = 2 * mrp.sigma3 / (1 + mrp.squared())
 
 
 class ClassicalRodriguezParameter(Attitude):
@@ -191,6 +204,14 @@ class ModifiedRodriguezParameter(Attitude):
         self.sigma1 = sigma1
         self.sigma2 = sigma2
         self.sigma3 = sigma3
+    
+    def squared(self) -> float:
+        """
+        Calculate the squared norm of the modified Rodriguez parameter.
+
+        :return: The squared norm of the modified Rodriguez parameter.
+        """
+        return self.sigma1**2 + self.sigma2**2 + self.sigma3**2
     
     def __init__(self, e: EigenaxisRotation) -> None:
         """
