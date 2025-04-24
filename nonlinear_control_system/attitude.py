@@ -151,3 +151,15 @@ class ClassicalRodriguezParameter(Attitude):
         self.tau1 = tau1
         self.tau2 = tau2
         self.tau3 = tau3
+    
+    def __init__(self, e: EigenaxisRotation) -> None:
+        """
+        Initialize the ClassicalRodriguezParameter class with an eigenaxis rotation.
+
+        :param eigenaxis_rotation: An instance of EigenaxisRotation.
+        """
+        super().__init__()
+        
+        self.tau1 = e.e1 * np.tan(e.eigenangle / 2)
+        self.tau2 = e.e2 * np.tan(e.eigenangle / 2)
+        self.tau3 = e.e3 * np.tan(e.eigenangle / 2)
