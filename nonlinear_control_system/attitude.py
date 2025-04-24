@@ -127,6 +127,28 @@ class Quaternion(Attitude):
         self.q2 = q2
         self.q3 = q3
         self.q4 = q4
+    
+    def __init__(self, q1: Quaternion, q2: Quaternion) -> None:
+        """
+        Initialize the Quaternion class with two quaternions.
+
+        :param q1: The first quaternion.
+        :param q2: The second quaternion.
+        """
+        super().__init__()
+        
+        quaternion_matrix = np.mat([
+            [q2.q4, q2.q3, -q2.q2, q2.q1],
+            [-q2.q3, q2.q4, q2.q1, q2.q2],
+            [q2.q2, -q2.q1, q2.q4, q2.q3],
+            [-q2.q1, -q2.q2, -q2.q3, q2.q4]
+        ])
+        result = quaternion_matrix @ np.mat([q1.q1, q1.q2, q1.q3, q1.q4]).T
+
+        self.q1 = result[0, 0]
+        self.q2 = result[1, 0]
+        self.q3 = result[2, 0]
+        self.q4 = result[3, 0]
 
     def __init__(self, e: EigenaxisRotation) -> None:
         """
