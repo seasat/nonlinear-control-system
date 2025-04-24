@@ -61,6 +61,24 @@ class DirectionCosineMatrix(Attitude):
         self.c31 = 2 * (q.q1 * q.q3 + q.q2 * q.q4)
         self.c32 = 2 * (q.q2 * q.q3 - q.q1 * q.q4)
         self.c33 = 1 - 2 * (q.q1**2 + q.q2**2)
+    
+    def __init__(self, mrp: ModifiedRodriguezParameter) -> None:
+        """
+        Initialize the DirectionCosineMatrix class with modified Rodriguez parameters.
+
+        :param modified_rodriguez_parameter: An instance of ModifiedRodriguezParameter.
+        """
+        super().__init__()
+        
+        self.c11 = ((1 + mrp.squared())**2 - 8 * mrp.sigma2**2 - 8 * mrp.sigma3**2) / (1 + mrp.squared())**2
+        self.c12 = 8 * mrp.sigma1 * mrp.sigma2 + 4 * mrp.sigma3 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        self.c13 = 8 * mrp.sigma1 * mrp.sigma3 + 4 * mrp.sigma2 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        self.c21 = 8 * mrp.sigma2 * mrp.sigma1 + 4 * mrp.sigma3 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        self.c22 = ((1 + mrp.squared())**2 - 8 * mrp.sigma1**2 - 8 * mrp.sigma3**2) / (1 + mrp.squared())**2
+        self.c23 = 8 * mrp.sigma2 * mrp.sigma3 + 4 * mrp.sigma1 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        self.c31 = 8 * mrp.sigma3 * mrp.sigma1 + 4 * mrp.sigma2 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        self.c32 = 8 * mrp.sigma3 * mrp.sigma2 + 4 * mrp.sigma1 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        self.c33 = ((1 + mrp.squared())**2 - 8 * mrp.sigma1**2 - 8 * mrp.sigma2**2) / (1 + mrp.squared())**2
 
 
 class EigenaxisRotation(Attitude):
