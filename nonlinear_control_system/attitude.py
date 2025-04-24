@@ -24,6 +24,24 @@ class DirectionCosineMatrix(Attitude):
         self.c31 = dcm[2, 0]
         self.c32 = dcm[2, 1]
         self.c33 = dcm[2, 2]
+    
+    def __init__(self, e: EigenaxisRotation) -> None:
+        """
+        Initialize the DirectionCosineMatrix class with an eigenaxis rotation.
+
+        :param eigenaxis_rotation: An instance of EigenaxisRotation.
+        """
+        super().__init__()
+        
+        self.c11 = np.cos(e.eigenangle) + e.e1**2 * (1 - np.cos(e.eigenangle))
+        self.c12 = e.e1 * e.e2 * (1 - np.cos(e.eigenangle)) + e.e3 * np.sin(e.eigenangle)
+        self.c13 = e.e1 * e.e3 * (1 - np.cos(e.eigenangle)) - e.e2 * np.sin(e.eigenangle)
+        self.c21 = e.e2 * e.e1 * (1 - np.cos(e.eigenangle)) - e.e3 * np.sin(e.eigenangle)
+        self.c22 = np.cos(e.eigenangle) + e.e2**2 * (1 - np.cos(e.eigenangle))
+        self.c23 = e.e2 * e.e3 * (1 - np.cos(e.eigenangle)) + e.e1 * np.sin(e.eigenangle)
+        self.c31 = e.e3 * e.e1 * (1 - np.cos(e.eigenangle)) + e.e2 * np.sin(e.eigenangle)
+        self.c32 = e.e3 * e.e2 * (1 - np.cos(e.eigenangle)) - e.e1 * np.sin(e.eigenangle)
+        self.c33 = np.cos(e.eigenangle) + e.e3**2 * (1 - np.cos(e.eigenangle))
 
 
 class EigenaxisRotation(Attitude):
