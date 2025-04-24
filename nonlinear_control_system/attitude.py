@@ -26,6 +26,22 @@ class DirectionCosineMatrix(Attitude):
         self.c33 = dcm[2, 2]
 
 
+class EigenaxisRotation(Attitude):
+    def __init__(self, eigenangle: float, eigenaxis: np.array[3]) -> None:
+        """
+        Initialize the EigenaxisRotation class with an eigenangle and eigenaxis.
+
+        :param eigenangle: The angle of rotation about the eigenaxis in radians.
+        :param eigenaxis: A 3-element array representing the eigenaxis of rotation.
+        """
+        super().__init__()
+        assert len(eigenaxis) == 3, "Eigenaxis must must have 3 elements"
+        assert np.isclose(np.linalg.norm(eigenaxis), 1), "Eigenaxis must be a unit vector"
+
+        self.eigenangle = eigenangle
+        (self.e1, self.e2, self.e3) = eigenaxis
+
+
 class Quaternion(Attitude):
     def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
         """
