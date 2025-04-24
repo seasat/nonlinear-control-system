@@ -1,11 +1,22 @@
 
 
 class Attitude:
-    def __init__(self, quaternion: tuple) -> None:
-        """
-        Initialize the Attitude class with a quaternion.
+    def __init__(self) -> None:
+        pass
 
-        :param quaternion: A tuple representing the quaternion (q0, q1, q2, q3).
+
+class Quaternion(Attitude):
+    def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
         """
-        assert len(quaternion) == 4, "Quaternion must be a tuple of length 4"
-        (self.q1, self.q2, self.q3, self.q4) = quaternion
+        Initialize the Quaternion class with a quaternion.
+
+        :param q1: The first component of the quaternion.
+        :param q2: The second component of the quaternion.
+        :param q3: The third component of the quaternion.   
+        :param q4: The fourth component of the quaternion.
+        """
+        super().__init__()
+        self.q1 = q1
+        self.q2 = q2
+        self.q3 = q3
+        self.q4 = q4
