@@ -45,13 +45,13 @@ class Quaternion(Attitude):
         """
         super().__init__()
         
-        quaternion_matrix = np.mat([
+        quaternion_matrix = np.asmatrix([
             [q2.q4, q2.q3, -q2.q2, q2.q1],
             [-q2.q3, q2.q4, q2.q1, q2.q2],
             [q2.q2, -q2.q1, q2.q4, q2.q3],
             [-q2.q1, -q2.q2, -q2.q3, q2.q4]
         ])
-        result = quaternion_matrix @ np.mat([q1.q1, q1.q2, q1.q3, q1.q4]).T
+        result = quaternion_matrix @ np.asmatrix([q1.q1, q1.q2, q1.q3, q1.q4]).T
 
         q1 = result[0, 0]
         q2 = result[1, 0]

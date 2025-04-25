@@ -6,7 +6,7 @@ from quantity import Quantity as Qty
 
 # settings
 INERTIA_TENSOR = Qty.matrix(
-    np.mat([
+    np.asmatrix([
         [124.531, 0.0, 0.0],
         [0.0, 124.586, 0.0],
         [0.0, 0.0, 1.704]

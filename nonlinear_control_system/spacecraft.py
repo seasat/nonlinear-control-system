@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Spacecraft:
-    def __init__(self, inertia_tensor: np.mat) -> None:
+    def __init__(self, inertia_tensor: np.matrix) -> None:
         """
         Initialize the Spacecraft class with an inertia tensor.
 
