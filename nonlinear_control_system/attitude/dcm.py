@@ -1,5 +1,6 @@
 import numpy as np
 
+from .attitude import Attitude
 import attitude
 
 class DirectionCosineMatrix(Attitude):
