@@ -1,6 +1,7 @@
+from __future__ import annotations
 import numpy as np
 
-from . import Attitude, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
+from .attitude import Attitude
 
 
 class Quaternion(Attitude):
@@ -21,7 +22,7 @@ class Quaternion(Attitude):
         self.q3 = q3
         self.q4 = q4
     
-    def __matmul__(self, other: "Quaternion") -> "Quaternion":
+    def __matmul__(self, other: Quaternion) -> Quaternion:
         """
         Successive rotations of two quaternions.
 
@@ -33,7 +34,7 @@ class Quaternion(Attitude):
         return Quaternion.from_successive_rotations(self, other)
     
     @classmethod
-    def from_successive_rotations(cls, q1: "Quaternion", q2: "Quaternion") -> "Quaternion":
+    def from_successive_rotations(cls, q1: Quaternion, q2: Quaternion) -> Quaternion:
         """
         Initialize the Quaternion class with two quaternions.
 

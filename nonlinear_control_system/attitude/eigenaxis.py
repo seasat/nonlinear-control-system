@@ -1,6 +1,8 @@
+from __future__ import annotations
 import numpy as np
 
-from . import Attitude, Quaternion, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
+from .attitude import Attitude
+
 
 class EigenaxisRotation(Attitude):
     def __init__(self, eigenangle: float, eigenaxis: np.ndarray[3]) -> None:
