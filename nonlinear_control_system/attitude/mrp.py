@@ -15,20 +15,6 @@ class ClassicalRodriguezParameter:
         self.tau1 = tau1
         self.tau2 = tau2
         self.tau3 = tau3
-    
-    @classmethod
-    def from_eigenaxis(cls, e: "EigenaxisRotation") -> "ClassicalRodriguezParameter":
-        """
-        Initialize the ClassicalRodriguezParameter class with an eigenaxis rotation.
-
-        :param eigenaxis_rotation: An instance of EigenaxisRotation.
-        """
-        super().__init__()
-        
-        tau1 = e.e1 * np.tan(e.eigenangle / 2)
-        tau2 = e.e2 * np.tan(e.eigenangle / 2)
-        tau3 = e.e3 * np.tan(e.eigenangle / 2)
-        return cls(tau1, tau2, tau3)
 
     @classmethod
     def from_quaternion(cls, q: "Quaternion") -> "ClassicalRodriguezParameter":
@@ -102,21 +88,6 @@ class ModifiedRodriguezParameter:
             [c21, c22, c23],
             [c31, c32, c33]
         ]))
-        
-    
-    @classmethod
-    def from_eigenaxis(cls, e: "EigenaxisRotation") -> "ModifiedRodriguezParameter":
-        """
-        Initialize the ModifiedRodriguezParameter class with an eigenaxis rotation.
-
-        :param eigenaxis_rotation: An instance of EigenaxisRotation.
-        """
-        super().__init__()
-        
-        sigma1 = e.e1 * np.tan(e.eigenangle / 4)
-        sigma2 = e.e2 * np.tan(e.eigenangle / 4)
-        sigma3 = e.e3 * np.tan(e.eigenangle / 4)
-        return cls(sigma1, sigma2, sigma3)
 
     @classmethod
     def from_quaternion(cls, q: "Quaternion") -> "ModifiedRodriguezParameter":

@@ -52,3 +52,25 @@ class EigenaxisRotation(Attitude):
             [c21, c22, c23],
             [c31, c32, c33]
         ]))
+    
+    def to_crp(self) -> "ClassicalRodriguezParameter":
+        """
+        Convert the eigenaxis rotation to a Classical Rodriguez parameter.
+
+        :return: An instance of ClassicalRodriguezParameter.
+        """
+        tau1 = self.e1 * np.tan(self.eigenangle / 2)
+        tau2 = self.e2 * np.tan(self.eigenangle / 2)
+        tau3 = self.e3 * np.tan(self.eigenangle / 2)
+        return attitude.ClassicalRodriguezParameter(tau1, tau2, tau3)
+    
+    def to_mrp(self) -> "ModifiedRodriguezParameter":
+        """
+        Convert the eigenaxis rotation to a modified Rodriguez parameter.
+
+        :return: An instance of ModifiedRodriguezParameter.
+        """
+        sigma1 = self.e1 * np.tan(self.eigenangle / 4)
+        sigma2 = self.e2 * np.tan(self.eigenangle / 4)
+        sigma3 = self.e3 * np.tan(self.eigenangle / 4)
+        return attitude.ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
