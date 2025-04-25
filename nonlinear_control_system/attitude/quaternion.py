@@ -1,6 +1,7 @@
 import numpy as np
 
-from attitude import Attitude
+from .attitude import Attitude
+import attitude
 
 
 class Quaternion(Attitude):
@@ -57,3 +58,25 @@ class Quaternion(Attitude):
         return cls(q1, q2, q3, q4)
     
     # conversion methods
+    def to_dcm(self) -> "DirectionCosineMatrix":
+        """
+        Convert the quaternion to a direction cosine matrix.
+
+        :return: An instance of DirectionCosineMatrix.
+        """
+        c11 = 1 - 2 * (self.q2**2 + self.q3**2)
+        c12 = 2 * (self.q1 * self.q2 + self.q3 * self.q4)
+        c13 = 2 * (self.q1 * self.q3 - self.q2 * self.q4)
+        c21 = 2 * (self.q1 * self.q2 - self.q3 * self.q4)
+        c22 = 1 - 2 * (self.q1**2 + self.q3**2)
+        c23 = 2 * (self.q2 * self.q3 + self.q1 * self.q4)
+        c31 = 2 * (self.q1 * self.q3 + self.q2 * self.q4)
+        c32 = 2 * (self.q2 * self.q3 - self.q1 * self.q4)
+        c33 = 1 - 2 * (self.q1**2 + self.q2**2)
+
+        return attitude.DirectionCosineMatrix(np.asmatrix([
+            [c11, c12, c13],
+            [c21, c22, c23],
+            [c31, c32, c33]
+        ]))
+        

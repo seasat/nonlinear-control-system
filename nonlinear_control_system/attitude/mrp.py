@@ -79,6 +79,30 @@ class ModifiedRodriguezParameter:
         q2 = 2 * self.sigma2 / (1 + squared)
         q3 = 2 * self.sigma3 / (1 + squared)
         return attitude.Quaternion(q1, q2, q3, q4) 
+
+    def to_dcm(self) -> "DirectionCosineMatrix":
+        """
+        Convert the modified Rodriguez parameter to a direction cosine matrix.
+
+        :return: An instance of DirectionCosineMatrix.
+        """
+        squared = self.squared()
+        c11 = ((1 + squared)**2 - 8 * self.sigma2**2 - 8 * self.sigma3**2) / (1 + squared)**2
+        c12 = 8 * self.sigma1 * self.sigma2 + 4 * self.sigma3 * (1 - squared) / (1 + squared)**2
+        c13 = 8 * self.sigma1 * self.sigma3 + 4 * self.sigma2 * (1 - squared) / (1 + squared)**2
+        c21 = 8 * self.sigma2 * self.sigma1 + 4 * self.sigma3 * (1 - squared) / (1 + squared)**2
+        c22 = ((1 + squared)**2 - 8 * self.sigma1**2 - 8 * self.sigma3**2) / (1 + squared)**2
+        c23 = 8 * self.sigma2 * self.sigma3 + 4 * self.sigma1 * (1 - squared) / (1 + squared)**2
+        c31 = 8 * self.sigma3 * self.sigma1 + 4 * self.sigma2 * (1 - squared) / (1 + squared)**2
+        c32 = 8 * self.sigma3 * self.sigma2 + 4 * self.sigma1 * (1 - squared) / (1 + squared)**2
+        c33 = ((1 + squared)**2 - 8 * self.sigma1**2 - 8 * self.sigma2**2) / (1 + squared)**2
+
+        return attitude.DirectionCosineMatrix(np.asmatrix([
+            [c11, c12, c13],
+            [c21, c22, c23],
+            [c31, c32, c33]
+        ]))
+        
     
     @classmethod
     def from_eigenaxis(cls, e: "EigenaxisRotation") -> "ModifiedRodriguezParameter":
