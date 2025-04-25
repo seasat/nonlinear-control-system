@@ -1,6 +1,6 @@
 import numpy as np
 
-from .attitude import Attitude
+from attitude import Attitude
 
 
 class Quaternion(Attitude):
