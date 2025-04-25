@@ -16,20 +16,6 @@ class ClassicalRodriguezParameter:
         self.tau2 = tau2
         self.tau3 = tau3
 
-    @classmethod
-    def from_quaternion(cls, q: "Quaternion") -> "ClassicalRodriguezParameter":
-        """
-        Initialize the ClassicalRodriguezParameter class with a quaternion.
-
-        :param quaternion: An instance of Quaternion.
-        """
-        super().__init__()
-        
-        tau1 = q.q1 / q.q4
-        tau2 = q.q2 / q.q4
-        tau3 = q.q3 / q.q4
-        return cls(tau1, tau2, tau3)
-
 
 class ModifiedRodriguezParameter:
     def __init__(self, sigma1: float, sigma2: float, sigma3: float) -> None:
@@ -88,17 +74,3 @@ class ModifiedRodriguezParameter:
             [c21, c22, c23],
             [c31, c32, c33]
         ]))
-
-    @classmethod
-    def from_quaternion(cls, q: "Quaternion") -> "ModifiedRodriguezParameter":
-        """
-        Initialize the ModifiedRodriguezParameter class with a quaternion.
-
-        :param quaternion: An instance of Quaternion.
-        """
-        super().__init__()
-        
-        sigma1 = q.q1 / (1 + q.q4)
-        sigma2 = q.q2 / (1 + q.q4)
-        sigma3 = q.q3 / (1 + q.q4)
-        return cls(sigma1, sigma2, sigma3)

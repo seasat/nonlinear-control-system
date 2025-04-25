@@ -80,3 +80,24 @@ class Quaternion(Attitude):
             [c31, c32, c33]
         ]))
         
+    def to_crp(self) -> "ClassicalRodriguezParameter":
+        """
+        Convert the quaternion to a Classical Rodriguez parameter.
+
+        :return: An instance of ClassicalRodriguezParameter.
+        """
+        tau1 = self.q1 / self.q4
+        tau2 = self.q2 / self.q4
+        tau3 = self.q3 / self.q4
+        return attitude.ClassicalRodriguezParameter(tau1, tau2, tau3)
+    
+    def to_mrp(self) -> "ModifiedRodriguezParameter":
+        """
+        Convert the quaternion to a modified Rodriguez parameter.
+
+        :return: An instance of ModifiedRodriguezParameter.
+        """
+        sigma1 = self.q1 / (1 + self.q4)
+        sigma2 = self.q2 / (1 + self.q4)
+        sigma3 = self.q3 / (1 + self.q4)
+        return attitude.ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
