@@ -1,7 +1,6 @@
 import numpy as np
 
-from .attitude import Attitude
-import attitude
+from . import Attitude, Quaternion, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
 
 class EigenaxisRotation(Attitude):
     def __init__(self, eigenangle: float, eigenaxis: np.ndarray[3]) -> None:
@@ -19,7 +18,7 @@ class EigenaxisRotation(Attitude):
         (self.e1, self.e2, self.e3) = eigenaxis
 
     # conversion methods
-    def to_quaternion(self) -> "Quaternion":
+    def to_quaternion(self) -> Quaternion:
         """
         Convert the eigenaxis rotation to a quaternion.
 
@@ -29,9 +28,9 @@ class EigenaxisRotation(Attitude):
         q2 = self.e2 * np.sin(self.eigenangle / 2)
         q3 = self.e3 * np.sin(self.eigenangle / 2)
         q4 = np.cos(self.eigenangle / 2)
-        return attitude.Quaternion(q1, q2, q3, q4)
+        return Quaternion(q1, q2, q3, q4)
     
-    def to_dcm(self) -> "DirectionCosineMatrix":
+    def to_dcm(self) -> DirectionCosineMatrix:
         """
         Convert the eigenaxis rotation to a direction cosine matrix.
 
@@ -47,13 +46,13 @@ class EigenaxisRotation(Attitude):
         c32 = self.e3 * self.e2 * (1 - np.cos(self.eigenangle)) - self.e1 * np.sin(self.eigenangle)
         c33 = np.cos(self.eigenangle) + self.e3**2 * (1 - np.cos(self.eigenangle))
 
-        return attitude.DirectionCosineMatrix(np.asmatrix([
+        return DirectionCosineMatrix(np.asmatrix([
             [c11, c12, c13],
             [c21, c22, c23],
             [c31, c32, c33]
         ]))
     
-    def to_crp(self) -> "ClassicalRodriguezParameter":
+    def to_crp(self) -> ClassicalRodriguezParameter:
         """
         Convert the eigenaxis rotation to a Classical Rodriguez parameter.
 
@@ -62,9 +61,9 @@ class EigenaxisRotation(Attitude):
         tau1 = self.e1 * np.tan(self.eigenangle / 2)
         tau2 = self.e2 * np.tan(self.eigenangle / 2)
         tau3 = self.e3 * np.tan(self.eigenangle / 2)
-        return attitude.ClassicalRodriguezParameter(tau1, tau2, tau3)
+        return ClassicalRodriguezParameter(tau1, tau2, tau3)
     
-    def to_mrp(self) -> "ModifiedRodriguezParameter":
+    def to_mrp(self) -> ModifiedRodriguezParameter:
         """
         Convert the eigenaxis rotation to a modified Rodriguez parameter.
 
@@ -73,4 +72,4 @@ class EigenaxisRotation(Attitude):
         sigma1 = self.e1 * np.tan(self.eigenangle / 4)
         sigma2 = self.e2 * np.tan(self.eigenangle / 4)
         sigma3 = self.e3 * np.tan(self.eigenangle / 4)
-        return attitude.ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
+        return ModifiedRodriguezParameter(sigma1, sigma2, sigma3)

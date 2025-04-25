@@ -1,7 +1,6 @@
 import numpy as np
 
-from .attitude import Attitude
-import attitude
+from . import Attitude, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
 
 
 class Quaternion(Attitude):
@@ -58,7 +57,7 @@ class Quaternion(Attitude):
         return cls(q1, q2, q3, q4)
     
     # conversion methods
-    def to_dcm(self) -> "DirectionCosineMatrix":
+    def to_dcm(self) -> DirectionCosineMatrix:
         """
         Convert the quaternion to a direction cosine matrix.
 
@@ -74,13 +73,13 @@ class Quaternion(Attitude):
         c32 = 2 * (self.q2 * self.q3 - self.q1 * self.q4)
         c33 = 1 - 2 * (self.q1**2 + self.q2**2)
 
-        return attitude.DirectionCosineMatrix(np.asmatrix([
+        return DirectionCosineMatrix(np.asmatrix([
             [c11, c12, c13],
             [c21, c22, c23],
             [c31, c32, c33]
         ]))
         
-    def to_crp(self) -> "ClassicalRodriguezParameter":
+    def to_crp(self) -> ClassicalRodriguezParameter:
         """
         Convert the quaternion to a Classical Rodriguez parameter.
 
@@ -89,9 +88,9 @@ class Quaternion(Attitude):
         tau1 = self.q1 / self.q4
         tau2 = self.q2 / self.q4
         tau3 = self.q3 / self.q4
-        return attitude.ClassicalRodriguezParameter(tau1, tau2, tau3)
+        return ClassicalRodriguezParameter(tau1, tau2, tau3)
     
-    def to_mrp(self) -> "ModifiedRodriguezParameter":
+    def to_mrp(self) -> ModifiedRodriguezParameter:
         """
         Convert the quaternion to a modified Rodriguez parameter.
 
@@ -100,4 +99,4 @@ class Quaternion(Attitude):
         sigma1 = self.q1 / (1 + self.q4)
         sigma2 = self.q2 / (1 + self.q4)
         sigma3 = self.q3 / (1 + self.q4)
-        return attitude.ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
+        return ModifiedRodriguezParameter(sigma1, sigma2, sigma3)

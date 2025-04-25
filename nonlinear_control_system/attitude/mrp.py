@@ -1,9 +1,9 @@
 import numpy as np
 
-import attitude
+from . import Attitude, Quaternion, DirectionCosineMatrix
 
 
-class ClassicalRodriguezParameter:
+class ClassicalRodriguezParameter(Attitude):
     def __init__(self, tau1: float, tau2: float, tau3: float) -> None:
         """
         Initialize the ClassicalRodriguezParameter class with classical Rodriguez parameters.
@@ -17,7 +17,7 @@ class ClassicalRodriguezParameter:
         self.tau3 = tau3
 
 
-class ModifiedRodriguezParameter:
+class ModifiedRodriguezParameter(Attitude):
     def __init__(self, sigma1: float, sigma2: float, sigma3: float) -> None:
         """
         Initialize the ModifiedRodriguezParameter class with modified Rodriguez parameters.
@@ -39,7 +39,7 @@ class ModifiedRodriguezParameter:
         return self.sigma1**2 + self.sigma2**2 + self.sigma3**2
 
     # conversion methods
-    def to_quaternion(self) -> "Quaternion":
+    def to_quaternion(self) -> Quaternion:
         """
         Convert the modified Rodriguez parameter to a quaternion.
 
@@ -50,9 +50,9 @@ class ModifiedRodriguezParameter:
         q1 = 2 * self.sigma1 / (1 + squared)
         q2 = 2 * self.sigma2 / (1 + squared)
         q3 = 2 * self.sigma3 / (1 + squared)
-        return attitude.Quaternion(q1, q2, q3, q4) 
+        return Quaternion(q1, q2, q3, q4) 
 
-    def to_dcm(self) -> "DirectionCosineMatrix":
+    def to_dcm(self) -> DirectionCosineMatrix:
         """
         Convert the modified Rodriguez parameter to a direction cosine matrix.
 
@@ -69,7 +69,7 @@ class ModifiedRodriguezParameter:
         c32 = 8 * self.sigma3 * self.sigma2 + 4 * self.sigma1 * (1 - squared) / (1 + squared)**2
         c33 = ((1 + squared)**2 - 8 * self.sigma1**2 - 8 * self.sigma2**2) / (1 + squared)**2
 
-        return attitude.DirectionCosineMatrix(np.asmatrix([
+        return DirectionCosineMatrix(np.asmatrix([
             [c11, c12, c13],
             [c21, c22, c23],
             [c31, c32, c33]

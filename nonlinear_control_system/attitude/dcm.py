@@ -1,7 +1,6 @@
 import numpy as np
 
-from .attitude import Attitude
-import attitude
+from . import Attitude, Quaternion, EigenaxisRotation
 
 class DirectionCosineMatrix(Attitude):
     def __init__(self, dcm: np.matrix) -> None:
@@ -49,7 +48,7 @@ class DirectionCosineMatrix(Attitude):
         ])
     
     # conversion methods
-    def to_quaternion(self) -> "Quaternion":
+    def to_quaternion(self) -> Quaternion:
         """
         Convert the direction cosine matrix to a quaternion.
 
@@ -59,9 +58,9 @@ class DirectionCosineMatrix(Attitude):
         q1 = (self.c23 - self.c32) / (4 * q4)
         q2 = (self.c31 - self.c13) / (4 * q4)
         q3 = (self.c12 - self.c21) / (4 * q4)
-        return attitude.Quaternion(q1, q2, q3, q4)
+        return Quaternion(q1, q2, q3, q4)
     
-    def to_eigenaxis(self) -> "EigenaxisRotation":
+    def to_eigenaxis(self) -> EigenaxisRotation:
         """
         Convert the direction cosine matrix to an eigenaxis rotation.
 
@@ -71,4 +70,4 @@ class DirectionCosineMatrix(Attitude):
         e1 = (self.c23 - self.c32) / (2 * np.sin(eigenangle))
         e2 = (self.c31 - self.c13) / (2 * np.sin(eigenangle))
         e3 = (self.c12 - self.c21) / (2 * np.sin(eigenangle))
-        return attitude.EigenaxisRotation(eigenangle, np.array([e1, e2, e3]))
+        return EigenaxisRotation(eigenangle, np.array([e1, e2, e3]))
