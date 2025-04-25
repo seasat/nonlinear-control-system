@@ -27,6 +27,31 @@ class DirectionCosineMatrix(Attitude):
         self.c32 = dcm[2, 1]
         self.c33 = dcm[2, 2]
     
+    def __matmul__(self, other: "DirectionCosineMatrix") -> "DirectionCosineMatrix":
+        """
+        Multiply two direction cosine matrices.
+
+        :param other: Another instance of DirectionCosineMatrix.
+        :return: A new instance of DirectionCosineMatrix representing the product.
+        """
+        assert isinstance(other, DirectionCosineMatrix), "Can only multiply with another DirectionCosineMatrix"
+        
+        result = self.dcm.get_matrix() @ other.dcm.get_matrix()
+        return DirectionCosineMatrix(result)
+    
+    def get_matrix(self) -> np.mat:
+        """
+        Get the direction cosine matrix.
+
+        :return: The direction cosine matrix as an np matrix.
+        """
+        return np.mat([
+            [self.c11, self.c12, self.c13],
+            [self.c21, self.c22, self.c23],
+            [self.c31, self.c32, self.c33]
+        ])
+    
+    # alternative constructors/conversions
     @classmethod
     def from_eigenaxis(cls, e: EigenaxisRotation) -> "DirectionCosineMatrix":
         """
