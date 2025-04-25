@@ -18,5 +18,5 @@ SAMPLE_TIME = Qty(0.1, 's')
 
 
 if __name__ == "__main__":
-    sc = Spacecraft(INERTIA_TENSOR)
+    sc = Spacecraft(INERTIA_TENSOR, None)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME)
