@@ -60,3 +60,15 @@ class DirectionCosineMatrix(Attitude):
         q2 = (self.c31 - self.c13) / (4 * q4)
         q3 = (self.c12 - self.c21) / (4 * q4)
         return attitude.Quaternion(q1, q2, q3, q4)
+    
+    def to_eigenaxis(self) -> "EigenaxisRotation":
+        """
+        Convert the direction cosine matrix to an eigenaxis rotation.
+
+        :return: An instance of EigenaxisRotation.
+        """
+        eigenangle = np.arccos((self.c11 + self.c22 + self.c33 - 1) / 2)
+        e1 = (self.c23 - self.c32) / (2 * np.sin(eigenangle))
+        e2 = (self.c31 - self.c13) / (2 * np.sin(eigenangle))
+        e3 = (self.c12 - self.c21) / (2 * np.sin(eigenangle))
+        return attitude.EigenaxisRotation(eigenangle, np.array([e1, e2, e3]))
