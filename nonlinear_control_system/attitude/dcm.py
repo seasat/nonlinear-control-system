@@ -48,6 +48,20 @@ class DirectionCosineMatrix(Attitude):
             [self.c31, self.c32, self.c33]
         ])
     
+    # conversion methods
+    def to_quaternion(self) -> "Quaternion":
+        """
+        Convert the direction cosine matrix to a quaternion.
+
+        :return: An instance of Quaternion.
+        """
+        q4 = np.sqrt(1 + self.c11 + self.c22 + self.c33) / 2
+        q1 = (self.c23 - self.c32) / (4 * q4)
+        q2 = (self.c31 - self.c13) / (4 * q4)
+        q3 = (self.c12 - self.c21) / (4 * q4)
+        return attitude.Quaternion(q1, q2, q3, q4)
+        
+    
     # alternative constructors/conversions
     @classmethod
     def from_eigenaxis(cls, e: "EigenaxisRotation") -> "DirectionCosineMatrix":

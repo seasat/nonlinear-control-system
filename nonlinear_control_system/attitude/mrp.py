@@ -65,6 +65,20 @@ class ModifiedRodriguezParameter:
         :return: The squared norm of the modified Rodriguez parameter.
         """
         return self.sigma1**2 + self.sigma2**2 + self.sigma3**2
+
+    # conversion methods
+    def to_quaternion(self) -> "Quaternion":
+        """
+        Convert the modified Rodriguez parameter to a quaternion.
+
+        :return: An instance of Quaternion.
+        """
+        squared = self.squared()
+        q4 = 1 - squared / (1 + squared) 
+        q1 = 2 * self.sigma1 / (1 + squared)
+        q2 = 2 * self.sigma2 / (1 + squared)
+        q3 = 2 * self.sigma3 / (1 + squared)
+        return attitude.Quaternion(q1, q2, q3, q4) 
     
     @classmethod
     def from_eigenaxis(cls, e: "EigenaxisRotation") -> "ModifiedRodriguezParameter":

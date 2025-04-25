@@ -18,6 +18,19 @@ class EigenaxisRotation(Attitude):
         self.eigenangle = eigenangle
         (self.e1, self.e2, self.e3) = eigenaxis
 
+    # conversion methods
+    def to_quaternion(self) -> "Quaternion":
+        """
+        Convert the eigenaxis rotation to a quaternion.
+
+        :return: An instance of Quaternion.
+        """
+        q1 = self.e1 * np.sin(self.eigenangle / 2)
+        q2 = self.e2 * np.sin(self.eigenangle / 2)
+        q3 = self.e3 * np.sin(self.eigenangle / 2)
+        q4 = np.cos(self.eigenangle / 2)
+        return attitude.Quaternion(q1, q2, q3, q4)
+
     @classmethod
     def from_dcm(cls, dcm: "DirectionCosineMatrix") -> "EigenaxisRotation":
         """
