@@ -24,7 +24,8 @@ class Quaternion(Attitude):
         self.q3 = q3
         self.q4 = q4
     
-    def __init__(self, q1: "Quaternion", q2: "Quaternion") -> None:
+    @classmethod
+    def from_successive_rotations(cls, q1: "Quaternion", q2: "Quaternion") -> "Quaternion":
         """
         Initialize the Quaternion class with two quaternions.
 
@@ -41,12 +42,15 @@ class Quaternion(Attitude):
         ])
         result = quaternion_matrix @ np.mat([q1.q1, q1.q2, q1.q3, q1.q4]).T
 
-        self.q1 = result[0, 0]
-        self.q2 = result[1, 0]
-        self.q3 = result[2, 0]
-        self.q4 = result[3, 0]
-
-    def __init__(self, e: EigenaxisRotation) -> None:
+        q1 = result[0, 0]
+        q2 = result[1, 0]
+        q3 = result[2, 0]
+        q4 = result[3, 0]
+        return cls(q1, q2, q3, q4)
+    
+    # alternative constructors/conversions
+    @classmethod
+    def from_eigenaxis(cls, e: EigenaxisRotation) -> "Quaternion":
         """
         Initialize the Quaternion class with an eigenaxis rotation.
 
@@ -54,12 +58,15 @@ class Quaternion(Attitude):
         """
         super().__init__()
         
-        self.q1 = e.e1 * np.sin(e.eigenangle / 2)
-        self.q2 = e.e2 * np.sin(e.eigenangle / 2)
-        self.q3 = e.e3 * np.sin(e.eigenangle / 2)
-        self.q4 = np.cos(e.eigenangle / 2)
+        q1 = e.e1 * np.sin(e.eigenangle / 2)
+        q2 = e.e2 * np.sin(e.eigenangle / 2)
+        q3 = e.e3 * np.sin(e.eigenangle / 2)
+        q4 = np.cos(e.eigenangle / 2)
+
+        return cls(q1, q2, q3, q4)
     
-    def __init__(self, dcm: DirectionCosineMatrix) -> None:
+    @classmethod
+    def from_dcm(cls, dcm: DirectionCosineMatrix) -> "Quaternion":
         """
         Initialize the Quaternion class with a direction cosine matrix.
 
@@ -67,12 +74,15 @@ class Quaternion(Attitude):
         """
         super().__init__()
         
-        self.q4 = np.sqrt(1 + dcm.c11 + dcm.c22 + dcm.c33) / 2
-        self.q1 = (dcm.c23 - dcm.c32) / (4 * self.q4)
-        self.q2 = (dcm.c31 - dcm.c13) / (4 * self.q4)
-        self.q3 = (dcm.c12 - dcm.c21) / (4 * self.q4)
+        q4 = np.sqrt(1 + dcm.c11 + dcm.c22 + dcm.c33) / 2
+        q1 = (dcm.c23 - dcm.c32) / (4 * self.q4)
+        q2 = (dcm.c31 - dcm.c13) / (4 * self.q4)
+        q3 = (dcm.c12 - dcm.c21) / (4 * self.q4)
+
+        return cls(q1, q2, q3, q4)
     
-    def __init__(self, mrp: ModifiedRodriguezParameter) -> None:
+    @classmethod
+    def from_mrp(cls, mrp: ModifiedRodriguezParameter) -> "Quaternion":
         """
         Initialize the Quaternion class with modified Rodriguez parameters.
 
@@ -80,7 +90,9 @@ class Quaternion(Attitude):
         """
         super().__init__()
         
-        self.q4 = 1 - mrp.squared() / (1 + mrp.squared()) 
-        self.q1 = 2 * mrp.sigma1 / (1 + mrp.squared())
-        self.q2 = 2 * mrp.sigma2 / (1 + mrp.squared())
-        self.q3 = 2 * mrp.sigma3 / (1 + mrp.squared())
+        q4 = 1 - mrp.squared() / (1 + mrp.squared()) 
+        q1 = 2 * mrp.sigma1 / (1 + mrp.squared())
+        q2 = 2 * mrp.sigma2 / (1 + mrp.squared())
+        q3 = 2 * mrp.sigma3 / (1 + mrp.squared())
+
+        return cls(q1, q2, q3, q4)
