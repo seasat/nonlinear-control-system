@@ -24,6 +24,17 @@ class Quaternion(Attitude):
         self.q3 = q3
         self.q4 = q4
     
+    def __matmul__(self, other: "Quaternion") -> "Quaternion":
+        """
+        Successive rotations of two quaternions.
+
+        :param other: The other quaternion to multiply with.
+        :return: The resulting attitude as a quaternion.
+        """
+        assert isinstance(other, Quaternion), "Can only multiply with another Quaternion"
+        
+        return Quaternion.from_successive_rotations(self, other)
+    
     @classmethod
     def from_successive_rotations(cls, q1: "Quaternion", q2: "Quaternion") -> "Quaternion":
         """
