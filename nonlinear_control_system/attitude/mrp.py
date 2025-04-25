@@ -1,11 +1,9 @@
 import numpy as np
 
-from attitude import Attitude
-from eigenaxis import EigenaxisRotation
-from quaternion import Quaternion
+import attitude
 
 
-class ClassicalRodriguezParameter(Attitude):
+class ClassicalRodriguezParameter:
     def __init__(self, tau1: float, tau2: float, tau3: float) -> None:
         """
         Initialize the ClassicalRodriguezParameter class with classical Rodriguez parameters.
@@ -14,14 +12,12 @@ class ClassicalRodriguezParameter(Attitude):
         :param tau2: The second classical Rodriguez parameter.
         :param tau3: The third classical Rodriguez parameter.
         """
-        super().__init__()
-        
         self.tau1 = tau1
         self.tau2 = tau2
         self.tau3 = tau3
     
     @classmethod
-    def from_eigenaxis(cls, e: EigenaxisRotation) -> "ClassicalRodriguezParameter":
+    def from_eigenaxis(cls, e: "EigenaxisRotation") -> "ClassicalRodriguezParameter":
         """
         Initialize the ClassicalRodriguezParameter class with an eigenaxis rotation.
 
@@ -35,7 +31,7 @@ class ClassicalRodriguezParameter(Attitude):
         return cls(tau1, tau2, tau3)
 
     @classmethod
-    def from_quaternion(cls, q: Quaternion) -> "ClassicalRodriguezParameter":
+    def from_quaternion(cls, q: "Quaternion") -> "ClassicalRodriguezParameter":
         """
         Initialize the ClassicalRodriguezParameter class with a quaternion.
 
@@ -49,7 +45,7 @@ class ClassicalRodriguezParameter(Attitude):
         return cls(tau1, tau2, tau3)
 
 
-class ModifiedRodriguezParameter(Attitude):
+class ModifiedRodriguezParameter:
     def __init__(self, sigma1: float, sigma2: float, sigma3: float) -> None:
         """
         Initialize the ModifiedRodriguezParameter class with modified Rodriguez parameters.
@@ -58,8 +54,6 @@ class ModifiedRodriguezParameter(Attitude):
         :param sigma2: The second modified Rodriguez parameter.
         :param sigma3: The third modified Rodriguez parameter.
         """
-        super().__init__()
-        
         self.sigma1 = sigma1
         self.sigma2 = sigma2
         self.sigma3 = sigma3
@@ -73,7 +67,7 @@ class ModifiedRodriguezParameter(Attitude):
         return self.sigma1**2 + self.sigma2**2 + self.sigma3**2
     
     @classmethod
-    def from_eigenaxis(cls, e: EigenaxisRotation) -> "ModifiedRodriguezParameter":
+    def from_eigenaxis(cls, e: "EigenaxisRotation") -> "ModifiedRodriguezParameter":
         """
         Initialize the ModifiedRodriguezParameter class with an eigenaxis rotation.
 
@@ -87,7 +81,7 @@ class ModifiedRodriguezParameter(Attitude):
         return cls(sigma1, sigma2, sigma3)
 
     @classmethod
-    def from_quaternion(cls, q: Quaternion) -> "ModifiedRodriguezParameter":
+    def from_quaternion(cls, q: "Quaternion") -> "ModifiedRodriguezParameter":
         """
         Initialize the ModifiedRodriguezParameter class with a quaternion.
 
