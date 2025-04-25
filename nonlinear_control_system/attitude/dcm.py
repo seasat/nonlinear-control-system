@@ -1,9 +1,9 @@
 import numpy as np
 
-from attitude import Attitude
-from eigenaxis import EigenaxisRotation
-from quaternion import Quaternion
-from mrp import ModifiedRodriguezParameter
+from .attitude import Attitude
+from .eigenaxis import EigenaxisRotation
+from .quaternion import Quaternion
+from .mrp import ModifiedRodriguezParameter
 
 
 class DirectionCosineMatrix(Attitude):

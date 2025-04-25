@@ -1,7 +1,7 @@
 import numpy as np
 
-from attitude import Attitude
-from dcm import DirectionCosineMatrix
+from .attitude import Attitude
+from .dcm import DirectionCosineMatrix
 
 
 class EigenaxisRotation(Attitude):

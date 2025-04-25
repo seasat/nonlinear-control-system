@@ -1,9 +1,9 @@
 import numpy as np
 
-from attitude import Attitude
-from dcm import DirectionCosineMatrix
-from eigenaxis import EigenaxisRotation
-from mrp import ModifiedRodriguezParameter
+from .attitude import Attitude
+from .dcm import DirectionCosineMatrix
+from .eigenaxis import EigenaxisRotation
+from .mrp import ModifiedRodriguezParameter
 
 
 class Quaternion(Attitude):
