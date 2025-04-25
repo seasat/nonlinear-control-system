@@ -1,4 +1,5 @@
-
+# -*- coding: utf-8 -*-
+import numpy as np
 
 
 class Quantity:
@@ -11,6 +12,19 @@ class Quantity:
         """
         self.value = value
         self.unit = unit
+    
+    @classmethod
+    def matrix(cls, matrix: np.mat, unit: str) -> np.mat["Quantity"]:
+        """
+        Create a matrix of quantities.
+
+        :param value: The value of the quantity as a numpy matrix.
+        :param unit: The unit of the quantities.
+        :return: The resulting quantities as a numpy matrix.
+        """
+        assert isinstance(matrix, np.mat), "Input must be a numpy matrix"
+        
+        return np.mat([[cls(value, unit) for value in row] for row in matrix])
 
     # addition
     def __add__(self, other: "Quantity") -> "Quantity":
