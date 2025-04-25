@@ -72,7 +72,8 @@ class ModifiedRodriguezParameter(Attitude):
         """
         return self.sigma1**2 + self.sigma2**2 + self.sigma3**2
     
-    def __init__(self, e: EigenaxisRotation) -> None:
+    @classmethod
+    def from_eigenaxis(cls, e: EigenaxisRotation) -> "ModifiedRodriguezParameter":
         """
         Initialize the ModifiedRodriguezParameter class with an eigenaxis rotation.
 
@@ -80,11 +81,13 @@ class ModifiedRodriguezParameter(Attitude):
         """
         super().__init__()
         
-        self.sigma1 = e.e1 * np.tan(e.eigenangle / 4)
-        self.sigma2 = e.e2 * np.tan(e.eigenangle / 4)
-        self.sigma3 = e.e3 * np.tan(e.eigenangle / 4)
+        sigma1 = e.e1 * np.tan(e.eigenangle / 4)
+        sigma2 = e.e2 * np.tan(e.eigenangle / 4)
+        sigma3 = e.e3 * np.tan(e.eigenangle / 4)
+        return cls(sigma1, sigma2, sigma3)
 
-    def __init__(self, q: Quaternion) -> None:
+    @classmethod
+    def from_quaternion(cls, q: Quaternion) -> "ModifiedRodriguezParameter":
         """
         Initialize the ModifiedRodriguezParameter class with a quaternion.
 
@@ -92,6 +95,7 @@ class ModifiedRodriguezParameter(Attitude):
         """
         super().__init__()
         
-        self.sigma1 = q.q1 / (1 + q.q4)
-        self.sigma2 = q.q2 / (1 + q.q4)
-        self.sigma3 = q.q3 / (1 + q.q4)
+        sigma1 = q.q1 / (1 + q.q4)
+        sigma2 = q.q2 / (1 + q.q4)
+        sigma3 = q.q3 / (1 + q.q4)
+        return cls(sigma1, sigma2, sigma3)
