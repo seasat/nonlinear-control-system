@@ -4,7 +4,7 @@ from .attitude import Attitude
 import attitude
 
 class DirectionCosineMatrix(Attitude):
-    def __init__(self, dcm: np.mat) -> None:
+    def __init__(self, dcm: np.matrix) -> None:
         """
         Initialize the DirectionCosineMatrix class with a direction cosine matrix.
 
@@ -36,7 +36,7 @@ class DirectionCosineMatrix(Attitude):
         result = self.dcm.get_matrix() @ other.dcm.get_matrix()
         return DirectionCosineMatrix(result)
     
-    def get_matrix(self) -> np.mat:
+    def get_matrix(self) -> np.matrix:
         """
         Get the direction cosine matrix.
 
