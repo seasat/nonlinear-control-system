@@ -27,7 +27,8 @@ class DirectionCosineMatrix(Attitude):
         self.c32 = dcm[2, 1]
         self.c33 = dcm[2, 2]
     
-    def __init__(self, e: EigenaxisRotation) -> None:
+    @classmethod
+    def from_eigenaxis(cls, e: EigenaxisRotation) -> "DirectionCosineMatrix":
         """
         Initialize the DirectionCosineMatrix class with an eigenaxis rotation.
 
@@ -35,17 +36,24 @@ class DirectionCosineMatrix(Attitude):
         """
         super().__init__()
         
-        self.c11 = np.cos(e.eigenangle) + e.e1**2 * (1 - np.cos(e.eigenangle))
-        self.c12 = e.e1 * e.e2 * (1 - np.cos(e.eigenangle)) + e.e3 * np.sin(e.eigenangle)
-        self.c13 = e.e1 * e.e3 * (1 - np.cos(e.eigenangle)) - e.e2 * np.sin(e.eigenangle)
-        self.c21 = e.e2 * e.e1 * (1 - np.cos(e.eigenangle)) - e.e3 * np.sin(e.eigenangle)
-        self.c22 = np.cos(e.eigenangle) + e.e2**2 * (1 - np.cos(e.eigenangle))
-        self.c23 = e.e2 * e.e3 * (1 - np.cos(e.eigenangle)) + e.e1 * np.sin(e.eigenangle)
-        self.c31 = e.e3 * e.e1 * (1 - np.cos(e.eigenangle)) + e.e2 * np.sin(e.eigenangle)
-        self.c32 = e.e3 * e.e2 * (1 - np.cos(e.eigenangle)) - e.e1 * np.sin(e.eigenangle)
-        self.c33 = np.cos(e.eigenangle) + e.e3**2 * (1 - np.cos(e.eigenangle))
+        c11 = np.cos(e.eigenangle) + e.e1**2 * (1 - np.cos(e.eigenangle))
+        c12 = e.e1 * e.e2 * (1 - np.cos(e.eigenangle)) + e.e3 * np.sin(e.eigenangle)
+        c13 = e.e1 * e.e3 * (1 - np.cos(e.eigenangle)) - e.e2 * np.sin(e.eigenangle)
+        c21 = e.e2 * e.e1 * (1 - np.cos(e.eigenangle)) - e.e3 * np.sin(e.eigenangle)
+        c22 = np.cos(e.eigenangle) + e.e2**2 * (1 - np.cos(e.eigenangle))
+        c23 = e.e2 * e.e3 * (1 - np.cos(e.eigenangle)) + e.e1 * np.sin(e.eigenangle)
+        c31 = e.e3 * e.e1 * (1 - np.cos(e.eigenangle)) + e.e2 * np.sin(e.eigenangle)
+        c32 = e.e3 * e.e2 * (1 - np.cos(e.eigenangle)) - e.e1 * np.sin(e.eigenangle)
+        c33 = np.cos(e.eigenangle) + e.e3**2 * (1 - np.cos(e.eigenangle))
+
+        return cls(np.mat([
+            [c11, c12, c13],
+            [c21, c22, c23],
+            [c31, c32, c33]
+        ]))
     
-    def __init__(self, q: Quaternion) -> None:
+    @classmethod
+    def from_quaternion(cls, q: Quaternion) -> "DirectionCosineMatrix":
         """
         Initialize the DirectionCosineMatrix class with a quaternion.
 
@@ -53,17 +61,24 @@ class DirectionCosineMatrix(Attitude):
         """
         super().__init__()
         
-        self.c11 = 1 - 2 * (q.q2**2 + q.q3**2)
-        self.c12 = 2 * (q.q1 * q.q2 + q.q3 * q.q4)
-        self.c13 = 2 * (q.q1 * q.q3 - q.q2 * q.q4)
-        self.c21 = 2 * (q.q1 * q.q2 - q.q3 * q.q4)
-        self.c22 = 1 - 2 * (q.q1**2 + q.q3**2)
-        self.c23 = 2 * (q.q2 * q.q3 + q.q1 * q.q4)
-        self.c31 = 2 * (q.q1 * q.q3 + q.q2 * q.q4)
-        self.c32 = 2 * (q.q2 * q.q3 - q.q1 * q.q4)
-        self.c33 = 1 - 2 * (q.q1**2 + q.q2**2)
+        c11 = 1 - 2 * (q.q2**2 + q.q3**2)
+        c12 = 2 * (q.q1 * q.q2 + q.q3 * q.q4)
+        c13 = 2 * (q.q1 * q.q3 - q.q2 * q.q4)
+        c21 = 2 * (q.q1 * q.q2 - q.q3 * q.q4)
+        c22 = 1 - 2 * (q.q1**2 + q.q3**2)
+        c23 = 2 * (q.q2 * q.q3 + q.q1 * q.q4)
+        c31 = 2 * (q.q1 * q.q3 + q.q2 * q.q4)
+        c32 = 2 * (q.q2 * q.q3 - q.q1 * q.q4)
+        c33 = 1 - 2 * (q.q1**2 + q.q2**2)
+
+        return cls(np.mat([
+            [c11, c12, c13],
+            [c21, c22, c23],
+            [c31, c32, c33]
+        ]))
     
-    def __init__(self, mrp: ModifiedRodriguezParameter) -> None:
+    @classmethod
+    def from_mrp(cls, mrp: ModifiedRodriguezParameter) -> "DirectionCosineMatrix":
         """
         Initialize the DirectionCosineMatrix class with modified Rodriguez parameters.
 
@@ -71,12 +86,18 @@ class DirectionCosineMatrix(Attitude):
         """
         super().__init__()
         
-        self.c11 = ((1 + mrp.squared())**2 - 8 * mrp.sigma2**2 - 8 * mrp.sigma3**2) / (1 + mrp.squared())**2
-        self.c12 = 8 * mrp.sigma1 * mrp.sigma2 + 4 * mrp.sigma3 * (1 - mrp.squared()) / (1 + mrp.squared())**2
-        self.c13 = 8 * mrp.sigma1 * mrp.sigma3 + 4 * mrp.sigma2 * (1 - mrp.squared()) / (1 + mrp.squared())**2
-        self.c21 = 8 * mrp.sigma2 * mrp.sigma1 + 4 * mrp.sigma3 * (1 - mrp.squared()) / (1 + mrp.squared())**2
-        self.c22 = ((1 + mrp.squared())**2 - 8 * mrp.sigma1**2 - 8 * mrp.sigma3**2) / (1 + mrp.squared())**2
-        self.c23 = 8 * mrp.sigma2 * mrp.sigma3 + 4 * mrp.sigma1 * (1 - mrp.squared()) / (1 + mrp.squared())**2
-        self.c31 = 8 * mrp.sigma3 * mrp.sigma1 + 4 * mrp.sigma2 * (1 - mrp.squared()) / (1 + mrp.squared())**2
-        self.c32 = 8 * mrp.sigma3 * mrp.sigma2 + 4 * mrp.sigma1 * (1 - mrp.squared()) / (1 + mrp.squared())**2
-        self.c33 = ((1 + mrp.squared())**2 - 8 * mrp.sigma1**2 - 8 * mrp.sigma2**2) / (1 + mrp.squared())**2
+        c11 = ((1 + mrp.squared())**2 - 8 * mrp.sigma2**2 - 8 * mrp.sigma3**2) / (1 + mrp.squared())**2
+        c12 = 8 * mrp.sigma1 * mrp.sigma2 + 4 * mrp.sigma3 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        c13 = 8 * mrp.sigma1 * mrp.sigma3 + 4 * mrp.sigma2 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        c21 = 8 * mrp.sigma2 * mrp.sigma1 + 4 * mrp.sigma3 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        c22 = ((1 + mrp.squared())**2 - 8 * mrp.sigma1**2 - 8 * mrp.sigma3**2) / (1 + mrp.squared())**2
+        c23 = 8 * mrp.sigma2 * mrp.sigma3 + 4 * mrp.sigma1 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        c31 = 8 * mrp.sigma3 * mrp.sigma1 + 4 * mrp.sigma2 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        c32 = 8 * mrp.sigma3 * mrp.sigma2 + 4 * mrp.sigma1 * (1 - mrp.squared()) / (1 + mrp.squared())**2
+        c33 = ((1 + mrp.squared())**2 - 8 * mrp.sigma1**2 - 8 * mrp.sigma2**2) / (1 + mrp.squared())**2
+
+        return cls(np.mat([
+            [c11, c12, c13],
+            [c21, c22, c23],
+            [c31, c32, c33]
+        ]))
