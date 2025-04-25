@@ -75,9 +75,9 @@ class Quaternion(Attitude):
         super().__init__()
         
         q4 = np.sqrt(1 + dcm.c11 + dcm.c22 + dcm.c33) / 2
-        q1 = (dcm.c23 - dcm.c32) / (4 * self.q4)
-        q2 = (dcm.c31 - dcm.c13) / (4 * self.q4)
-        q3 = (dcm.c12 - dcm.c21) / (4 * self.q4)
+        q1 = (dcm.c23 - dcm.c32) / (4 * q4)
+        q2 = (dcm.c31 - dcm.c13) / (4 * q4)
+        q3 = (dcm.c12 - dcm.c21) / (4 * q4)
 
         return cls(q1, q2, q3, q4)
     
