@@ -19,7 +19,8 @@ class EigenaxisRotation(Attitude):
         self.eigenangle = eigenangle
         (self.e1, self.e2, self.e3) = eigenaxis
 
-    def __init__(self, dcm: DirectionCosineMatrix) -> None:
+    @classmethod
+    def from_dcm(cls, dcm: DirectionCosineMatrix) -> "EigenaxisRotation":
         """
         Initialize the EigenaxisRotation class with a direction cosine matrix.
 
@@ -27,7 +28,9 @@ class EigenaxisRotation(Attitude):
         """
         super().__init__()
         
-        self.eigenangle = np.arccos((dcm.c11 + dcm.c22 + dcm.c33 - 1) / 2)
-        self.e1 = (dcm.c23 - dcm.c32) / (2 * np.sin(self.eigenangle))
-        self.e2 = (dcm.c31 - dcm.c13) / (2 * np.sin(self.eigenangle))
-        self.e3 = (dcm.c12 - dcm.c21) / (2 * np.sin(self.eigenangle))
+        eigenangle = np.arccos((dcm.c11 + dcm.c22 + dcm.c33 - 1) / 2)
+        e1 = (dcm.c23 - dcm.c32) / (2 * np.sin(eigenangle))
+        e2 = (dcm.c31 - dcm.c13) / (2 * np.sin(eigenangle))
+        e3 = (dcm.c12 - dcm.c21) / (2 * np.sin(eigenangle))
+
+        return cls(eigenangle, np.array([e1, e2, e3]))
