@@ -1,8 +1,6 @@
 import numpy as np
 
-from .attitude import Attitude
-from .dcm import DirectionCosineMatrix
-
+import attitude
 
 class EigenaxisRotation(Attitude):
     def __init__(self, eigenangle: float, eigenaxis: np.array[3]) -> None:

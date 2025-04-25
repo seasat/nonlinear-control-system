@@ -1,10 +1,6 @@
 import numpy as np
 
-from .attitude import Attitude
-from .dcm import DirectionCosineMatrix
-from .eigenaxis import EigenaxisRotation
-from .mrp import ModifiedRodriguezParameter
-
+import attitude
 
 class Quaternion(Attitude):
     def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
