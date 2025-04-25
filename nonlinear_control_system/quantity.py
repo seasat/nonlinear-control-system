@@ -23,8 +23,13 @@ class Quantity:
         :return: The resulting quantities as a numpy matrix.
         """
         assert isinstance(matrix, np.matrix), "Input must be a numpy matrix"
+
+        quantity_matrix = np.zeros(matrix.shape, dtype=Quantity)
+        for i in range(matrix.shape[0]):
+            for j in range(matrix.shape[1]):
+                quantity_matrix[i, j] = cls(matrix[i, j], unit)
         
-        return np.asmatrix([[cls(value, unit) for value in row] for row in matrix])
+        return np.asmatrix(quantity_matrix)
 
     # addition
     def __add__(self, other: "Quantity") -> "Quantity":
