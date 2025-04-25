@@ -50,7 +50,7 @@ class DirectionCosineMatrix(Attitude):
     
     # alternative constructors/conversions
     @classmethod
-    def from_eigenaxis(cls, e: EigenaxisRotation) -> "DirectionCosineMatrix":
+    def from_eigenaxis(cls, e: "EigenaxisRotation") -> "DirectionCosineMatrix":
         """
         Initialize the DirectionCosineMatrix class with an eigenaxis rotation.
 
@@ -75,7 +75,7 @@ class DirectionCosineMatrix(Attitude):
         ]))
     
     @classmethod
-    def from_quaternion(cls, q: Quaternion) -> "DirectionCosineMatrix":
+    def from_quaternion(cls, q: "Quaternion") -> "DirectionCosineMatrix":
         """
         Initialize the DirectionCosineMatrix class with a quaternion.
 
@@ -100,7 +100,7 @@ class DirectionCosineMatrix(Attitude):
         ]))
     
     @classmethod
-    def from_mrp(cls, mrp: ModifiedRodriguezParameter) -> "DirectionCosineMatrix":
+    def from_mrp(cls, mrp: "ModifiedRodriguezParameter") -> "DirectionCosineMatrix":
         """
         Initialize the DirectionCosineMatrix class with modified Rodriguez parameters.
 

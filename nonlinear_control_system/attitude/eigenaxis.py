@@ -4,7 +4,7 @@ from .attitude import Attitude
 import attitude
 
 class EigenaxisRotation(Attitude):
-    def __init__(self, eigenangle: float, eigenaxis: np.array[3]) -> None:
+    def __init__(self, eigenangle: float, eigenaxis: np.ndarray[3]) -> None:
         """
         Initialize the EigenaxisRotation class with an eigenangle and eigenaxis.
 
@@ -19,7 +19,7 @@ class EigenaxisRotation(Attitude):
         (self.e1, self.e2, self.e3) = eigenaxis
 
     @classmethod
-    def from_dcm(cls, dcm: DirectionCosineMatrix) -> "EigenaxisRotation":
+    def from_dcm(cls, dcm: "DirectionCosineMatrix") -> "EigenaxisRotation":
         """
         Initialize the EigenaxisRotation class with a direction cosine matrix.
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 from .attitude import Attitude
-import attitude
+
 
 class Quaternion(Attitude):
     def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
@@ -58,7 +58,7 @@ class Quaternion(Attitude):
     
     # alternative constructors/conversions
     @classmethod
-    def from_eigenaxis(cls, e: EigenaxisRotation) -> "Quaternion":
+    def from_eigenaxis(cls, e: "EigenaxisRotation") -> "Quaternion":
         """
         Initialize the Quaternion class with an eigenaxis rotation.
 
@@ -74,7 +74,7 @@ class Quaternion(Attitude):
         return cls(q1, q2, q3, q4)
     
     @classmethod
-    def from_dcm(cls, dcm: DirectionCosineMatrix) -> "Quaternion":
+    def from_dcm(cls, dcm: "DirectionCosineMatrix") -> "Quaternion":
         """
         Initialize the Quaternion class with a direction cosine matrix.
 
@@ -90,7 +90,7 @@ class Quaternion(Attitude):
         return cls(q1, q2, q3, q4)
     
     @classmethod
-    def from_mrp(cls, mrp: ModifiedRodriguezParameter) -> "Quaternion":
+    def from_mrp(cls, mrp: "ModifiedRodriguezParameter") -> "Quaternion":
         """
         Initialize the Quaternion class with modified Rodriguez parameters.
 
