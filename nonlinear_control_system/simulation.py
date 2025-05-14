@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
-from attitude import Attitude
+from attitude import Attitude, YawPitchRoll
 
 
 class Simulation:
@@ -31,6 +31,7 @@ class Simulation:
         self.target_attitudes = np.zeros_like(self.attitudes)
 
         self._calculate_target_attitudes(target_attitude_commands)
+        self._run_simulation()
     
     def _calculate_target_attitudes(self, target_attitude_commands: dict[float: Attitude]) -> None:
         """
@@ -49,6 +50,14 @@ class Simulation:
                     break
 
             self.target_attitudes[idx] = current_command_attitude
+    
+    def _run_simulation(self) -> None:
+        for idx, time in enumerate(self.times):
+            target_attitude = self.target_attitudes[idx]
+
+            attitude = YawPitchRoll(0, 0, 0)
+
+            self.attitudes[idx] = attitude
     
     def plot_attitudes(self) -> None:
         """
