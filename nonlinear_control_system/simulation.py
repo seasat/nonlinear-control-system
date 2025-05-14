@@ -13,6 +13,8 @@ class Simulation:
         :param duration: The total duration of the simulation in seconds.
         :param sample_time: The time interval between each simulation step in seconds.
         """
+        assert isinstance(spacecraft, Spacecraft), "Spacecraft must be an instance of Spacecraft"
+
         self.spacecraft = spacecraft
         self.duration = duration
         self.sample_time = sample_time
