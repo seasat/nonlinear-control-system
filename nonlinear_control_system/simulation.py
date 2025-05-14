@@ -72,7 +72,7 @@ class Simulation:
         rolls = np.array([attitude.roll for attitude in self.attitudes])
         ax.plot(self.times, rolls, label="Roll")
 
-        ax.set_color_cycle(None)
+        ax.set_prop_cycle(None)
         command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
         ax.plot(self.times, command_yaws, label="Command Yaw", linestyle='--')
         command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
