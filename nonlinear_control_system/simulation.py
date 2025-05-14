@@ -36,14 +36,14 @@ class Simulation:
         Calculate the target attitudes based on the target attitude commands.
         """
         target_attitude_commands = sorted(target_attitude_commands.items())
-        next_command = iter(target_attitude_commands)
-        current_command_attitude = next_command[1]
-        next(next_command)
+        command_iterator = iter(target_attitude_commands)
+        current_command_attitude = target_attitude_commands[0][1]
+        command = next(command_iterator)
         for idx, time in enumerate(self.times):
-            if time >= next_command[0]:
-                current_command_attitude = next_command[1]
+            if time >= command[0]:
+                current_command_attitude = command[1]
                 try:
-                    next(next_command)
+                    command = next(command_iterator)
                 except StopIteration:
                     break
 
