@@ -47,7 +47,7 @@ class Simulation:
                 try:
                     command = next(command_iterator)
                 except StopIteration:
-                    break
+                    pass # no more commands, don't update
 
             self.target_attitudes[idx] = current_command_attitude
     
