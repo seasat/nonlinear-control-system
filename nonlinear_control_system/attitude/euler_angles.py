@@ -43,7 +43,7 @@ class EulerAngles(Attitude):
         t_1 = self.first_axis(self.first_angle)
         t_2 = self.second_axis(self.second_angle)
         t_3 = self.third_axis(self.third_angle)
-        return t_1 @ t_2 @ t_3
+        return t_3 @ t_2 @ t_1
     
 
 class YawPitchRoll(EulerAngles):
