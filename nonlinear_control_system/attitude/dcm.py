@@ -1,7 +1,8 @@
 from __future__ import annotations
 import numpy as np
 
-from .attitude import Attitude
+from . import Attitude, Quaternion, EigenaxisRotation
+
 
 class DirectionCosineMatrix(Attitude):
     def __init__(self, dcm: np.matrix) -> None:
