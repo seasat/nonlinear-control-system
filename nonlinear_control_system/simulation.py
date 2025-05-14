@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+import numpy as np
 
 from spacecraft import Spacecraft
 
@@ -17,3 +17,11 @@ class Simulation:
         self.spacecraft = spacecraft
         self.duration = duration
         self.sample_time = sample_time
+
+        self.sample_points = int(duration // sample_time + 1) # include start and end
+        self.times = np.linspace(0, duration, self.sample_points, endpoint=True)
+
+        # initialize history arrays
+        self.attitudes = np.zeros(self.sample_points, dtype=type(spacecraft.attitude)) # use same attitude type as spacecraft stores
+        self.angular_velocities = np.zeros_like(self.attitudes)
+        self.target_attitudes = np.zeros_like(self.attitudes)
