@@ -53,3 +53,13 @@ class YawPitchRoll(EulerAngles):
             Axis.Y_ROTATION, pitch,
             Axis.X_ROTATION, roll
         )
+    
+    @property
+    def yaw(self) -> float:
+        return self.first_angle
+    @property
+    def pitch(self) -> float:
+        return self.second_angle
+    @property
+    def roll(self) -> float:
+        return self.third_angle
