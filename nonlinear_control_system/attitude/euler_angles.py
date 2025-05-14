@@ -25,9 +25,6 @@ class EulerAngles(Attitude):
         super().__init__()
         # no two successive axes can be the same
         assert first_axis != second_axis and second_axis != third_axis, "No two successive axes can be the same"
-        assert isinstance(first_axis, Axis), "First axis must be an instance of Axis"
-        assert isinstance(second_axis, Axis), "Second axis must be an instance of Axis"
-        assert isinstance(third_axis, Axis), "Third axis must be an instance of Axis"
 
         self.first_axis = first_axis
         self.first_angle = first_angle
