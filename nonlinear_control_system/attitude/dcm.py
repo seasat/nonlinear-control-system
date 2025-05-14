@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 
-from . import Attitude, Quaternion, EigenaxisRotation, YawPitchRoll
+from . import Attitude
 
 
 class DirectionCosineMatrix(Attitude):
@@ -56,6 +56,7 @@ class DirectionCosineMatrix(Attitude):
 
         :return: An instance of Quaternion.
         """
+        from . import Quaternion
         q4 = np.sqrt(1 + self.c11 + self.c22 + self.c33) / 2
         q1 = (self.c23 - self.c32) / (4 * q4)
         q2 = (self.c31 - self.c13) / (4 * q4)
@@ -66,6 +67,7 @@ class DirectionCosineMatrix(Attitude):
         """
         Convert the direction cosine matrix to Euler angles.
         """
+        from . import YawPitchRoll
         yaw = np.arctan2(self.c21, self.c11)
         pitch = np.arcsin(-self.c31)
         roll = np.arctan2(self.c32, self.c33)
@@ -77,6 +79,7 @@ class DirectionCosineMatrix(Attitude):
 
         :return: An instance of EigenaxisRotation.
         """
+        from . import EigenaxisRotation
         eigenangle = np.arccos((self.c11 + self.c22 + self.c33 - 1) / 2)
         e1 = (self.c23 - self.c32) / (2 * np.sin(eigenangle))
         e2 = (self.c31 - self.c13) / (2 * np.sin(eigenangle))

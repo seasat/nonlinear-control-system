@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 
-from . import Attitude, Quaternion, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
+from . import Attitude, DirectionCosineMatrix
 
 
 class EigenaxisRotation(Attitude):
@@ -26,6 +26,7 @@ class EigenaxisRotation(Attitude):
 
         :return: An instance of Quaternion.
         """
+        from . import Quaternion
         q1 = self.e1 * np.sin(self.eigenangle / 2)
         q2 = self.e2 * np.sin(self.eigenangle / 2)
         q3 = self.e3 * np.sin(self.eigenangle / 2)
@@ -60,6 +61,7 @@ class EigenaxisRotation(Attitude):
 
         :return: An instance of ClassicalRodriguezParameter.
         """
+        from . import ClassicalRodriguezParameter
         tau1 = self.e1 * np.tan(self.eigenangle / 2)
         tau2 = self.e2 * np.tan(self.eigenangle / 2)
         tau3 = self.e3 * np.tan(self.eigenangle / 2)
@@ -71,6 +73,7 @@ class EigenaxisRotation(Attitude):
 
         :return: An instance of ModifiedRodriguezParameter.
         """
+        from . import ModifiedRodriguezParameter
         sigma1 = self.e1 * np.tan(self.eigenangle / 4)
         sigma2 = self.e2 * np.tan(self.eigenangle / 4)
         sigma3 = self.e3 * np.tan(self.eigenangle / 4)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 
-from . import Attitude, Quaternion, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
+from . import Attitude, DirectionCosineMatrix
 
 
 class Quaternion(Attitude):
@@ -86,6 +86,7 @@ class Quaternion(Attitude):
 
         :return: An instance of ClassicalRodriguezParameter.
         """
+        from . import ClassicalRodriguezParameter
         tau1 = self.q1 / self.q4
         tau2 = self.q2 / self.q4
         tau3 = self.q3 / self.q4
@@ -97,6 +98,7 @@ class Quaternion(Attitude):
 
         :return: An instance of ModifiedRodriguezParameter.
         """
+        from . import ModifiedRodriguezParameter
         sigma1 = self.q1 / (1 + self.q4)
         sigma2 = self.q2 / (1 + self.q4)
         sigma3 = self.q3 / (1 + self.q4)
