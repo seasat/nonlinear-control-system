@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from spacecraft import Spacecraft
-from quantity import Quantity as Qty
 
 
 class Simulation:
-    def __init__(self, spacecraft: Spacecraft, duration: Qty, sample_time: Qty) -> None:
+    def __init__(self, spacecraft: Spacecraft, duration: float, sample_time: float) -> None:
         """
         Initialize the Simulation class with a spacecraft, duration, and sample time.
 
