@@ -37,8 +37,7 @@ class Simulation:
         """
         target_attitude_commands = sorted(target_attitude_commands.items())
         command_iterator = iter(target_attitude_commands)
-        current_command_attitude = target_attitude_commands[0][1]
-        command = next(command_iterator)
+        current_command_attitude = 0
         for idx, time in enumerate(self.times):
             if time >= command[0]:
                 current_command_attitude = command[1]
