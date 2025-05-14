@@ -18,10 +18,8 @@ def main():
     SIMULATION_DURATION = Qty(1000, 's')
     SAMPLE_TIME = Qty(0.1, 's')
 
-
-    if __name__ == "__main__":
-        sc = Spacecraft(INERTIA_TENSOR, None)
-        simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME)
+    sc = Spacecraft(INERTIA_TENSOR, None)
+    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME)
 
 
 if __name__ == "__main__":
