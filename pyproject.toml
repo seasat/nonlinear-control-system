@@ -1,0 +1,13 @@
+[project]
+name = "nonlinear_control"
+version = "0.1.0"
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "control"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
