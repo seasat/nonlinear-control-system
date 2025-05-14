@@ -63,7 +63,7 @@ class DirectionCosineMatrix(Attitude):
         q3 = (self.c12 - self.c21) / (4 * q4)
         return Quaternion(q1, q2, q3, q4)
 
-    def to_euler_angles(self) -> YawPitchRoll:
+    def to_yaw_pitch_roll(self) -> YawPitchRoll:
         """
         Convert the direction cosine matrix to Euler angles.
         """
