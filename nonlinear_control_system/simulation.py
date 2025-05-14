@@ -55,9 +55,9 @@ class Simulation:
         for idx, time in enumerate(self.times):
             target_attitude = self.target_attitudes[idx]
 
-            attitude = YawPitchRoll(0, 0, 0)
+            # TODO: implement control loop
 
-            self.attitudes[idx] = attitude
+            self.attitudes[idx] = self.spacecraft.attitude
     
     def plot_attitudes(self) -> None:
         """
