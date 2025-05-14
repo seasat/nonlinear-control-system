@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
 from simulation import Simulation
@@ -25,6 +26,9 @@ def main():
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, ATTITUDE_COMMANDS)
+    
+    simulation.plot_attitudes()
+    plt.show()
 
 
 if __name__ == "__main__":
