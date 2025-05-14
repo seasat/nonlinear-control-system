@@ -73,3 +73,36 @@ class DirectionCosineMatrix(Attitude):
         e2 = (self.c31 - self.c13) / (2 * np.sin(eigenangle))
         e3 = (self.c12 - self.c21) / (2 * np.sin(eigenangle))
         return EigenaxisRotation(eigenangle, np.array([e1, e2, e3]))
+
+    @staticmethod
+    def calculate_t_1(angle: float) -> DirectionCosineMatrix:
+        """
+        Calculate the direction cosine matrix for a rotation about the x-axis.
+        """
+        return DirectionCosineMatrix(np.asmatrix([
+            [1, 0, 0],
+            [0, np.cos(angle), np.sin(angle)],
+            [0, -np.sin(angle), np.cos(angle)]
+        ]))
+    
+    @staticmethod
+    def calculate_t_2(angle: float) -> DirectionCosineMatrix:
+        """
+        Calculate the direction cosine matrix for a rotation about the y-axis.
+        """
+        return DirectionCosineMatrix(np.asmatrix([
+            [np.cos(angle), 0, -np.sin(angle)],
+            [0, 1, 0],
+            [np.sin(angle), 0, np.cos(angle)]
+        ]))
+    
+    @staticmethod
+    def calculate_t_3(angle: float) -> DirectionCosineMatrix:
+        """
+        Calculate the direction cosine matrix for a rotation about the z-axis.
+        """
+        return DirectionCosineMatrix(np.asmatrix([
+            [np.cos(angle), np.sin(angle), 0],
+            [-np.sin(angle), np.cos(angle), 0],
+            [0, 0, 1]
+        ]))
