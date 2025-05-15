@@ -30,7 +30,7 @@ def main():
     }
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)))
-    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, ATTITUDE_COMMANDS)
+    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
     simulation.plot_attitudes()
     plt.show()
