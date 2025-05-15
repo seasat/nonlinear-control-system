@@ -14,6 +14,11 @@ def main():
         [0.0, 124.586, 0.0],
         [0.0, 0.0, 1.704]
     ])
+    DISTURBANCE_TORQUE = np.asmatrix([
+        [1e-4],
+        [1e-4],
+        [1e-4],
+    ]) # Nm
     INITIAL_ATTITUDE = YawPitchRoll(np.deg2rad(30), np.deg2rad(30), np.deg2rad(30))
     SIMULATION_DURATION = 1000 # s
     SAMPLE_TIME = 0.1 # s

@@ -6,7 +6,7 @@ from attitude import Attitude, YawPitchRoll
 
 
 class Simulation:
-    def __init__(self, spacecraft: Spacecraft, duration: float, sample_time: float, target_attitude_commands: dict[float: Attitude]) -> None:
+    def __init__(self, spacecraft: Spacecraft, duration: float, sample_time: float, external_torque: np.matrix, target_attitude_commands: dict[float: Attitude]) -> None:
         """
         Initialize the Simulation class with a spacecraft, duration, and sample time.
 
@@ -17,10 +17,12 @@ class Simulation:
         """
         assert isinstance(spacecraft, Spacecraft), "Spacecraft must be an instance of Spacecraft"
         assert isinstance(target_attitude_commands, dict), "Target attitudes must be a dictionary"
+        assert isinstance(external_torque, np.matrix), "External torque must be a numpy matrix"
 
         self.spacecraft = spacecraft
         self.duration = duration
         self.sample_time = sample_time
+        self.external_torque = external_torque
 
         self.sample_points = int(duration // sample_time + 1) # include start and end
         self.times = np.linspace(0, duration, self.sample_points, endpoint=True)
