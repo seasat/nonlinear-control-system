@@ -58,7 +58,9 @@ class Simulation:
             target_attitude = self.target_attitudes[idx]
 
             # TODO: implement control loop
-            angular_acceleration = np.invert(self.spacecraft.inertia_tensor) @ (self.torque - self.spacecraft.angular_velocity * (self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity))
+            torque = self.external_torque
+
+            angular_acceleration = np.invert(self.spacecraft.inertia_tensor) @ (torque - self.spacecraft.angular_velocity * (self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity))
             angular_velocity = self.spacecraft.angular_velocity + angular_acceleration * self.sample_time
 
             # update spacecraft state
