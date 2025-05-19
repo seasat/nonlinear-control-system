@@ -92,5 +92,5 @@ class Simulation:
         command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
         ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
 
-        ax.set_xlabel("Time $[\mathrm{s}]$")
-        ax.set_ylabel("Attitude $[\mathrm{rad}]$")
+        ax.set_xlabel(r"Time $[\mathrm{s}]$")
+        ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
