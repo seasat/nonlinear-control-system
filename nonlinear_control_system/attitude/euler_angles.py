@@ -1,4 +1,6 @@
+from __future__ import annotations
 from enum import Enum
+import numpy as np
 
 from . import Attitude
 from . import DirectionCosineMatrix as dcm
@@ -68,3 +70,13 @@ class YawPitchRoll(EulerAngles):
     @property
     def roll(self) -> float:
         return self.third_angle
+
+    def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
+        """
+        Add two attitudes in yaw-pitch-roll representation together.
+        Wrap the angles to be between -pi and pi.
+        """
+        assert isinstance(other, YawPitchRoll), "Can only add YawPitchRoll objects"
+        wrap = lambda x: (x + np.pi) % (2 * np.pi) - np.pi
+        new_angles = [wrap(angle) for angle in [self.roll + other.roll, self.pitch + other.pitch, self.yaw + other.yaw]]
+        return YawPitchRoll(new_angles)

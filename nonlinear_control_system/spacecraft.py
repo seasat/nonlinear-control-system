@@ -12,7 +12,7 @@ class Spacecraft:
         """
         assert inertia_tensor.shape == (3, 3), "Inertia tensor must be a 3x3 matrix"
         assert isinstance(attitude, Attitude), "Attitude must be an Attitude object"
-        assert isinstance(angular_velocity, AngularVelocity), "Angular velocity must be an AngularVelocity object"
+        assert angular_velocity.shape == (3, 1), "Angular velocity must be a 3x1 ndarray"
 
         self.inertia_tensor = inertia_tensor
         self.attitude = attitude

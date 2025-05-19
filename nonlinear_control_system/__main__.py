@@ -29,7 +29,7 @@ def main():
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
 
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity([0, 0, 0]))
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)))
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
     simulation.plot_attitudes()

@@ -63,9 +63,10 @@ class Simulation:
             angular_acceleration = np.linalg.inv(self.spacecraft.inertia_tensor) @ (torque - np.cross(self.spacecraft.angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity).flatten()).reshape(3, 1))
 
             # integrate rotational dynamics
-            angular_velocity_change = AngularVelocity(angular_acceleration * self.sample_time)
+            angular_velocity_change = angular_acceleration * self.sample_time
             angular_velocity = self.spacecraft.angular_velocity + angular_velocity_change
-            attitude_change = YawPitchRoll(angular_velocity.to_ypr_rates(self.spacecraft.attitude) * self.sample_time)
+            ypr_rates = AngularVelocity.to_ypr_rates(angular_velocity, self.spacecraft.attitude)
+            attitude_change = YawPitchRoll(ypr_rates * self.sample_time)
             attitude = self.spacecraft.attitude + attitude_change
 
             # update spacecraft state
