@@ -172,3 +172,31 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# latex
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.pdf
+*.run.xml
+*.toc
+# latexmk
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+# glossaries
+*.ist
+*.acn
+*.acr
+*.alg
+# svg
+svg-inkscape/
