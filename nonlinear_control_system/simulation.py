@@ -61,11 +61,14 @@ class Simulation:
             torque = self.external_torque
 
             angular_acceleration = np.linalg.inv(self.spacecraft.inertia_tensor) @ (torque - np.cross(self.spacecraft.angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity).flatten()).reshape(3, 1))
-            angular_velocity = self.spacecraft.angular_velocity + angular_acceleration * self.sample_time
+
+            # integrate rotational dynamics
+            angular_velocity = self.spacecraft.angular_velocity + AngularVelocity(angular_acceleration * self.sample_time)
+            attitude = self.spacecraft.attitude + angular_velocity.to_ypr_rates(self.spacecraft.attitude) * self.sample_time
 
             # update spacecraft state
             self.spacecraft.angular_velocity = angular_velocity
-            self.spacecraft.attitude = self.spacecraft.attitude + angular_velocity * self.sample_time
+            self.spacecraft.attitude = attitude
 
             # log step data
             self.attitudes[idx] = self.spacecraft.attitude
