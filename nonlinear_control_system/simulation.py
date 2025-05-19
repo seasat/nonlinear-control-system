@@ -65,6 +65,7 @@ class Simulation:
             # integrate rotational dynamics
             angular_velocity_change = angular_acceleration * self.sample_time
             angular_velocity = self.spacecraft.angular_velocity + angular_velocity_change
+
             ypr_rates = AngularVelocity.to_ypr_rates(angular_velocity, self.spacecraft.attitude)
             attitude_change = YawPitchRoll(ypr_rates * self.sample_time)
             attitude = self.spacecraft.attitude + attitude_change
