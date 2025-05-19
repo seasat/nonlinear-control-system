@@ -49,12 +49,12 @@ class YawPitchRoll(EulerAngles):
     """
     Yaw-Pitch-Roll (Z-Y-X) Euler angles.
     """
-    def __init__(self, angles: list) -> None:
+    def __init__(self, angles: np.ndarray) -> None:
         """
         Initialize YawPitchRoll with vector of roll then pitch then yaw angle.
         Note that rotations are performed in reverse order yaw -> pitch -> roll.
         """
-        assert len(angles) == 3, "YawPitchRoll must be initialized with three angles"
+        np.asarray(angles).reshape(3,)
         super().__init__(
             Axis.Z_ROTATION, angles[2],
             Axis.Y_ROTATION, angles[1],
