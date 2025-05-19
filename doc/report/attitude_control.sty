@@ -1,0 +1,37 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{attitude_control}[2025/04/28 package for attitude control assignment report]
+
+% packages
+\RequirePackage[english]{babel}
+\RequirePackage{siunitx}
+\RequirePackage{graphicx}
+\RequirePackage{caption, subcaption}
+\RequirePackage[style=apa]{biblatex}
+\RequirePackage{parskip}
+\RequirePackage{booktabs}
+\RequirePackage{svg}
+\RequirePackage{csquotes}
+
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage[acronyms, toc, nomain]{glossaries}
+\RequirePackage{cleveref}
+
+% settings
+\graphicspath{{../fig/}}
+\addbibresource{references.bib}
+\makeglossaries
+
+% commands
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}m{#1}}
+
+% acronyms
+\newacronym{cmb}{CMB}{Core Mantle Boundary}
+\newacronym{moi}{MoI}{Moment of Inertia}
+\newacronym{m1}{M1}{Model 1}
+\newacronym{m2}{M2}{Model 2}
+\newacronym{m3}{M3}{Model 3}
+\newacronym{messenger}{MESSENGER}{MErcury Surface, Space ENvironment, GEochemistry, and Ranging}
+
+% package options
+\DeclareOption*{\PackageWarning{attitude_control}{Unknown option ‘\CurrentOption’}}
+\ProcessOptions\relax
