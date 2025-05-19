@@ -1,10 +1,10 @@
 import numpy as np
 
-from attitude.quaternion import Attitude
+from attitude import Attitude, AngularVelocity
 
 
 class Spacecraft:
-    def __init__(self, inertia_tensor: np.matrix, attitude: Attitude, angular_velocity: np.matrix) -> None:
+    def __init__(self, inertia_tensor: np.matrix, attitude: Attitude, angular_velocity: AngularVelocity) -> None:
         """
         Initialize the Spacecraft class with an inertia tensor and attitude in form of a quaternion.
 
@@ -12,7 +12,7 @@ class Spacecraft:
         """
         assert inertia_tensor.shape == (3, 3), "Inertia tensor must be a 3x3 matrix"
         assert isinstance(attitude, Attitude), "Attitude must be an Attitude object"
-        assert angular_velocity.shape == (3, 1), "Attitude must be a 3x1 matrix"
+        assert isinstance(angular_velocity, AngularVelocity), "Angular velocity must be an AngularVelocity object"
 
         self.inertia_tensor = inertia_tensor
         self.attitude = attitude

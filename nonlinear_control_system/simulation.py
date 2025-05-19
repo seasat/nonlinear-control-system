@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
-from attitude import Attitude, YawPitchRoll
+from attitude import Attitude, YawPitchRoll, AngularVelocity
 
 
 class Simulation:
