@@ -5,9 +5,7 @@ from . import YawPitchRoll
 
 class AngularVelocity(np.ndarray):
     def __new__(cls, input_array: np.ndarray) -> AngularVelocity:
-        obj = np.asarray(input_array, dtype=float).view(cls)
-        assert obj.flatten().shape == (3,), "Angular velocity must contain 3 components"
-        obj.reshape(3, 1)
+        obj = np.asarray(input_array, dtype=float).reshape(3,1).view(cls)
         return obj
     
     def __array_finalize__(self, obj: np.ndarray) -> AngularVelocity:
