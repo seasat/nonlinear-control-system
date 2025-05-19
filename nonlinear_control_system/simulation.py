@@ -60,7 +60,7 @@ class Simulation:
             # TODO: implement control loop
             torque = self.external_torque
 
-            angular_acceleration = np.linalg.inv(self.spacecraft.inertia_tensor) @ (torque - np.cross(self.spacecraft.angular_velocity, self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity))
+            angular_acceleration = np.linalg.inv(self.spacecraft.inertia_tensor) @ (torque - np.cross(self.spacecraft.angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity).flatten()).reshape(3, 1))
             angular_velocity = self.spacecraft.angular_velocity + angular_acceleration * self.sample_time
 
             # update spacecraft state
