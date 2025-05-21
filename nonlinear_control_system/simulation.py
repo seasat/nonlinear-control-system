@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
 from attitude import Attitude, YawPitchRoll, AngularVelocity
-import dynamics
+import dynamics, integrator
 
 
 class Simulation:
@@ -61,16 +61,16 @@ class Simulation:
 
             # TODO: implement control loop
             torque = self.external_torque
-            angular_acceleration = dynamics.calculate_angular_acceleration(
+
+            # integrate rotational dynamics
+            angular_velocity = integrator.rk4(
+                dynamics.calculate_angular_acceleration,
                 self.spacecraft.angular_velocity,
-                None,
+                time,
+                self.sample_time,
                 self.spacecraft.inertia_tensor,
                 torque
             )
-
-            # integrate rotational dynamics
-            angular_velocity_change = angular_acceleration * self.sample_time
-            angular_velocity = self.spacecraft.angular_velocity + angular_velocity_change
 
             ypr_rates = AngularVelocity.to_ypr_rates(angular_velocity, self.spacecraft.attitude)
             attitude_change = YawPitchRoll(ypr_rates * self.sample_time)
