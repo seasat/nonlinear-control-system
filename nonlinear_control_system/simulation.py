@@ -56,6 +56,7 @@ class Simulation:
     def _run_simulation(self) -> None:
         for idx, time in enumerate(self.times):
             target_attitude = self.target_attitudes[idx]
+            attitude_error = target_attitude - self.spacecraft.attitude
 
             # TODO: implement control loop
             torque = self.external_torque
