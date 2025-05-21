@@ -75,6 +75,9 @@ class YawPitchRoll(EulerAngles):
     @property
     def roll(self) -> float:
         return self.third_angle
+    
+    def to_vector(self) -> np.ndarray:
+        return np.array([self.roll, self.pitch, self.yaw])
 
     def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
