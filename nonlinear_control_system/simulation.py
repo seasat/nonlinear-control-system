@@ -63,7 +63,7 @@ class Simulation:
             torque = self.external_torque
             angular_acceleration = dynamics.calculate_angular_acceleration(
                 self.spacecraft.angular_velocity,
-                time,
+                None,
                 self.spacecraft.inertia_tensor,
                 torque
             )

@@ -3,7 +3,7 @@ import numpy as np
 
 def calculate_angular_acceleration(
     angular_velocity: np.ndarray,
-    time: float,
+    time: None,
     inertia_tensor: np.matrix, 
     torque: np.ndarray,
 ) -> np.ndarray:
