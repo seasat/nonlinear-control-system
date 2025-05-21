@@ -77,7 +77,8 @@ class YawPitchRoll(EulerAngles):
         return self.third_angle
     
     def to_vector(self) -> np.ndarray:
-        return np.array([self.roll, self.pitch, self.yaw])
+        """Return roll, pitch and yaw as a column vector."""
+        return np.array([self.roll, self.pitch, self.yaw]).reshape(3, 1)
 
     def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
