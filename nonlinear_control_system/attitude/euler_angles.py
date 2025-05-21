@@ -82,7 +82,7 @@ class YawPitchRoll(EulerAngles):
         Wrap the angles to be between -pi and pi.
         """
         assert isinstance(other, YawPitchRoll), "Can only add YawPitchRoll objects"
-        new_angles = [self.wrap(angle) for angle in [self.roll + other.roll, self.pitch + other.pitch, self.yaw + other.yaw]]
+        new_angles = [self.wrap_angle(angle) for angle in [self.roll + other.roll, self.pitch + other.pitch, self.yaw + other.yaw]]
         return YawPitchRoll(new_angles)
     
     def __sub__(self, other: YawPitchRoll) -> YawPitchRoll:
@@ -91,5 +91,5 @@ class YawPitchRoll(EulerAngles):
         Wrap the angles to be between -pi and pi.
         """
         assert isinstance(other, YawPitchRoll), "Can only subtract YawPitchRoll objects"
-        new_angles = [self.wrap(angle) for angle in [self.roll - other.roll, self.pitch - other.pitch, self.yaw - other.yaw]]
+        new_angles = [self.wrap_angle(angle) for angle in [self.roll - other.roll, self.pitch - other.pitch, self.yaw - other.yaw]]
         return YawPitchRoll(new_angles)
