@@ -1,7 +1,7 @@
 from collections.abc import Callable
 import numpy as np
 
-def rk4(derivative: Callable[[np.ndarray, float, ...], np.ndarray], state: np.ndarray, time: float, time_step: float, *args):
+def rk4(derivative: Callable[[np.ndarray, float, list], np.ndarray], state: np.ndarray, time: float, time_step: float, *args):
     """Runge-Kutta 4th order integration method."""
     k1 = derivative(state, time, *args)
     k2 = derivative(state + 0.5 * time_step * k1, time + 0.5 * time_step, *args)
