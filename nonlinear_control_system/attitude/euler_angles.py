@@ -44,6 +44,11 @@ class EulerAngles(Attitude):
         t_3 = self.third_axis(self.third_angle)
         return t_3 @ t_2 @ t_1
     
+    @staticmethod
+    def wrap_angle(angle: float) -> float:
+        """Wrap angle to be between -pi and pi."""
+        return (angle + np.pi) % (2 * np.pi) - np.pi
+    
 
 class YawPitchRoll(EulerAngles):
     """
@@ -77,6 +82,14 @@ class YawPitchRoll(EulerAngles):
         Wrap the angles to be between -pi and pi.
         """
         assert isinstance(other, YawPitchRoll), "Can only add YawPitchRoll objects"
-        wrap = lambda x: (x + np.pi) % (2 * np.pi) - np.pi
-        new_angles = [wrap(angle) for angle in [self.roll + other.roll, self.pitch + other.pitch, self.yaw + other.yaw]]
+        new_angles = [self.wrap(angle) for angle in [self.roll + other.roll, self.pitch + other.pitch, self.yaw + other.yaw]]
+        return YawPitchRoll(new_angles)
+    
+    def __sub__(self, other: YawPitchRoll) -> YawPitchRoll:
+        """
+        Subtract two attitudes in yaw-pitch-roll representation.
+        Wrap the angles to be between -pi and pi.
+        """
+        assert isinstance(other, YawPitchRoll), "Can only subtract YawPitchRoll objects"
+        new_angles = [self.wrap(angle) for angle in [self.roll - other.roll, self.pitch - other.pitch, self.yaw - other.yaw]]
         return YawPitchRoll(new_angles)
