@@ -70,7 +70,8 @@ class Simulation:
                 time,
                 self.sample_time,
                 self.spacecraft.inertia_tensor,
-                torque
+                torque,
+                self.spacecraft.orbit.mean_motion
             )
             attitude = YawPitchRoll(state[:3])
             angular_velocity = AngularVelocity(state[3:6])
