@@ -5,10 +5,15 @@ import matplotlib.pyplot as plt
 from spacecraft import Spacecraft
 from simulation import Simulation
 from attitude import YawPitchRoll, AngularVelocity
+from orbit import Orbit
 
 
 def main():
     # settings
+    ORBIT = Orbit(
+        gravitational_parameter = 3.98600442e14, # m^3 s^-2
+        semi_major_axis = 6.378137e6 + 700e3 # m
+    )
     INERTIA_TENSOR = np.asmatrix([
         [124.531, 0.0, 0.0],
         [0.0, 124.586, 0.0],
@@ -29,7 +34,7 @@ def main():
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
 
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)))
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
     simulation.plot_attitudes()
