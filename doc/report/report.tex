@@ -15,7 +15,10 @@
 \pagenumbering{roman}
 \tableofcontents
 \listoffigures
-\listoftables
+\begingroup
+    \let\clearpage\relax
+    \listoftables
+\endgroup
 \clearpage
 
 
@@ -56,7 +59,10 @@
 
 % back matter
 \printglossary[type=\acronymtype]
-\printglossary[type=symbols, style=long3col]
+\begingroup
+    \let\clearpage\relax
+    \printglossary[type=symbols, style=long3col]
+\endgroup
 \printbibliography
 
 \end{document}
