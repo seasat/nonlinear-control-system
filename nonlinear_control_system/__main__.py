@@ -48,7 +48,7 @@ def main():
     print(f"{control.poles(closed_linear_system)=}")
     print(f"is stable: {all(np.real(control.poles(closed_linear_system)) < 0)}")
 
-    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
+    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, gains)
     
     simulation.plot_attitudes()
     plt.show()
