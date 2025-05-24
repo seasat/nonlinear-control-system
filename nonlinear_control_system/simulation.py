@@ -2,11 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
-from attitude import Attitude, YawPitchRoll
+from attitude import Attitude, YawPitchRoll, AngularVelocity
+import dynamics, integrator
+from controller import Controller
 
 
 class Simulation:
-    def __init__(self, spacecraft: Spacecraft, duration: float, sample_time: float, external_torque: np.matrix, target_attitude_commands: dict[float: Attitude]) -> None:
+    def __init__(self,
+            spacecraft: Spacecraft,
+            duration: float,
+            sample_time: float,
+            external_torque: np.matrix,
+            target_attitude_commands: dict[float: Attitude],
+            controller: Controller
+        ) -> None:
         """
         Initialize the Simulation class with a spacecraft, duration, and sample time.
 
@@ -18,11 +27,13 @@ class Simulation:
         assert isinstance(spacecraft, Spacecraft), "Spacecraft must be an instance of Spacecraft"
         assert isinstance(target_attitude_commands, dict), "Target attitudes must be a dictionary"
         assert isinstance(external_torque, np.matrix), "External torque must be a numpy matrix"
+        assert isinstance(controller, Controller), "Controller must be an instance of Controller"
 
         self.spacecraft = spacecraft
         self.duration = duration
         self.sample_time = sample_time
         self.external_torque = external_torque
+        self.controller = controller
 
         self.sample_points = int(duration // sample_time + 1) # include start and end
         self.times = np.linspace(0, duration, self.sample_points, endpoint=True)
@@ -31,6 +42,7 @@ class Simulation:
         self.attitudes = np.zeros(self.sample_points, dtype=type(spacecraft.attitude)) # use same attitude type as spacecraft stores
         self.angular_velocities = np.zeros_like(self.attitudes)
         self.target_attitudes = np.zeros_like(self.attitudes)
+        self.attitude_errors = np.zeros_like(self.attitudes)
 
         self._calculate_target_attitudes(target_attitude_commands)
         self._run_simulation()
@@ -55,21 +67,39 @@ class Simulation:
     
     def _run_simulation(self) -> None:
         for idx, time in enumerate(self.times):
-            target_attitude = self.target_attitudes[idx]
+            target_attitude: YawPitchRoll = self.target_attitudes[idx]
+            attitude_error: YawPitchRoll = target_attitude - self.spacecraft.attitude
+            rate_error: np.ndarray = -self.spacecraft.angular_velocity
 
-            # TODO: implement control loop
-            torque = self.external_torque
+            # calculate control torque
+            control_torque = self.controller.calculate_control_torque(
+                attitude_error.to_vector(),
+                rate_error
+            )
+            torque = self.external_torque + control_torque
 
-            angular_acceleration = np.invert(self.spacecraft.inertia_tensor) @ (torque - np.cross(self.spacecraft.angular_velocity, self.spacecraft.inertia_tensor @ self.spacecraft.angular_velocity))
-            angular_velocity = self.spacecraft.angular_velocity + angular_acceleration * self.sample_time
+            # integrate rotational dynamics
+            state = np.concatenate((self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity))
+            state = integrator.rk4(
+                dynamics.calculate_state_change,
+                state,
+                time,
+                self.sample_time,
+                self.spacecraft.inertia_tensor,
+                torque,
+                self.spacecraft.orbit.mean_motion
+            )
+            attitude = YawPitchRoll(state[:3])
+            angular_velocity = AngularVelocity(state[3:6])
 
             # update spacecraft state
             self.spacecraft.angular_velocity = angular_velocity
-            self.spacecraft.attitude = self.spacecraft.attitude + angular_velocity * self.sample_time
+            self.spacecraft.attitude = attitude
 
             # log step data
             self.attitudes[idx] = self.spacecraft.attitude
             self.angular_velocities[idx] = angular_velocity
+            self.attitude_errors[idx] = attitude_error
     
     def plot_attitudes(self) -> None:
         """
@@ -92,5 +122,19 @@ class Simulation:
         command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
         ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
 
-        ax.set_xlabel("Time $[\mathrm{s}]$")
-        ax.set_ylabel("Attitude $[\mathrm{rad}]$")
+        ax.set_xlabel(r"Time $[\mathrm{s}]$")
+        ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
+    
+    def plot_attitude_errors(self) -> None:
+        """ Plot the attitude errors over time. """
+        fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
+
+        yaws = np.array([error.yaw for error in self.attitude_errors])
+        ax.plot(self.times, yaws, label="Yaw Error")
+        pitches = np.array([error.pitch for error in self.attitude_errors])
+        ax.plot(self.times, pitches, label="Pitch Error")
+        rolls = np.array([error.roll for error in self.attitude_errors])
+        ax.plot(self.times, rolls, label="Roll Error")
+
+        ax.set_xlabel(r"Time $[\mathrm{s}]$")
+        ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")
