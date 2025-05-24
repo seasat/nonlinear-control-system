@@ -4,10 +4,18 @@ import matplotlib.pyplot as plt
 from spacecraft import Spacecraft
 from attitude import Attitude, YawPitchRoll, AngularVelocity
 import dynamics, integrator
+from controller import Controller
 
 
 class Simulation:
-    def __init__(self, spacecraft: Spacecraft, duration: float, sample_time: float, external_torque: np.matrix, target_attitude_commands: dict[float: Attitude], gains: np.matrix) -> None:
+    def __init__(self,
+            spacecraft: Spacecraft,
+            duration: float,
+            sample_time: float,
+            external_torque: np.matrix,
+            target_attitude_commands: dict[float: Attitude],
+            controller: Controller
+        ) -> None:
         """
         Initialize the Simulation class with a spacecraft, duration, and sample time.
 
@@ -19,13 +27,13 @@ class Simulation:
         assert isinstance(spacecraft, Spacecraft), "Spacecraft must be an instance of Spacecraft"
         assert isinstance(target_attitude_commands, dict), "Target attitudes must be a dictionary"
         assert isinstance(external_torque, np.matrix), "External torque must be a numpy matrix"
-        #assert isinstance(gains, np.matrix), "Gains must be a numpy matrix"
+        assert isinstance(controller, Controller), "Controller must be an instance of Controller"
 
         self.spacecraft = spacecraft
         self.duration = duration
         self.sample_time = sample_time
         self.external_torque = external_torque
-        self.gains = gains
+        self.controller = controller
 
         self.sample_points = int(duration // sample_time + 1) # include start and end
         self.times = np.linspace(0, duration, self.sample_points, endpoint=True)
@@ -64,7 +72,7 @@ class Simulation:
             rate_error: np.ndarray = -self.spacecraft.angular_velocity
 
             # calculate control torque
-            control_torque = self.gains[:, 0:3] @ attitude_error.to_vector() + self.gains[:, 3:6] @ rate_error
+            control_torque = self.controller.gains[:, 0:3] @ attitude_error.to_vector() + self.controller.gains[:, 3:6] @ rate_error
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics

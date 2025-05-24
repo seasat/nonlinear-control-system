@@ -7,6 +7,7 @@ from spacecraft import Spacecraft
 from simulation import Simulation
 from attitude import YawPitchRoll, AngularVelocity
 from orbit import Orbit
+from controller import Controller
 import dynamics
 
 
@@ -40,12 +41,9 @@ def main():
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
 
-    linear_system = dynamics.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion)
-    gains = dynamics.design_pd_controller(linear_system, NATURAL_FREQUENCY, DAMPING_RATIO)
-    closed_linear_system = dynamics.get_closed_loop_system(linear_system, gains)
+    pd_controller = Controller(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
 
-    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, gains)
-    
+    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
     plt.show()
