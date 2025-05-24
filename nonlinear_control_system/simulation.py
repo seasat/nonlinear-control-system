@@ -72,7 +72,10 @@ class Simulation:
             rate_error: np.ndarray = -self.spacecraft.angular_velocity
 
             # calculate control torque
-            control_torque = self.controller.gains[:, 0:3] @ attitude_error.to_vector() + self.controller.gains[:, 3:6] @ rate_error
+            control_torque = self.controller.calculate_control_torque(
+                attitude_error.to_vector(),
+                rate_error
+            )
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics

@@ -22,6 +22,11 @@ class Controller:
         self.gains = Controller.design_pd_controller(self.linear_system, natural_frequency, damping_ratio)
         self.get_closed_loop_system = Controller.get_closed_loop_system(self.linear_system, self.gains)
 
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        """ Calculate the control torque based on the attitude and angular velocity errors. """
+        control_torque = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ angular_velocity_error
+        return control_torque
+
     @staticmethod
     def get_linearized_system(inertia_tensor: np.matrix, mean_motion: float) -> control.StateSpace:
         """
