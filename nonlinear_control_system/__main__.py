@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
+import control
 
 from spacecraft import Spacecraft
 from simulation import Simulation
@@ -35,9 +36,12 @@ def main():
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
 
-    sys = dynamics.get_linearized_system(INERTIA_TENSOR, ORBIT.mean_motion)
-
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
+
+    sys = dynamics.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion)
+    print(f"{control.poles(sys)=}")
+    print(f"is stable: {all(np.real(control.poles(sys)) < 0)}")
+
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
     simulation.plot_attitudes()
