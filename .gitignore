@@ -199,5 +199,7 @@ cython_debug/
 *.acr
 *.alg
 *.syg
+*.slg
+*.syi
 # svg
 svg-inkscape/
