@@ -44,6 +44,9 @@ def main():
     print(f"{control.poles(linear_system)=}")
     print(f"is stable: {all(np.real(control.poles(linear_system)) < 0)}")
     gains = dynamics.design_pd_controller(linear_system, NATURAL_FREQUENCY, DAMPING_RATIO)
+    closed_linear_system = dynamics.get_closed_loop_system(linear_system, gains)
+    print(f"{control.poles(closed_linear_system)=}")
+    print(f"is stable: {all(np.real(control.poles(closed_linear_system)) < 0)}")
 
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
