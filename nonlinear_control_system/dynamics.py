@@ -51,3 +51,17 @@ def get_linearized_system(inertia_tensor: np.matrix, mean_motion: float) -> cont
     d = np.zeros((6, 3))
 
     return control.StateSpace(a, b, c, d)
+
+def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> control.StateSpace:
+    """Design a PD controller for a linear system."""
+    feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
+    a_closed_loop = linear_system.A - linear_system.B @ feedback_gains
+    return control.StateSpace(a_closed_loop, linear_system.B, linear_system.C, linear_system.D)
+
+def get_closed_loop_system(open_loop_system: control.StateSpace, feedback_gains: np.matrix) -> control.StateSpace:
+    """
+    Get the closed-loop system by combining an open-loop system with a controller.
+    dy/dt = (A - B*K) @ y + B @ u
+    """
+    closed_loop_a = open_loop_system.A - open_loop_system.B @ feedback_gains
+    return control.StateSpace(closed_loop_a, open_loop_system.B, open_loop_system.C, open_loop_system.D)
