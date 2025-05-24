@@ -52,11 +52,14 @@ def get_linearized_system(inertia_tensor: np.matrix, mean_motion: float) -> cont
 
     return control.StateSpace(a, b, c, d)
 
-def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> control.StateSpace:
+def design_pd_controller(linear_system: control.StateSpace, natural_frequency: float, damping_ratio: float) -> control.StateSpace:
     """Design a PD controller for a linear system."""
+    pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
+    conjugate_pole = complex(pole.real, -pole.imag)
+    desired_poles = [pole, conjugate_pole] * 3
+
     feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
-    a_closed_loop = linear_system.A - linear_system.B @ feedback_gains
-    return control.StateSpace(a_closed_loop, linear_system.B, linear_system.C, linear_system.D)
+    return feedback_gains
 
 def get_closed_loop_system(open_loop_system: control.StateSpace, feedback_gains: np.matrix) -> control.StateSpace:
     """

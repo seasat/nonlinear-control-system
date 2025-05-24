@@ -35,12 +35,15 @@ def main():
         500.1: YawPitchRoll([np.deg2rad(-60), np.deg2rad(-60), np.deg2rad(-60)]),
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
+    NATURAL_FREQUENCY = 0.1 # rad/s
+    DAMPING_RATIO = 0.7
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
 
     linear_system = dynamics.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion)
     print(f"{control.poles(linear_system)=}")
     print(f"is stable: {all(np.real(control.poles(linear_system)) < 0)}")
+    gains = dynamics.design_pd_controller(linear_system, NATURAL_FREQUENCY, DAMPING_RATIO)
 
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
