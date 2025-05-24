@@ -61,9 +61,9 @@ class YawPitchRoll(EulerAngles):
         """
         flattened = np.asarray(angles).flatten()
         super().__init__(
-            Axis.Z_ROTATION, flattened[2],
-            Axis.Y_ROTATION, flattened[1],
-            Axis.X_ROTATION, flattened[0]
+            Axis.Z_ROTATION, self.wrap_angle(flattened[2]),
+            Axis.Y_ROTATION, self.wrap_angle(flattened[1]),
+            Axis.X_ROTATION, self.wrap_angle(flattened[0])
         )
     
     @property
