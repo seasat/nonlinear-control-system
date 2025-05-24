@@ -51,6 +51,7 @@ def main():
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, gains)
     
     simulation.plot_attitudes()
+    simulation.plot_attitude_errors()
     plt.show()
 
 

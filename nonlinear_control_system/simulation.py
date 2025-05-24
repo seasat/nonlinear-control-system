@@ -34,6 +34,7 @@ class Simulation:
         self.attitudes = np.zeros(self.sample_points, dtype=type(spacecraft.attitude)) # use same attitude type as spacecraft stores
         self.angular_velocities = np.zeros_like(self.attitudes)
         self.target_attitudes = np.zeros_like(self.attitudes)
+        self.attitude_errors = np.zeros_like(self.attitudes)
 
         self._calculate_target_attitudes(target_attitude_commands)
         self._run_simulation()
@@ -87,6 +88,7 @@ class Simulation:
             # log step data
             self.attitudes[idx] = self.spacecraft.attitude
             self.angular_velocities[idx] = angular_velocity
+            self.attitude_errors[idx] = attitude_error
     
     def plot_attitudes(self) -> None:
         """
@@ -111,3 +113,17 @@ class Simulation:
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
+    
+    def plot_attitude_errors(self) -> None:
+        """ Plot the attitude errors over time. """
+        fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
+
+        yaws = np.array([error.yaw for error in self.attitude_errors])
+        ax.plot(self.times, yaws, label="Yaw Error")
+        pitches = np.array([error.pitch for error in self.attitude_errors])
+        ax.plot(self.times, pitches, label="Pitch Error")
+        rolls = np.array([error.roll for error in self.attitude_errors])
+        ax.plot(self.times, rolls, label="Roll Error")
+
+        ax.set_xlabel(r"Time $[\mathrm{s}]$")
+        ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")
