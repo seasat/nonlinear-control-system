@@ -38,9 +38,9 @@ def main():
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
 
-    sys = dynamics.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion)
-    print(f"{control.poles(sys)=}")
-    print(f"is stable: {all(np.real(control.poles(sys)) < 0)}")
+    linear_system = dynamics.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion)
+    print(f"{control.poles(linear_system)=}")
+    print(f"is stable: {all(np.real(control.poles(linear_system)) < 0)}")
 
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS)
     
