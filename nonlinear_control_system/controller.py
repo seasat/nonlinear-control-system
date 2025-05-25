@@ -93,8 +93,4 @@ class NDIController(Controller):
         assert isinstance(damping_ratio, (int, float)), "damping_ratio must be a number"
 
         self.spacecraft = spacecraft
-        self.linear_controller = PDController(
-            spacecraft,
-            natural_frequency,
-            damping_ratio
-        )
+        self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
