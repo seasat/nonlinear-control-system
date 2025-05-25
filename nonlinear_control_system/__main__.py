@@ -7,7 +7,7 @@ from spacecraft import Spacecraft
 from simulation import Simulation
 from attitude import YawPitchRoll, AngularVelocity
 from orbit import Orbit
-from controller import Controller, PDController
+from controller import Controller, PDController, NDIController
 import dynamics
 
 
@@ -45,6 +45,8 @@ def main():
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
+
+    ndi_controller = NDIController(sc, NATURAL_FREQUENCY, DAMPING_RATIO, DISTURBANCE_TORQUE)
 
     plt.show()
 
