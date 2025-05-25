@@ -42,10 +42,10 @@ def main():
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
 
     pd_controller = Controller(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
-
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
+
     plt.show()
 
 
