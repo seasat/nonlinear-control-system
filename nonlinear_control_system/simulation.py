@@ -136,5 +136,7 @@ class Simulation:
         rolls = np.array([error.roll for error in self.attitude_errors])
         ax.plot(self.times, np.abs(rolls), label="Roll Error")
 
+        ax.set_yscale('log')
+
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")
