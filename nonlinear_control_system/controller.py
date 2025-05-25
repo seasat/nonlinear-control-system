@@ -109,4 +109,4 @@ class NDIController(Controller):
         ypr_rates = self.spacecraft.angular_velocity.to_ypr_rates(angular_velocity, self.spacecraft.attitude, self.spacecraft.orbit.mean_motion)
         accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ angular_velocity).flatten())
 
-        return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + ypr_rates_derivative @ self.disturbance_torque
+        return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
