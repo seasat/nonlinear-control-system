@@ -6,6 +6,10 @@ import dynamics
 
 
 class Controller:
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        raise NotImplementedError("This method should be implemented by subclasses.")
+    
+class PDController(Controller):
     def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
