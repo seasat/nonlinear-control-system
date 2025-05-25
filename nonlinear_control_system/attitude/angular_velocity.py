@@ -30,9 +30,9 @@ class AngularVelocity(np.ndarray):
         """
         assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
         matrix = np.array([
-            [1, np.sin(attitude.yaw) * np.tan(attitude.pitch), np.cos(attitude.yaw) * np.tan(attitude.pitch)],
-            [0, np.cos(attitude.yaw), -np.sin(attitude.yaw)],
-            [0, np.sin(attitude.yaw) / np.cos(attitude.pitch), np.cos(attitude.yaw) / np.cos(attitude.pitch)]
+            [1, np.sin(attitude.roll) * np.tan(attitude.pitch), np.cos(attitude.roll) * np.tan(attitude.pitch)],
+            [0, np.cos(attitude.roll), -np.sin(attitude.roll)],
+            [0, np.sin(attitude.roll) / np.cos(attitude.pitch), np.cos(attitude.roll) / np.cos(attitude.pitch)]
         ])
         affine_vector = n * np.array([
             [np.sin(attitude.yaw) / np.cos(attitude.pitch)],
