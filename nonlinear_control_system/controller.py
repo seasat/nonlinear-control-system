@@ -22,9 +22,9 @@ class PDController(Controller):
         self.natural_frequency = natural_frequency
         self.damping_ratio = damping_ratio
 
-        self.linear_system = Controller.get_linearized_system(spacecraft.inertia_tensor, spacecraft.orbit.mean_motion)
-        self.gains = Controller.design_pd_controller(self.linear_system, natural_frequency, damping_ratio)
-        self.get_closed_loop_system = Controller.get_closed_loop_system(self.linear_system, self.gains)
+        self.linear_system = PDController.get_linearized_system(spacecraft.inertia_tensor, spacecraft.orbit.mean_motion)
+        self.gains = PDController.design_pd_controller(self.linear_system, natural_frequency, damping_ratio)
+        self.get_closed_loop_system = PDController.get_closed_loop_system(self.linear_system, self.gains)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
