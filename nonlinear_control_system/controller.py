@@ -2,7 +2,7 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-import dynamics
+from attitude.angular_velocity import calculate_ypr_rate_derivative
 
 
 class Controller:
@@ -82,7 +82,7 @@ class PDController(Controller):
     
 class NDIController(Controller):
 
-    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
+    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float, disturbance_torque: np.ndarray) -> None:
         """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert isinstance(natural_frequency, (int, float)), "natural_frequency must be a number"
@@ -91,14 +91,17 @@ class NDIController(Controller):
         self.spacecraft = spacecraft
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
+        self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
+
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
-        inversion_offset = self._calculate_inversion_offset(attitude_error, angular_velocity_error)
         transform_matrix = self._calculate_transform_matrix(attitude_error, angular_velocity_error)
+        inversion_offset = self._calculate_inversion_offset(attitude_error, angular_velocity_error)
         return np.linalg.inv(transform_matrix) @ (virtual_control_output - inversion_offset)
     
-    def _calculate_inversion_offset(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
-        raise NotImplementedError
+    def _calculate_transform_matrix(self) -> np.ndarray:
+        ypr_rate_derivative = calculate_ypr_rate_derivative(self.spacecraft.attitude, self.spacecraft.angular_velocity, self.spacecraft.orbit.mean_motion)
+        return ypr_rate_derivative @ np.vstack(np.zeros((3, 3)), self.j_inv)
     
-    def _calculate_transform_matrix(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+    def _calculate_inversion_offset(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         raise NotImplementedError
