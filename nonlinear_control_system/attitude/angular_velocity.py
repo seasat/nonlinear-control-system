@@ -61,7 +61,7 @@ def calculate_ypr_rate_derivative(attitude: YawPitchRoll, angular_velocity: np.n
     a33 = n * np.tan(pitch) * np.cos(yaw)
     
     return np.array([
-        [a11, a12, a13, 1, np.sin(roll) * np.tan(pitch), np.cos(roll) * np.tan(pitch)]
+        [a11, a12, a13, 1, np.sin(roll) * np.tan(pitch), np.cos(roll) * np.tan(pitch)],
         [a21, a22, a23, 0, np.cos(roll), -np.sin(roll)],
         [a31, a32, a33, 0, np.sin(roll) / np.cos(pitch), np.cos(roll) / np.cos(pitch)]
     ])
