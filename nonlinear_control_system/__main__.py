@@ -41,18 +41,18 @@ def main():
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity([0, 0, 0]), ORBIT)
 
-    pd_controller = PDController(sc, PDController.design_pd_controller(
-        PDController.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion),
-        NATURAL_FREQUENCY, DAMPING_RATIO
-    ))
-    simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
-    simulation.plot_attitudes()
-    simulation.plot_attitude_errors()
+    #pd_controller = PDController(sc, PDController.design_pd_controller(
+        #PDController.get_linearized_system(sc.inertia_tensor, sc.orbit.mean_motion),
+        #NATURAL_FREQUENCY, DAMPING_RATIO
+    #))
+    #simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
+    #simulation.plot_attitudes()
+    #simulation.plot_attitude_errors()
 
-    #ndi_controller = NDIController(sc, 0.1, 0.7, DISTURBANCE_TORQUE)
-    #simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
-    #simulation_ndi.plot_attitudes()
-    #simulation_ndi.plot_attitude_errors()
+    ndi_controller = NDIController(sc, np.diag([10, 10, 5]), np.diag([10, 10, 5]), DISTURBANCE_TORQUE)
+    simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
+    simulation_ndi.plot_attitudes()
+    simulation_ndi.plot_attitude_errors()
 
     plt.show()
 
