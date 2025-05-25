@@ -40,3 +40,28 @@ class AngularVelocity(np.ndarray):
             [np.tan(attitude.pitch) * np.sin(attitude.yaw)]
         ])
         return matrix @ angular_rates + affine_vector
+    
+def calculate_ypr_rate_derivative(attitude: YawPitchRoll, angular_velocity: np.ndarray, n: float) -> np.ndarray:
+    """
+    Calculate the derivative of the yaw, pitch, and roll rates.
+    """
+    assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
+    assert angular_velocity.size == 3, "Angular velocity must have 3 components"
+    roll, pitch, yaw = attitude.roll, attitude.pitch, attitude.yaw
+    omega_1, omega_2, omega_3 = angular_velocity.flatten()
+
+    a11 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) * np.tan(pitch)
+    a12 = (np.sin(roll) * omega_2 + np.cos(roll) * omega_3) / np.cos(pitch)**2 + n * np.sin(yaw) * np.tan(pitch) / np.cos(pitch)
+    a13 = -n / np.cos(pitch) * np.cos(yaw)
+    a21 = -np.sin(roll) * omega_2 - np.cos(roll) * omega_3
+    a22 = 0
+    a23 = -n * np.sin(yaw)
+    a31 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) / np.cos(pitch)
+    a32 = (np.sin(roll) * omega_2 + np.cos(roll) * omega_3) * np.tan(pitch) / np.cos(pitch) + n * np.sin(yaw) / np.cos(pitch)**2
+    a33 = n * np.tan(pitch) * np.cos(yaw)
+    
+    return np.array([
+        [a11, a12, a13, 1, np.sin(roll) * np.tan(pitch), np.cos(roll) * np.tan(pitch)]
+        [a21, a22, a23, 0, np.cos(roll), -np.sin(roll)],
+        [a31, a32, a33, 0, np.sin(roll) / np.cos(pitch), np.cos(roll) / np.cos(pitch)]
+    ])
