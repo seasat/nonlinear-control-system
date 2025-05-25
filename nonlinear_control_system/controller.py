@@ -81,6 +81,7 @@ class PDController(Controller):
 
     
 class NDIController(Controller):
+
     def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
         """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
@@ -89,3 +90,15 @@ class NDIController(Controller):
 
         self.spacecraft = spacecraft
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
+
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
+        inversion_offset = self._calculate_inversion_offset(attitude_error, angular_velocity_error)
+        transform_matrix = self._calculate_transform_matrix(attitude_error, angular_velocity_error)
+        return np.linalg.inv(transform_matrix) @ (virtual_control_output - inversion_offset)
+    
+    def _calculate_inversion_offset(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        raise NotImplementedError
+    
+    def _calculate_transform_matrix(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        raise NotImplementedError
