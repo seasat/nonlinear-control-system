@@ -78,3 +78,23 @@ class PDController(Controller):
         """
         closed_loop_a = open_loop_system.A - open_loop_system.B @ feedback_gains
         return control.StateSpace(closed_loop_a, open_loop_system.B, open_loop_system.C, open_loop_system.D)
+    
+class NDIController(Controller):
+    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
+        """
+        Initialize the NDIController class with a spacecraft and controller parameters.
+        
+        :param spacecraft: The spacecraft to be controlled.
+        :param natural_frequency: The natural frequency of the controller.
+        :param damping_ratio: The damping ratio of the controller.
+        """
+        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
+        assert isinstance(natural_frequency, (int, float)), "natural_frequency must be a number"
+        assert isinstance(damping_ratio, (int, float)), "damping_ratio must be a number"
+
+        self.spacecraft = spacecraft
+        self.linear_controller = PDController(
+            spacecraft,
+            natural_frequency,
+            damping_ratio
+        )
