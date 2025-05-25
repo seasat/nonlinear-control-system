@@ -39,7 +39,7 @@ def main():
     NATURAL_FREQUENCY = .8 # rad/s
     DAMPING_RATIO = 0.95
 
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity(0, 0, 0), ORBIT)
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity([0, 0, 0]), ORBIT)
 
     #pd_controller = PDController(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
     #simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
