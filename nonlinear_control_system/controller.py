@@ -77,3 +77,18 @@ class NDIController(Controller):
         accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
 
         return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
+
+
+class TSSController(Controller):
+    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
+        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
+
+        self.spacecraft = spacecraft
+        self.natural_frequency = natural_frequency
+        self.damping_ratio = damping_ratio
+
+        self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
+
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        # Placeholder for TSS control logic
+        raise NotImplementedError("TSSController is not yet implemented.")
