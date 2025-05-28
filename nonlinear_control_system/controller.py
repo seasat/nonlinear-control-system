@@ -50,18 +50,16 @@ class PDController(Controller):
     
 class NDIController(Controller):
 
-    def __init__(self, spacecraft: Spacecraft, proportional_gains: np.ndarray, differential_gains: np.ndarray, disturbance_torque: np.ndarray) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
         """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
-        assert proportional_gains.shape == (3, 3), "proportional_gains must be a 3x3 matrix"
-        assert differential_gains.shape == (3, 3), "differential_gains must be a 3x3 matrix"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
         self.spacecraft = spacecraft
-        self.linear_controller = PDController(spacecraft, np.hstack([proportional_gains, differential_gains]))
         self.disturbance_torque = disturbance_torque
 
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
+        self.linear_controller = PDController(system.get_dynamically_inverted_system(), natural_frequency, damping_ratio)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
