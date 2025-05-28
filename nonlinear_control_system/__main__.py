@@ -7,8 +7,8 @@ from spacecraft import Spacecraft
 from simulation import Simulation
 from attitude import YawPitchRoll, AngularVelocity
 from orbit import Orbit
-from controller import Controller
-import dynamics
+from controller import Controller, PDController, NDIController
+import system
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
         [1e-4],
     ]) # Nm
     INITIAL_ATTITUDE = YawPitchRoll([np.deg2rad(30), np.deg2rad(30), np.deg2rad(30)]) # rad
-    SIMULATION_DURATION = 1000 # s
+    SIMULATION_DURATION = 1500 # s
     SAMPLE_TIME = 0.1 # s
     ATTITUDE_COMMANDS = {
         0: YawPitchRoll([0, 0, 0]),
@@ -39,13 +39,18 @@ def main():
     NATURAL_FREQUENCY = .8 # rad/s
     DAMPING_RATIO = 0.95
 
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity([0, 0, 0]), ORBIT)
 
-    pd_controller = Controller(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
-
+    pd_controller = PDController(system.get_linearized_system(sc), NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
+
+    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, 3, 0.8)
+    simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
+    simulation_ndi.plot_attitudes()
+    simulation_ndi.plot_attitude_errors()
+
     plt.show()
 
 

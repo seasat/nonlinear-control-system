@@ -130,11 +130,13 @@ class Simulation:
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
         yaws = np.array([error.yaw for error in self.attitude_errors])
-        ax.plot(self.times, yaws, label="Yaw Error")
+        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
         pitches = np.array([error.pitch for error in self.attitude_errors])
-        ax.plot(self.times, pitches, label="Pitch Error")
+        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
         rolls = np.array([error.roll for error in self.attitude_errors])
-        ax.plot(self.times, rolls, label="Roll Error")
+        ax.plot(self.times, np.abs(rolls), label="Roll Error")
+
+        ax.set_yscale('log')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")

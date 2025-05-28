@@ -2,25 +2,26 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-import dynamics
+from attitude.angular_velocity import calculate_ypr_rate_derivative
+import system
 
 
 class Controller:
-    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        raise NotImplementedError("This method should be implemented by subclasses.")
+    
+class PDController(Controller):
+    def __init__(self, linear_plant: control.StateSpace, natural_frequency: float, damping_ratio: float) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
-        :param spacecraft: The spacecraft to be controlled.
+        :param linear_plant: The linear state-space representation of the plant.
         :param natural_frequency: The natural frequency of the controller.
         :param damping_ratio: The damping ratio of the controller.
         """
-        self.spacecraft = spacecraft
-        self.natural_frequency = natural_frequency
-        self.damping_ratio = damping_ratio
 
-        self.linear_system = Controller.get_linearized_system(spacecraft.inertia_tensor, spacecraft.orbit.mean_motion)
-        self.gains = Controller.design_pd_controller(self.linear_system, natural_frequency, damping_ratio)
-        self.get_closed_loop_system = Controller.get_closed_loop_system(self.linear_system, self.gains)
+        self.gains = PDController.design_pd_controller(linear_plant, natural_frequency, damping_ratio)
+        self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, self.gains)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
@@ -28,40 +29,12 @@ class Controller:
         return control_torque
 
     @staticmethod
-    def get_linearized_system(inertia_tensor: np.matrix, mean_motion: float) -> control.StateSpace:
-        """
-        Get the system matrices A and B for the linearized system
-        dy/dt = A @ y + B @ u
-        """
-        J_INV = np.linalg.inv(inertia_tensor)
-
-        a = np.zeros((6, 6))
-        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-        a[0, 1] = mean_motion
-        orbital_coupling = np.array([
-            [0, 0, -mean_motion * (inertia_tensor[2,2] + inertia_tensor[1,1])],
-            [0, 0, 0],
-            [mean_motion * (inertia_tensor[0,0] + inertia_tensor[1,1]), 0, 0],
-        ])
-        a[3:6, 3:6] = -np.linalg.inv(inertia_tensor) @ orbital_coupling
-
-        b = np.zeros((6, 3))
-        # control torque affect the angular velocity
-        b[3:6, 0:3] = J_INV
-
-        # track all outputs
-        c = np.eye(6)
-        # no feedthrough
-        d = np.zeros((6, 3))
-
-        return control.StateSpace(a, b, c, d)
-
-    @staticmethod
     def design_pd_controller(linear_system: control.StateSpace, natural_frequency: float, damping_ratio: float) -> control.StateSpace:
         """Design a PD controller for a linear system."""
         pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
         conjugate_pole = complex(pole.real, -pole.imag)
-        desired_poles = [pole, conjugate_pole] * 3
+        test = np.linalg.matrix_rank(linear_system.B)
+        desired_poles = [pole, conjugate_pole] * np.linalg.matrix_rank(linear_system.B)
 
         feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
         return feedback_gains
@@ -74,3 +47,33 @@ class Controller:
         """
         closed_loop_a = open_loop_system.A - open_loop_system.B @ feedback_gains
         return control.StateSpace(closed_loop_a, open_loop_system.B, open_loop_system.C, open_loop_system.D)
+
+    
+class NDIController(Controller):
+
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
+        """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
+        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
+        assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
+
+        self.spacecraft = spacecraft
+        self.disturbance_torque = disturbance_torque
+
+        self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
+        self.linear_controller = PDController(system.get_dynamically_inverted_system(), natural_frequency, damping_ratio)
+
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
+        ypr_rates_derivative = calculate_ypr_rate_derivative(self.spacecraft.attitude, self.spacecraft.angular_velocity, self.spacecraft.orbit.mean_motion)
+
+        transform_matrix = ypr_rates_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
+        inversion_offset = self._calculate_inversion_offset(ypr_rates_derivative, transform_matrix)
+        return np.linalg.inv(transform_matrix) @ (virtual_control_output - inversion_offset)
+    
+    def _calculate_inversion_offset(self, ypr_rates_derivative: np.ndarray, transform_matrix: np.ndarray) -> np.ndarray:
+        angular_velocity = self.spacecraft.angular_velocity
+
+        ypr_rates = self.spacecraft.angular_velocity.to_ypr_rates(angular_velocity, self.spacecraft.attitude, self.spacecraft.orbit.mean_motion)
+        accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
+
+        return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
