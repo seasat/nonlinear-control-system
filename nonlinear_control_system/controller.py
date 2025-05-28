@@ -11,19 +11,17 @@ class Controller:
         raise NotImplementedError("This method should be implemented by subclasses.")
     
 class PDController(Controller):
-    def __init__(self, spacecraft: Spacecraft, gains: np.ndarray) -> None:
+    def __init__(self, linear_plant: control.StateSpace, natural_frequency: float, damping_ratio: float) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
-        :param spacecraft: The spacecraft to be controlled.
+        :param linear_plant: The linear state-space representation of the plant.
         :param natural_frequency: The natural frequency of the controller.
         :param damping_ratio: The damping ratio of the controller.
         """
-        self.spacecraft = spacecraft
 
-        self.linear_system = system.get_linearized_system(spacecraft)
-        self.gains = gains
-        self.get_closed_loop_system = PDController.get_closed_loop_system(self.linear_system, self.gains)
+        self.gains = PDController.design_pd_controller(linear_plant, natural_frequency, damping_ratio)
+        self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, self.gains)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
