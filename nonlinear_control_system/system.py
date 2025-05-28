@@ -33,3 +33,12 @@ def get_linearized_system(spacecraft: Spacecraft) -> control.StateSpace:
     d = np.zeros((6, 3))
 
     return control.StateSpace(a, b, c, d)
+
+def get_dynamically_inverted_system() -> control.StateSpace:
+    """
+    Get state space of double integrator system after dynamic inversion where plant is
+    G(s) = 1/s^2
+    """
+    # double integrator system
+    transfer_function = 1 / control.tf('s')**2
+    return control.tf2ss(transfer_function)
