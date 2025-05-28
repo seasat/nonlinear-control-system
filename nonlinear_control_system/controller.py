@@ -2,7 +2,7 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-from attitude.angular_velocity import calculate_ypr_rate_derivative
+import attitude.angular_velocity as av
 import system
 
 
@@ -64,7 +64,7 @@ class NDIController(Controller):
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
-        ypr_rates_derivative = calculate_ypr_rate_derivative(self.spacecraft.attitude, self.spacecraft.angular_velocity, self.spacecraft.orbit.mean_motion)
+        ypr_rates_derivative = av.calculate_ypr_rate_derivative(self.spacecraft.attitude, self.spacecraft.angular_velocity, self.spacecraft.orbit.mean_motion)
 
         transform_matrix = ypr_rates_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
         inversion_offset = self._calculate_inversion_offset(ypr_rates_derivative, transform_matrix)
@@ -83,12 +83,20 @@ class TSSController(Controller):
     def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
-        self.spacecraft = spacecraft
+        self.sc = spacecraft
         self.natural_frequency = natural_frequency
         self.damping_ratio = damping_ratio
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
-        # Placeholder for TSS control logic
-        raise NotImplementedError("TSSController is not yet implemented.")
+        # outer loop
+        target_ypr_rates = self.k2 @ attitude_error
+        target_angular_velocity = av.ypr_rates_to_angular_velocity(target_ypr_rates, self.sc.attitude, self.sc.orbit.mean_motion)
+
+        # inner loop
+        angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
+        target_angular_acceleration = self.k1 @ angular_velocity_error
+
+        control_torque = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1)
+        return control_torque

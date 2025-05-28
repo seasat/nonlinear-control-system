@@ -65,3 +65,8 @@ def calculate_ypr_rate_derivative(attitude: YawPitchRoll, angular_velocity: np.n
         [a21, a22, a23, 0, np.cos(roll), -np.sin(roll)],
         [a31, a32, a33, 0, np.sin(roll) / np.cos(pitch), np.cos(roll) / np.cos(pitch)]
     ])
+
+def ypr_rates_to_angular_velocity(ypr_rates: np.ndarray, attitude: YawPitchRoll, n: float) -> AngularVelocity:
+    """ Convert yaw, pitch, and roll rates to angular velocities about body fixed axes. """
+    assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
+    raise NotImplementedError("This function is not implemented yet. It requires the inverse of the transformation matrix used in to_ypr_rates.")
