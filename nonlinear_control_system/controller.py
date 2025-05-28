@@ -11,6 +11,7 @@ class Controller:
         raise NotImplementedError("This method should be implemented by subclasses.")
     
 class PDController(Controller):
+    """ Proportional-Derivative (PD) Controller for spacecraft attitude control. """
     def __init__(self, linear_plant: control.StateSpace, natural_frequency: float, damping_ratio: float) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
@@ -50,7 +51,7 @@ class PDController(Controller):
 
     
 class NDIController(Controller):
-
+    """ Nonlinear Dynamic Inversion (NDI) Controller for spacecraft attitude control. """
     def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
         """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
