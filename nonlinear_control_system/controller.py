@@ -3,6 +3,7 @@ import control
 
 from spacecraft import Spacecraft
 from attitude.angular_velocity import calculate_ypr_rate_derivative
+import system
 
 
 class Controller:
@@ -20,7 +21,7 @@ class PDController(Controller):
         """
         self.spacecraft = spacecraft
 
-        self.linear_system = PDController.get_linearized_system(spacecraft.inertia_tensor, spacecraft.orbit.mean_motion)
+        self.linear_system = system.get_linearized_system(spacecraft.inertia_tensor, spacecraft.orbit.mean_motion)
         self.gains = gains
         self.get_closed_loop_system = PDController.get_closed_loop_system(self.linear_system, self.gains)
 
@@ -28,35 +29,6 @@ class PDController(Controller):
         """ Calculate the control torque based on the attitude and angular velocity errors. """
         control_torque = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ angular_velocity_error
         return control_torque
-
-    @staticmethod
-    def get_linearized_system(inertia_tensor: np.matrix, mean_motion: float) -> control.StateSpace:
-        """
-        Get the system matrices A and B for the linearized system
-        dy/dt = A @ y + B @ u
-        """
-        J_INV = np.linalg.inv(inertia_tensor)
-
-        a = np.zeros((6, 6))
-        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-        a[0, 1] = mean_motion
-        orbital_coupling = np.array([
-            [0, 0, -mean_motion * (inertia_tensor[2,2] + inertia_tensor[1,1])],
-            [0, 0, 0],
-            [mean_motion * (inertia_tensor[0,0] + inertia_tensor[1,1]), 0, 0],
-        ])
-        a[3:6, 3:6] = -np.linalg.inv(inertia_tensor) @ orbital_coupling
-
-        b = np.zeros((6, 3))
-        # control torque affect the angular velocity
-        b[3:6, 0:3] = J_INV
-
-        # track all outputs
-        c = np.eye(6)
-        # no feedthrough
-        d = np.zeros((6, 3))
-
-        return control.StateSpace(a, b, c, d)
 
     @staticmethod
     def design_pd_controller(linear_system: control.StateSpace, natural_frequency: float, damping_ratio: float) -> control.StateSpace:
