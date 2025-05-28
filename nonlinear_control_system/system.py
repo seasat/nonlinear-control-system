@@ -40,5 +40,13 @@ def get_dynamically_inverted_system() -> control.StateSpace:
     G(s) = 1/s^2
     """
     # double integrator system
-    transfer_function = 1 / control.tf('s')**2
-    return control.tf2ss(transfer_function)
+    a = np.zeros((6, 6))
+    a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
+
+    b = np.zeros((6, 3))
+    b[3:6, 0:3] = np.eye(3)  # Control torque affects the angular velocity
+
+    c = np.eye(6)  # Track all outputs
+    d = np.zeros((6, 3))  # No feedthrough
+    
+    return control.StateSpace(a, b, c, d)

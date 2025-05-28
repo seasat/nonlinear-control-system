@@ -33,7 +33,8 @@ class PDController(Controller):
         """Design a PD controller for a linear system."""
         pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
         conjugate_pole = complex(pole.real, -pole.imag)
-        desired_poles = [pole, conjugate_pole] * 3
+        test = np.linalg.matrix_rank(linear_system.B)
+        desired_poles = [pole, conjugate_pole] * np.linalg.matrix_rank(linear_system.B)
 
         feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
         return feedback_gains
