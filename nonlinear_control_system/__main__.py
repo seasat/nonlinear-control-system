@@ -46,7 +46,7 @@ def main():
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
 
-    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
+    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, 3, 0.8)
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
