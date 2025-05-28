@@ -80,7 +80,7 @@ class NDIController(Controller):
 
 
 class TSSController(Controller):
-    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
+    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float, tss_factor: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
         self.sc = spacecraft
@@ -88,6 +88,8 @@ class TSSController(Controller):
         self.damping_ratio = damping_ratio
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
+        self.k1 = natural_frequency**2 * np.eye(3)
+        self.k2 = tss_factor * damping_ratio * natural_frequency * np.eye(3)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         # outer loop
