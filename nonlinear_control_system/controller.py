@@ -21,7 +21,7 @@ class PDController(Controller):
         """
         self.spacecraft = spacecraft
 
-        self.linear_system = system.get_linearized_system(spacecraft.inertia_tensor, spacecraft.orbit.mean_motion)
+        self.linear_system = system.get_linearized_system(spacecraft)
         self.gains = gains
         self.get_closed_loop_system = PDController.get_closed_loop_system(self.linear_system, self.gains)
 

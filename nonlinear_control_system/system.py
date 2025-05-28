@@ -1,23 +1,27 @@
 import numpy as np
 import control
 
+from spacecraft import Spacecraft
 
-def get_linearized_system(inertia_tensor: np.matrix, mean_motion: float) -> control.StateSpace:
+
+def get_linearized_system(spacecraft: Spacecraft) -> control.StateSpace:
     """
     Get the system matrices A and B for the linearized system
     dy/dt = A @ y + B @ u
     """
-    J_INV = np.linalg.inv(inertia_tensor)
+    J = spacecraft.inertia_tensor
+    n = spacecraft.orbit.mean_motion
+    J_INV = np.linalg.inv(J)
 
     a = np.zeros((6, 6))
     a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-    a[0, 1] = mean_motion
+    a[0, 1] = n
     orbital_coupling = np.array([
-        [0, 0, -mean_motion * (inertia_tensor[2,2] + inertia_tensor[1,1])],
+        [0, 0, -n * (J[2,2] + J[1,1])],
         [0, 0, 0],
-        [mean_motion * (inertia_tensor[0,0] + inertia_tensor[1,1]), 0, 0],
+        [n * (J[0,0] + J[1,1]), 0, 0],
     ])
-    a[3:6, 3:6] = -np.linalg.inv(inertia_tensor) @ orbital_coupling
+    a[3:6, 3:6] = -J_INV @ orbital_coupling
 
     b = np.zeros((6, 3))
     # control torque affect the angular velocity
