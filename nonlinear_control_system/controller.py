@@ -80,6 +80,7 @@ class NDIController(Controller):
 
 
 class TSSController(Controller):
+    """ Time-Scale Separation (TSS) Controller for spacecraft attitude control. """
     def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float, tss_factor: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
