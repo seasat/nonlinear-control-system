@@ -79,7 +79,7 @@ class Simulation:
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
-            state = np.concatenate((self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity))
+            state = np.vstack([self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity])
             state = integrator.rk4(
                 dynamics.calculate_state_change,
                 state,
