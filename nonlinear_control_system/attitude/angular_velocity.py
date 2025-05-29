@@ -29,17 +29,29 @@ class AngularVelocity(np.ndarray):
         Convert the angular velocity to yaw, pitch, and roll rates.
         """
         assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
+
+        matrix = AngularVelocity._calculate_ypr_rate_matrix(attitude)
+        affine_vector = AngularVelocity._calculate_ypr_rate_vector(attitude, n)
+        return matrix @ angular_rates + affine_vector
+    
+    @staticmethod
+    def _calculate_ypr_rate_matrix(attitude: YawPitchRoll) -> np.matrix:
         matrix = np.array([
             [1, np.sin(attitude.roll) * np.tan(attitude.pitch), np.cos(attitude.roll) * np.tan(attitude.pitch)],
             [0, np.cos(attitude.roll), -np.sin(attitude.roll)],
             [0, np.sin(attitude.roll) / np.cos(attitude.pitch), np.cos(attitude.roll) / np.cos(attitude.pitch)]
         ])
+        return matrix
+    
+    @staticmethod
+    def _calculate_ypr_rate_vector(attitude: YawPitchRoll, n: float) -> np.ndarray:
         affine_vector = n * np.array([
             [np.sin(attitude.yaw) / np.cos(attitude.pitch)],
             [np.cos(attitude.yaw)],
             [np.tan(attitude.pitch) * np.sin(attitude.yaw)]
         ])
-        return matrix @ angular_rates + affine_vector
+        return affine_vector
+
     
 def calculate_ypr_rate_derivative(attitude: YawPitchRoll, angular_velocity: np.ndarray, n: float) -> np.ndarray:
     """
