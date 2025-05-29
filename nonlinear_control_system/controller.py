@@ -3,7 +3,6 @@ import control
 
 from spacecraft import Spacecraft
 from attitude.angular_velocity import YPRRates
-import system
 
 
 class Controller:
@@ -48,6 +47,37 @@ class PDController(Controller):
         """
         closed_loop_a = open_loop_system.A - open_loop_system.B @ feedback_gains
         return control.StateSpace(closed_loop_a, open_loop_system.B, open_loop_system.C, open_loop_system.D)
+    
+    @staticmethod
+    def get_system_model(spacecraft: Spacecraft) -> control.StateSpace:
+        """
+        Get the system matrices A and B for the linearized system
+        dy/dt = A @ y + B @ u
+        """
+        J = spacecraft.inertia_tensor
+        n = spacecraft.orbit.mean_motion
+        J_INV = np.linalg.inv(J)
+    
+        a = np.zeros((6, 6))
+        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
+        a[0, 1] = n
+        orbital_coupling = np.array([
+            [0, 0, -n * (J[2,2] + J[1,1])],
+            [0, 0, 0],
+            [n * (J[0,0] + J[1,1]), 0, 0],
+        ])
+        a[3:6, 3:6] = -J_INV @ orbital_coupling
+    
+        b = np.zeros((6, 3))
+        # control torque affect the angular velocity
+        b[3:6, 0:3] = J_INV
+    
+        # track all outputs
+        c = np.eye(6)
+        # no feedthrough
+        d = np.zeros((6, 3))
+    
+        return control.StateSpace(a, b, c, d)
 
     
 class NDIController(Controller):
@@ -61,7 +91,7 @@ class NDIController(Controller):
         self.disturbance_torque = disturbance_torque
 
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
-        self.linear_controller = PDController(system.get_dynamically_inverted_system(), natural_frequency, damping_ratio)
+        self.linear_controller = PDController(self.get_system_model(), natural_frequency, damping_ratio)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
@@ -78,6 +108,24 @@ class NDIController(Controller):
         accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.sc.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
 
         return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
+    
+    @staticmethod
+    def get_system_model() -> control.StateSpace:
+        """
+        Get state space of double integrator system after dynamic inversion where plant is
+        G(s) = 1/s^2
+        """
+        # double integrator system
+        a = np.zeros((6, 6))
+        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
+
+        b = np.zeros((6, 3))
+        b[3:6, 0:3] = np.eye(3)  # Control torque affects the angular velocity
+
+        c = np.eye(6)  # Track all outputs
+        d = np.zeros((6, 3))  # No feedthrough
+        
+        return control.StateSpace(a, b, c, d)
 
 
 class TSSController(Controller):

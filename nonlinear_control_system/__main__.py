@@ -8,7 +8,6 @@ from simulation import Simulation
 from attitude import YawPitchRoll, BodyRates
 from orbit import Orbit
 from controller import PDController, NDIController, TSSController
-import system
 
 
 def main():
@@ -42,7 +41,7 @@ def main():
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
-    pd_controller = PDController(system.get_linearized_system(sc), NATURAL_FREQUENCY, DAMPING_RATIO)
+    pd_controller = PDController(PDController.get_system_model(sc), NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
