@@ -32,17 +32,14 @@ class AngularVelocity(np.ndarray):
         matrix = YPRRates._calculate_ypr_rate_matrix(attitude)
         affine_vector = YPRRates._calculate_ypr_rate_vector(attitude, n)
         return matrix @ self + affine_vector
-    
 
-class YPRRates(AngularVelocity):
-    def calculate_ypr_rate_derivative(attitude: YawPitchRoll, angular_velocity: np.ndarray, n: float) -> np.ndarray:
+    def calculate_ypr_rate_derivative(self, attitude: YawPitchRoll, n: float) -> np.ndarray:
         """
         Calculate the derivative of the yaw, pitch, and roll rates.
         """
         assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
-        assert angular_velocity.size == 3, "Angular velocity must have 3 components"
         roll, pitch, yaw = attitude.roll, attitude.pitch, attitude.yaw
-        omega_1, omega_2, omega_3 = angular_velocity.flatten()
+        omega_1, omega_2, omega_3 = self.flatten()
 
         a11 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) * np.tan(pitch)
         a12 = (np.sin(roll) * omega_2 + np.cos(roll) * omega_3) / np.cos(pitch)**2 + n * np.sin(yaw) * np.tan(pitch) / np.cos(pitch)
@@ -59,7 +56,9 @@ class YPRRates(AngularVelocity):
             [a21, a22, a23, 0, np.cos(roll), -np.sin(roll)],
             [a31, a32, a33, 0, np.sin(roll) / np.cos(pitch), np.cos(roll) / np.cos(pitch)]
         ])
+    
 
+class YPRRates(AngularVelocity):
     def to_angular_velocity(ypr_rates: np.ndarray, attitude: YawPitchRoll, n: float) -> AngularVelocity:
         """ Convert yaw, pitch, and roll rates to angular velocities about body fixed axes. """
         assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
