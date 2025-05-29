@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
-from attitude import Attitude, YawPitchRoll, AngularVelocity
+from attitude import Attitude, YawPitchRoll, AngularVelocity, BodyRates
 import dynamics, integrator
 from controller import Controller
 
@@ -69,7 +69,7 @@ class Simulation:
         for idx, time in enumerate(self.times):
             target_attitude: YawPitchRoll = self.target_attitudes[idx]
             attitude_error: YawPitchRoll = target_attitude - self.spacecraft.attitude
-            rate_error: np.ndarray = -self.spacecraft.angular_velocity
+            rate_error: BodyRates = -self.spacecraft.angular_velocity
 
             # calculate control torque
             control_torque = self.controller.calculate_control_torque(
