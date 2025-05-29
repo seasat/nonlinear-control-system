@@ -65,7 +65,7 @@ class NDIController(Controller):
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
-        ypr_rates_derivative = av.calculate_ypr_rate_derivative(self.spacecraft.attitude, self.spacecraft.angular_velocity, self.spacecraft.orbit.mean_motion)
+        ypr_rates_derivative = self.sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion)
 
         transform_matrix = ypr_rates_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
         inversion_offset = self._calculate_inversion_offset(ypr_rates_derivative, transform_matrix)
