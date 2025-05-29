@@ -9,6 +9,7 @@ import system
 class Controller:
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         raise NotImplementedError("This method should be implemented by subclasses.")
+
     
 class PDController(Controller):
     """ Proportional-Derivative (PD) Controller for spacecraft attitude control. """
