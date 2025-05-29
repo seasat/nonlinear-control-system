@@ -90,7 +90,7 @@ class Simulation:
                 self.spacecraft.orbit.mean_motion
             )
             attitude = YawPitchRoll(state[:3])
-            angular_velocity = AngularVelocity(state[3:6])
+            angular_velocity = BodyRates(state[3:6])
 
             # update spacecraft state
             self.spacecraft.angular_velocity = angular_velocity
