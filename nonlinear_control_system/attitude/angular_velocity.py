@@ -56,7 +56,7 @@ class AngularVelocity(np.ndarray):
             [a31, a32, a33]
         ])
 
-        return np.hstack(a, YPRRates._calculate_ypr_rate_matrix(attitude))
+        return np.hstack([a, YPRRates._calculate_ypr_rate_matrix(attitude)])
     
 
 class YPRRates(AngularVelocity):
