@@ -62,13 +62,13 @@ class BodyRates(AngularVelocity):
     
 
 class YPRRates(AngularVelocity):
-    def to_body_rates(ypr_rates: np.ndarray, attitude: YawPitchRoll, n: float) -> AngularVelocity:
+    def to_body_rates(self, attitude: YawPitchRoll, n: float) -> AngularVelocity:
         """ Convert yaw, pitch, and roll rates to angular velocities about body fixed axes. """
         assert isinstance(attitude, YawPitchRoll), "Attitude must be a YawPitchRoll object"
         
         matrix = YPRRates._calculate_ypr_rate_matrix(attitude)
         affine_vector = YPRRates._calculate_ypr_rate_vector(attitude, n)
-        return np.linalg.inv(matrix) @ (ypr_rates - affine_vector)
+        return np.linalg.inv(matrix) @ (self - affine_vector)
     
     @staticmethod
     def _calculate_ypr_rate_matrix(attitude: YawPitchRoll) -> np.matrix:
