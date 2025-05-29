@@ -130,10 +130,12 @@ class NDIController(Controller):
 
 class TSSController(Controller):
     """ Time-Scale Separation (TSS) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float, tss_factor: float) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float, tss_factor: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
+        assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
         self.sc = spacecraft
+        self.disturbance_torque = disturbance_torque
         self.natural_frequency = natural_frequency
         self.damping_ratio = damping_ratio
 
@@ -141,7 +143,7 @@ class TSSController(Controller):
         self.k1 = natural_frequency**2 * np.eye(3)
         self.k2 = tss_factor * damping_ratio * natural_frequency * np.eye(3)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray, disturbance_torque: np.ndarray) -> np.ndarray:
         # outer loop
         target_ypr_rates = YPRRates(self.k2 @ attitude_error)
         target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
@@ -150,5 +152,5 @@ class TSSController(Controller):
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
         target_angular_acceleration = self.k1 @ angular_velocity_error
 
-        control_torque = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1)
+        control_torque = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1) - self.disturbance_torque
         return control_torque

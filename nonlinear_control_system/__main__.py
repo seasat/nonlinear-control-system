@@ -51,7 +51,7 @@ def main():
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
-    tss_controller = TSSController(sc, NATURAL_FREQUENCY, DAMPING_RATIO, TSS_FACTOR)
+    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO, TSS_FACTOR)
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
