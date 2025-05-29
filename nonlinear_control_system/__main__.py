@@ -5,7 +5,7 @@ import control
 
 from spacecraft import Spacecraft
 from simulation import Simulation
-from attitude import YawPitchRoll, AngularVelocity
+from attitude import YawPitchRoll, BodyRates
 from orbit import Orbit
 from controller import PDController, NDIController, TSSController
 import system
@@ -40,7 +40,7 @@ def main():
     DAMPING_RATIO = 0.95
     TSS_FACTOR = 5 # time scale separation factor
 
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity([0, 0, 0]), ORBIT)
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
     pd_controller = PDController(system.get_linearized_system(sc), NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
