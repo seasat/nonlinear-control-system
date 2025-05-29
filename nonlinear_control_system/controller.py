@@ -96,7 +96,7 @@ class TSSController(Controller):
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         # outer loop
         target_ypr_rates = YPRRates(self.k2 @ attitude_error)
-        target_angular_velocity = target_ypr_rates.to_angular_velocity(self.sc.attitude, self.sc.orbit.mean_motion)
+        target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
