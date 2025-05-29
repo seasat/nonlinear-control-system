@@ -2,7 +2,7 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-from attitude.angular_velocity import AngularVelocity, YPRRates
+from attitude.angular_velocity import YPRRates
 import system
 
 
