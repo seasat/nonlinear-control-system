@@ -37,7 +37,7 @@ def main():
     }
     NATURAL_FREQUENCY = .8 # rad/s
     DAMPING_RATIO = 0.95
-    TSS_FACTOR = 5 # time scale separation factor
+    TSS_FACTOR = 10 # time scale separation factor
 
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
