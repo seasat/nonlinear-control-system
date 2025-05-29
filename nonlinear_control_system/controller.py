@@ -2,7 +2,7 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-import attitude.angular_velocity as av
+from attitude.angular_velocity import AngularVelocity, YPRRates
 import system
 
 
@@ -57,7 +57,7 @@ class NDIController(Controller):
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
-        self.spacecraft = spacecraft
+        self.sc = spacecraft
         self.disturbance_torque = disturbance_torque
 
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
@@ -72,10 +72,10 @@ class NDIController(Controller):
         return np.linalg.inv(transform_matrix) @ (virtual_control_output - inversion_offset)
     
     def _calculate_inversion_offset(self, ypr_rates_derivative: np.ndarray, transform_matrix: np.ndarray) -> np.ndarray:
-        angular_velocity = self.spacecraft.angular_velocity
+        angular_velocity = self.sc.angular_velocity
 
-        ypr_rates = self.spacecraft.angular_velocity.to_ypr_rates(self.spacecraft.attitude, self.spacecraft.orbit.mean_motion)
-        accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
+        ypr_rates = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.sc.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
 
         return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
 
