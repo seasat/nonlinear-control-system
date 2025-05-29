@@ -23,8 +23,7 @@ class AngularVelocity(np.ndarray):
     def z_component(self) -> float:
         return self[2, 0]
     
-    @staticmethod
-    def to_ypr_rates(angular_rates: np.ndarray, attitude: YawPitchRoll, n: float) -> np.ndarray:
+    def to_ypr_rates(self, attitude: YawPitchRoll, n: float) -> np.ndarray:
         """
         Convert the angular velocity to yaw, pitch, and roll rates.
         """
@@ -32,7 +31,7 @@ class AngularVelocity(np.ndarray):
 
         matrix = AngularVelocity._calculate_ypr_rate_matrix(attitude)
         affine_vector = AngularVelocity._calculate_ypr_rate_vector(attitude, n)
-        return matrix @ angular_rates + affine_vector
+        return matrix @ self + affine_vector
     
     @staticmethod
     def _calculate_ypr_rate_matrix(attitude: YawPitchRoll) -> np.matrix:

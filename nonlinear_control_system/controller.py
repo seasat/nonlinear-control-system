@@ -74,7 +74,7 @@ class NDIController(Controller):
     def _calculate_inversion_offset(self, ypr_rates_derivative: np.ndarray, transform_matrix: np.ndarray) -> np.ndarray:
         angular_velocity = self.spacecraft.angular_velocity
 
-        ypr_rates = self.spacecraft.angular_velocity.to_ypr_rates(angular_velocity, self.spacecraft.attitude, self.spacecraft.orbit.mean_motion)
+        ypr_rates = self.spacecraft.angular_velocity.to_ypr_rates(self.spacecraft.attitude, self.spacecraft.orbit.mean_motion)
         accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.spacecraft.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
 
         return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
