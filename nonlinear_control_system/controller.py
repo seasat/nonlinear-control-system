@@ -143,7 +143,7 @@ class TSSController(Controller):
         self.k1 = natural_frequency**2 * np.eye(3)
         self.k2 = tss_factor * damping_ratio * natural_frequency * np.eye(3)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray, disturbance_torque: np.ndarray) -> np.ndarray:
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         # outer loop
         target_ypr_rates = YPRRates(self.k2 @ attitude_error)
         target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
