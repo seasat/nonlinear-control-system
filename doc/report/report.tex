@@ -92,6 +92,8 @@ The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
     \end{bmatrix}
 \end{equation}
 
+It should be noted that any successive rotation is applied to the intermediate frame, resulting from the previous rotation.
+This leads to two intermediate frames being created $A \overset{i}{\rightarrow} A' \overset{j \neq i}{\rightarrow} A'' \overset{k \neq j}{\rightarrow} B$.
 Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:yaw}, \glsfull{sy:pitch} and \glsfull{sy:roll}, the resulting \gls{ac:dcm} is given by \cref{eqt:dcm_euler}.
 \begin{equation} \label{eqt:dcm_euler}
     \gls{sy:dcm}^{B/A} = \gls{sy:c1}(\gls{sy:roll}) \, \gls{sy:c2}(\gls{sy:pitch}) \, \gls{sy:c3}(\gls{sy:yaw})
