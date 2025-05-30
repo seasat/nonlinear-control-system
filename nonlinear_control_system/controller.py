@@ -160,8 +160,6 @@ class TSSController(Controller):
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
-        self.k1 = natural_frequency**2 * np.eye(3)
-        self.k2 = tss_factor * damping_ratio * natural_frequency * np.eye(3)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         # outer loop
