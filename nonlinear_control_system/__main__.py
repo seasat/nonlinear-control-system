@@ -49,11 +49,15 @@ def main():
     simulation.plot_attitude_errors()
 
     ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, system_poles)
+    sc.attitude = INITIAL_ATTITUDE  # Reset attitude for NDI simulation
+    sc.angular_velocity = BodyRates([0, 0, 0])  # Reset angular velocity for NDI simulation
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
     tss_controller = TSSController(sc, DISTURBANCE_TORQUE, system_poles, TSS_FACTOR)
+    sc.attitude = INITIAL_ATTITUDE  # Reset attitude for TSS simulation
+    sc.angular_velocity = BodyRates([0, 0, 0])  # Reset angular velocity for TSS simulation
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
