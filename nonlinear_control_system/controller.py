@@ -200,7 +200,6 @@ class INDIController(Controller):
         self.disturbance_torque = disturbance_torque
         self.last_control_torque = np.zeros((3, 1))
 
-        self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
@@ -209,11 +208,13 @@ class INDIController(Controller):
         target_body_rates: BodyRates = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
 
         # inner loop
-        body_rate_error = target_body_rates - self.sc.angular_velocity
-        target_angular_acceleration = self.linear_controller.derivative_gain @ body_rate_error
-        control_torque_increment = self.J_INV @ target_angular_acceleration
-        control_torque = self.last_control_torque + control_torque_increment
+        body_rate_error = target_body_rates - self.sc.angular_velocity # control variable
+        target_angular_acceleration = self.linear_controller.derivative_gain @ body_rate_error # virtual control output
+        control_torque_increment = self.sc.inertia_tensor @ (target_angular_acceleration - self.last_angular_acceleration) # dynamic inversion
+        control_torque = self.last_control_torque + control_torque_increment # incremental control
 
+        # log reference values for linearization at next step
+        self.last_angular_acceleration = target_angular_acceleration
         self.last_control_torque = control_torque
         return control_torque
 
