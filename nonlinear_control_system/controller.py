@@ -199,6 +199,7 @@ class INDIController(Controller):
         self.sc = spacecraft
         self.disturbance_torque = disturbance_torque
         self.last_control_torque = np.zeros((3, 1))
+        self.last_angular_acceleration = np.zeros((3, 1))
 
         self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
 
