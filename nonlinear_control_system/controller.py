@@ -27,6 +27,16 @@ class PDController(Controller):
         """ Calculate the control torque based on the attitude and angular velocity errors. """
         control_torque = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ angular_velocity_error
         return control_torque
+    
+    @property
+    def proportional_gain(self) -> np.ndarray:
+        """ Get the proportional gain matrix from the controller gains. """
+        return self.gains[:, 0:3]
+
+    @property
+    def derivative_gain(self) -> np.ndarray:
+        """ Get the derivative gain matrix from the controller gains. """
+        return self.gains[:, 3:6]
 
     @staticmethod
     def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> control.StateSpace:
@@ -149,17 +159,36 @@ class TSSController(Controller):
         damping_ratio = -closed_loop_poles[0].imag / natural_frequency
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
+        self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
         self.k1 = natural_frequency**2 * np.eye(3)
         self.k2 = tss_factor * damping_ratio * natural_frequency * np.eye(3)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         # outer loop
-        target_ypr_rates = YPRRates(self.k2 @ attitude_error)
+        target_ypr_rates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
         target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
-        target_angular_acceleration = self.k1 @ angular_velocity_error
+        target_angular_acceleration = self.linear_controller.derivative_gain @ angular_velocity_error
 
         control_torque = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1) - self.disturbance_torque
         return control_torque
+    
+    @staticmethod
+    def get_system_model() -> control.StateSpace:
+        """
+        Get state space of double integrator system after dynamic inversion where plant is
+        G(s) = 1/s^2
+        """
+        # double integrator system
+        a = np.zeros((6, 6))
+        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
+
+        b = np.zeros((6, 3))
+        b[3:6, 0:3] = np.eye(3)  # Control torque affects the angular velocity
+
+        c = np.eye(6)  # Track all outputs
+        d = np.zeros((6, 3))  # No feedthrough
+        
+        return control.StateSpace(a, b, c, d)
