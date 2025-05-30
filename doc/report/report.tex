@@ -63,6 +63,20 @@ In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements 
 \subsection{Euler Angles}
 Euler angles are a set of three angles that represent an orientation, rotation or attitude as three successive, single axis rotations.
 The rotations can be performed about any axis in any order, so long as no two rotations are about the same axis.
+For each successive rotation is applied to the intermediate frame, resulting from the previous rotation.
+This leads to two intermediate frames being created $A \overset{i}{\rightarrow} A' \overset{j \neq i}{\rightarrow} A'' \overset{k \neq j}{\rightarrow} B$.
+
+Any attitude can then be represented by a triplet of roll, pitch and yaw Euler angles (see \cref{eqt:ypr_attitude}).
+\begin{equation} \label{eqt:ypr_attitude}
+    \vec{\theta} = \begin{bmatrix}
+        \gls{sy:roll} \\
+        \gls{sy:pitch} \\
+        \gls{sy:yaw}
+    \end{bmatrix}
+\end{equation}
+
+
+\subsubsection*{Euler Angles to DCM}
 For any single axis rotation about axis $i$ with angle $\theta_i$, the rotation axis remains unchanged leaving $\gls{sy:a}_i = \gls{sy:b}_i$.
 The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
 
@@ -92,20 +106,9 @@ The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
     \end{bmatrix}
 \end{equation}
 
-It should be noted that any successive rotation is applied to the intermediate frame, resulting from the previous rotation.
-This leads to two intermediate frames being created $A \overset{i}{\rightarrow} A' \overset{j \neq i}{\rightarrow} A'' \overset{k \neq j}{\rightarrow} B$.
 Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:yaw}, \glsfull{sy:pitch} and \glsfull{sy:roll}, the resulting \gls{ac:dcm} is given by \cref{eqt:dcm_euler}.
 \begin{equation} \label{eqt:dcm_euler}
     \gls{sy:dcm}^{B/A} = \gls{sy:c1}(\gls{sy:roll}) \, \gls{sy:c2}(\gls{sy:pitch}) \, \gls{sy:c3}(\gls{sy:yaw})
-\end{equation}
-
-Any attitude can then be represented by a triplet of roll, pitch and yaw Euler angles (see \cref{eqt:ypr_attitude}).
-\begin{equation} \label{eqt:ypr_attitude}
-    \vec{\theta} = \begin{bmatrix}
-        \gls{sy:roll} \\
-        \gls{sy:pitch} \\
-        \gls{sy:yaw}
-    \end{bmatrix}
 \end{equation}
 
 
