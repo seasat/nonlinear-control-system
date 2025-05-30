@@ -20,3 +20,16 @@ class Spacecraft:
         self.attitude = attitude
         self.angular_velocity = angular_velocity
         self.orbit = orbit
+    
+    def set_state(self, attitude: Attitude, angular_velocity: AngularVelocity) -> None:
+        """
+        Set the state of the spacecraft.
+
+        :param attitude: The new attitude of the spacecraft.
+        :param angular_velocity: The new angular velocity of the spacecraft.
+        """
+        assert isinstance(attitude, Attitude), "Attitude must be an Attitude object"
+        assert isinstance(angular_velocity, AngularVelocity), "Angular velocity must be an AngularVelocity object"
+
+        self.attitude = attitude
+        self.angular_velocity = angular_velocity
