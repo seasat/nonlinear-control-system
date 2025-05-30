@@ -12,16 +12,15 @@ class Controller:
     
 class PDController(Controller):
     """ Proportional-Derivative (PD) Controller for spacecraft attitude control. """
-    def __init__(self, linear_plant: control.StateSpace, natural_frequency: float, damping_ratio: float) -> None:
+    def __init__(self, linear_plant: control.StateSpace, closed_loop_poles: list[complex]) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
         :param linear_plant: The linear state-space representation of the plant.
-        :param natural_frequency: The natural frequency of the controller.
-        :param damping_ratio: The damping ratio of the controller.
+        :param closed_loop_poles: The desired closed-loop poles for the PD controlled system.
         """
 
-        self.gains = PDController.design_pd_controller(linear_plant, natural_frequency, damping_ratio)
+        self.gains = PDController.design_pd_controller(linear_plant, closed_loop_poles)
         self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, self.gains)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
@@ -30,14 +29,24 @@ class PDController(Controller):
         return control_torque
 
     @staticmethod
-    def design_pd_controller(linear_system: control.StateSpace, natural_frequency: float, damping_ratio: float) -> control.StateSpace:
-        """Design a PD controller for a linear system."""
-        pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
-        conjugate_pole = complex(pole.real, -pole.imag)
-        desired_poles = [pole, conjugate_pole] * np.linalg.matrix_rank(linear_system.B)
-
+    def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> control.StateSpace:
+        """Design a PD controller for a linear system using the pole placement method. """
         feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
         return feedback_gains
+
+    @staticmethod
+    def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> list:
+        inertia_ratios = np.asarray([
+            1,
+            inertia_tensor[1, 1] / inertia_tensor[0, 0],
+            inertia_tensor[2, 2] / inertia_tensor[0, 0]
+        ])
+        pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
+        conjugate_pole = complex(pole.real, -pole.imag)
+        poles = [[pole * inertia_ratio, conjugate_pole * inertia_ratio] for inertia_ratio in inertia_ratios]
+        poles = np.array(poles).flatten()
+
+        return poles
 
     @staticmethod
     def get_closed_loop_system(open_loop_system: control.StateSpace, feedback_gains: np.matrix) -> control.StateSpace:
@@ -82,7 +91,7 @@ class PDController(Controller):
     
 class NDIController(Controller):
     """ Nonlinear Dynamic Inversion (NDI) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex]) -> None:
         """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
@@ -91,7 +100,7 @@ class NDIController(Controller):
         self.disturbance_torque = disturbance_torque
 
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
-        self.linear_controller = PDController(self.get_system_model(), natural_frequency, damping_ratio)
+        self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
@@ -130,14 +139,14 @@ class NDIController(Controller):
 
 class TSSController(Controller):
     """ Time-Scale Separation (TSS) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float, tss_factor: float) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex], tss_factor: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
         self.sc = spacecraft
         self.disturbance_torque = disturbance_torque
-        self.natural_frequency = natural_frequency
-        self.damping_ratio = damping_ratio
+        natural_frequency = np.abs(closed_loop_poles[0].real)
+        damping_ratio = -closed_loop_poles[0].imag / natural_frequency
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
         self.k1 = natural_frequency**2 * np.eye(3)

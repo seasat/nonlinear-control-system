@@ -8,6 +8,7 @@ from simulation import Simulation
 from attitude import YawPitchRoll, BodyRates
 from orbit import Orbit
 from controller import PDController, NDIController, TSSController
+import dynamics
 
 
 def main():
@@ -39,19 +40,20 @@ def main():
     DAMPING_RATIO = 0.95
     TSS_FACTOR = 10 # time scale separation factor
 
+    system_poles = PDController.calculate_poles(INERTIA_TENSOR, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
-    pd_controller = PDController(PDController.get_system_model(sc), NATURAL_FREQUENCY, DAMPING_RATIO)
+    pd_controller = PDController(PDController.get_system_model(sc), system_poles)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
 
-    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, 3, 0.8)
+    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, system_poles)
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
-    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO, TSS_FACTOR)
+    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, system_poles, TSS_FACTOR)
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
