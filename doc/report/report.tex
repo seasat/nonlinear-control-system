@@ -92,6 +92,12 @@ The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
     \end{bmatrix}
 \end{equation}
 
+Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:yaw}, \glsfull{sy:pitch} and \glsfull{sy:roll}, the resulting \gls{ac:dcm} is given by \cref{eqt:dcm_euler}.
+\begin{equation} \label{eqt:dcm_euler}
+    \gls{sy:dcm}^{B/A} = \gls{sy:c1}(\gls{sy:roll}) \, \gls{sy:c2}(\gls{sy:pitch}) \, \gls{sy:c3}(\gls{sy:yaw})
+\end{equation}
+
+
 \subsection{Quaternions}
 \subsection{Angular Rates}
 
