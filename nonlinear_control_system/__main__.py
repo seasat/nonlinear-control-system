@@ -38,7 +38,6 @@ def main():
     }
     NATURAL_FREQUENCY = 3 # rad/s
     DAMPING_RATIO = 0.9
-    TSS_FACTOR = 10 # time scale separation factor
 
     system_poles = PDController.calculate_poles(INERTIA_TENSOR, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
@@ -54,7 +53,7 @@ def main():
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
-    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, system_poles, TSS_FACTOR)
+    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, system_poles)
     sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()

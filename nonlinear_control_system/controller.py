@@ -149,14 +149,12 @@ class NDIController(Controller):
 
 class TSSController(Controller):
     """ Time-Scale Separation (TSS) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex], tss_factor: float) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex]) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
         self.sc = spacecraft
         self.disturbance_torque = disturbance_torque
-        natural_frequency = np.abs(closed_loop_poles[0].real)
-        damping_ratio = -closed_loop_poles[0].imag / natural_frequency
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
