@@ -44,12 +44,18 @@ In three dimension, $\gls{sy:dcm} \in \mathbb{R}^{3 \times 3}$ and the definitio
 \end{equation}
 
 A transformation matrix $\gls{sy:dcm}^{B/A}$ from frame $A$ to frame $B$ is constructed from the basis vectors of frame $A$ (\gls{sy:a1}, \gls{sy:a2}, \gls{sy:a2}) as expressed in frame $B$ (\gls{sy:b1}, \gls{sy:b2}, \gls{sy:b3}).
-In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements become equal to the cosine of the angle between each pair of basis vectors (see \cref{eqt:dcm_basis}).
+In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements become equal to the cosine of the angle between each pair of basis vectors (see \cref{eqt:dcm_basis}), hence the name cosine matrix.
 \begin{equation} \label{eqt:dcm_basis}
     \gls{sy:dcm}^{B/A} = \begin{bmatrix}
         \gls{sy:b1} \cdot \gls{sy:a1} & \gls{sy:b1} \cdot \gls{sy:a2} & \gls{sy:b1} \cdot \gls{sy:a3} \\
         \gls{sy:b2} \cdot \gls{sy:a1} & \gls{sy:b2} \cdot \gls{sy:a2} & \gls{sy:b2} \cdot \gls{sy:a3} \\
         \gls{sy:b3} \cdot \gls{sy:a1} & \gls{sy:b3} \cdot \gls{sy:a2} & \gls{sy:b3} \cdot \gls{sy:a3}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \cos \theta_{11} & \cos \theta_{12} & \cos \theta_{13} \\
+        \cos \theta_{21} & \cos \theta_{22} & \cos \theta_{23} \\
+        \cos \theta_{31} & \cos \theta_{32} & \cos \theta_{33}
     \end{bmatrix}
 \end{equation}
 
