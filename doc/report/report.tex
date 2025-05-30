@@ -43,13 +43,13 @@ In three dimension, $\gls{sy:dcm} \in \mathbb{R}^{3 \times 3}$ and the definitio
     \end{bmatrix}
 \end{equation}
 
-A transformation matrix $\gls{sy:dcm}^{B/A}$ from frame $A$ to frame $B$ is constructed from the basis vectors of frame $A$ (\gls{sy:a1}, \gls{sy:a2}, \gls{sy:a2}) as expressed in frame $B$ (\gls{sy:b1}, \gls{sy:b2}, \gls{sy:b3}).
+A transformation matrix $\gls{sy:dcm}^{B/A}$ from frame $A$ to frame $B$ is constructed from the basis vectors of frame $A$ ($\gls{sy:a}_1$, $\gls{sy:a}_2$, $\gls{sy:a}_3$) as expressed in frame $B$ ($\gls{sy:b}_1$, $\gls{sy:b}_2$, $\gls{sy:b}_3$).
 In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements become equal to the cosine of the angle between each pair of basis vectors (see \cref{eqt:dcm_basis}), hence the name cosine matrix.
 \begin{equation} \label{eqt:dcm_basis}
     \gls{sy:dcm}^{B/A} = \begin{bmatrix}
-        \gls{sy:b1} \cdot \gls{sy:a1} & \gls{sy:b1} \cdot \gls{sy:a2} & \gls{sy:b1} \cdot \gls{sy:a3} \\
-        \gls{sy:b2} \cdot \gls{sy:a1} & \gls{sy:b2} \cdot \gls{sy:a2} & \gls{sy:b2} \cdot \gls{sy:a3} \\
-        \gls{sy:b3} \cdot \gls{sy:a1} & \gls{sy:b3} \cdot \gls{sy:a2} & \gls{sy:b3} \cdot \gls{sy:a3}
+        \gls{sy:b}_1 \cdot \gls{sy:a}_1 & \gls{sy:b}_1 \cdot \gls{sy:a}_2 & \gls{sy:b}_1 \cdot \gls{sy:a}_3 \\
+        \gls{sy:b}_2 \cdot \gls{sy:a}_1 & \gls{sy:b}_2 \cdot \gls{sy:a}_2 & \gls{sy:b}_2 \cdot \gls{sy:a}_3 \\
+        \gls{sy:b}_3 \cdot \gls{sy:a}_1 & \gls{sy:b}_3 \cdot \gls{sy:a}_2 & \gls{sy:b}_3 \cdot \gls{sy:a}_3
     \end{bmatrix}
     =
     \begin{bmatrix}
@@ -63,7 +63,7 @@ In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements 
 \subsection{Euler Angles}
 Euler angles are a set of three angles that represent an orientation, rotation or attitude as three successive, single axis rotations.
 The rotations can be performed about any axis in any order, so long as no two rotations are about the same axis.
-For any single axis rotation about axis $i$ with angle $\theta_i$, the rotation axis remains unchanged leaving $\vec{a}_i = \vec{b}_i$.
+For any single axis rotation about axis $i$ with angle $\theta_i$, the rotation axis remains unchanged leaving $\gls{sy:a}_i = \gls{sy:b}_i$.
 The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
 
 \parbox{.49\textwidth}{
