@@ -36,7 +36,7 @@ def main():
         500.1: YawPitchRoll([np.deg2rad(-60), np.deg2rad(-60), np.deg2rad(-60)]),
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
-    NATURAL_FREQUENCY = .8 # rad/s
+    NATURAL_FREQUENCY = 2 # rad/s
     DAMPING_RATIO = 0.95
     TSS_FACTOR = 10 # time scale separation factor
 
