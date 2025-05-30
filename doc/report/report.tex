@@ -66,7 +66,7 @@ The rotations can be performed about any axis in any order, so long as no two ro
 For each successive rotation is applied to the intermediate frame, resulting from the previous rotation.
 This leads to two intermediate frames being created $A \overset{i}{\rightarrow} A' \overset{j \neq i}{\rightarrow} A'' \overset{k \neq j}{\rightarrow} B$.
 
-Any attitude can then be represented by a triplet of roll, pitch and yaw Euler angles (see \cref{eqt:ypr_attitude}).
+Defining a triplet with rotation order $3 \rightarrow 2 \rightarrow 1$, any attitude can then be represented by a triplet of roll, pitch and yaw Euler angles (see \cref{eqt:ypr_attitude}).
 \begin{equation} \label{eqt:ypr_attitude}
     \vec{\theta} = \begin{bmatrix}
         \gls{sy:roll} \\
