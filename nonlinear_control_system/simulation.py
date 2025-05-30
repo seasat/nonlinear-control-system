@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
-from attitude import Attitude, YawPitchRoll, AngularVelocity
+from attitude import Attitude, YawPitchRoll, AngularVelocity, BodyRates
 import dynamics, integrator
 from controller import Controller
 
@@ -69,7 +69,7 @@ class Simulation:
         for idx, time in enumerate(self.times):
             target_attitude: YawPitchRoll = self.target_attitudes[idx]
             attitude_error: YawPitchRoll = target_attitude - self.spacecraft.attitude
-            rate_error: np.ndarray = -self.spacecraft.angular_velocity
+            rate_error: BodyRates = -self.spacecraft.angular_velocity
 
             # calculate control torque
             control_torque = self.controller.calculate_control_torque(
@@ -79,7 +79,7 @@ class Simulation:
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
-            state = np.concatenate((self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity))
+            state = np.vstack([self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity])
             state = integrator.rk4(
                 dynamics.calculate_state_change,
                 state,
@@ -90,7 +90,7 @@ class Simulation:
                 self.spacecraft.orbit.mean_motion
             )
             attitude = YawPitchRoll(state[:3])
-            angular_velocity = AngularVelocity(state[3:6])
+            angular_velocity = BodyRates(state[3:6])
 
             # update spacecraft state
             self.spacecraft.angular_velocity = angular_velocity

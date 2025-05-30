@@ -5,10 +5,10 @@ import control
 
 from spacecraft import Spacecraft
 from simulation import Simulation
-from attitude import YawPitchRoll, AngularVelocity
+from attitude import YawPitchRoll, BodyRates
 from orbit import Orbit
-from controller import Controller, PDController, NDIController
-import system
+from controller import PDController, NDIController, TSSController
+import dynamics
 
 
 def main():
@@ -36,20 +36,28 @@ def main():
         500.1: YawPitchRoll([np.deg2rad(-60), np.deg2rad(-60), np.deg2rad(-60)]),
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
-    NATURAL_FREQUENCY = .8 # rad/s
-    DAMPING_RATIO = 0.95
+    NATURAL_FREQUENCY = 3 # rad/s
+    DAMPING_RATIO = 0.9
 
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, AngularVelocity([0, 0, 0]), ORBIT)
+    system_poles = PDController.calculate_poles(INERTIA_TENSOR, NATURAL_FREQUENCY, DAMPING_RATIO)
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
-    pd_controller = PDController(system.get_linearized_system(sc), NATURAL_FREQUENCY, DAMPING_RATIO)
+    pd_controller = PDController(PDController.get_system_model(sc), system_poles)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
 
-    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, 3, 0.8)
+    ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, system_poles)
+    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for NDI simulation
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
+
+    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, system_poles)
+    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
+    simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
+    simulation_tss.plot_attitudes()
+    simulation_tss.plot_attitude_errors()
 
     plt.show()
 
