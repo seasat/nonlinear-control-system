@@ -2,7 +2,7 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-from attitude.angular_velocity import YPRRates
+from attitude.angular_velocity import YPRRates, BodyRates
 
 
 class Controller:
@@ -187,4 +187,50 @@ class TSSController(Controller):
         c = np.eye(6)  # Track all outputs
         d = np.zeros((6, 3))  # No feedthrough
         
+        return control.StateSpace(a, b, c, d)
+
+
+class INDIController(Controller):
+    """ Inverse Nonlinear Dynamic Inversion (INDI) Controller for spacecraft attitude control. """
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex]) -> None:
+        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
+        assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
+
+        self.sc = spacecraft
+        self.disturbance_torque = disturbance_torque
+        self.last_control_torque = np.zeros((3, 1))
+
+        self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
+        self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
+
+    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+        # outer loop
+        target_ypr_rates: YPRRates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
+        target_body_rates: BodyRates = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+
+        # inner loop
+        body_rate_error = target_body_rates - self.sc.angular_velocity
+        target_angular_acceleration = self.linear_controller.derivative_gain @ body_rate_error
+        control_torque_increment = self.J_INV @ target_angular_acceleration
+        control_torque = self.last_control_torque + control_torque_increment
+
+        self.last_control_torque = control_torque
+        return control_torque
+
+    @staticmethod
+    def get_system_model() -> control.StateSpace:
+        """
+        Get state space of double integrator system after dynamic inversion where plant is
+        G(s) = 1/s^2
+        """
+        # double integrator system
+        a = np.zeros((6, 6))
+        a[0:3, 3:6] = np.eye(3)  # Identity matrix
+
+        b = np.zeros((6, 3))
+        b[3:6, 0:3] = np.eye(3)
+
+        c = np.eye(6)  # Track all outputs
+        d = np.zeros((6, 3))
+
         return control.StateSpace(a, b, c, d)
