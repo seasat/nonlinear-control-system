@@ -61,8 +61,13 @@ In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements 
 
 
 \subsection{Euler Angles}
+Euler angles are a set of three angles that represent an orientation, rotation or attitude as three successive, single axis rotations.
+The rotations can be performed about any axis in any order, so long as no two rotations are about the same axis.
+For any single axis rotation about axis $i$, the rotation axis remains unchanged leaving $\vec{a}_i = \vec{b}_i$.
+The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
+
 \parbox{.49\textwidth}{
-\begin{equation}
+\begin{equation} \label{eqt:c1}
     \gls{sy:c1}(\gls{sy:roll}) = \begin{bmatrix}
         1 & 0 & 0 \\
         0 & \cos(\gls{sy:roll}) & \sin(\gls{sy:roll}) \\
@@ -71,7 +76,7 @@ In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements 
 \end{equation}
 }
 \parbox{.49\textwidth}{
-\begin{equation}
+\begin{equation} \label{eqt:c2}
     \gls{sy:c2}(\gls{sy:pitch}) = \begin{bmatrix}
         \cos(\gls{sy:pitch}) & 0 & -\sin(\gls{sy:pitch}) \\
         0 & 1 & 0 \\
@@ -79,7 +84,7 @@ In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements 
     \end{bmatrix}
 \end{equation}
 }
-\begin{equation}
+\begin{equation} \label{eqt:c3}
     \gls{sy:c3}(\gls{sy:yaw}) = \begin{bmatrix}
         \cos(\gls{sy:yaw}) & \sin(\gls{sy:yaw}) & 0 \\
         -\sin(\gls{sy:yaw}) & \cos(\gls{sy:yaw}) & 0 \\
