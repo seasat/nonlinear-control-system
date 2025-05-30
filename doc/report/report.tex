@@ -43,26 +43,31 @@
 
 
 \subsection{Euler Angles}
-\begin{flalign}
-    \gls{sy:c1}(\gls{sy:roll}) &= \begin{bmatrix}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \gls{sy:c1}(\gls{sy:roll}) = \begin{bmatrix}
         1 & 0 & 0 \\
         0 & \cos(\gls{sy:roll}) & \sin(\gls{sy:roll}) \\
         0 & -\sin(\gls{sy:roll}) & \cos(\gls{sy:roll})
     \end{bmatrix}
-    &
-    \gls{sy:c2}(\gls{sy:pitch}) &= \begin{bmatrix}
+\end{equation}
+}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \gls{sy:c2}(\gls{sy:pitch}) = \begin{bmatrix}
         \cos(\gls{sy:pitch}) & 0 & -\sin(\gls{sy:pitch}) \\
         0 & 1 & 0 \\
         \sin(\gls{sy:pitch}) & 0 & \cos(\gls{sy:pitch})
     \end{bmatrix}
-    \\
-    \gls{sy:c3}(\gls{sy:yaw}) &= \begin{bmatrix}
+\end{equation}
+}
+\begin{equation}
+    \gls{sy:c3}(\gls{sy:yaw}) = \begin{bmatrix}
         \cos(\gls{sy:yaw}) & \sin(\gls{sy:yaw}) & 0 \\
         -\sin(\gls{sy:yaw}) & \cos(\gls{sy:yaw}) & 0 \\
         0 & 0 & 1
     \end{bmatrix}
-    &
-\end{flalign}
+\end{equation}
 
 \subsection{Quaternions}
 \subsection{Angular Rates}
