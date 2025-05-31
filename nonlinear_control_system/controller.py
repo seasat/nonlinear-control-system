@@ -25,11 +25,11 @@ class PDController(Controller):
         self.gains = PDController.design_pd_controller(linear_plant, closed_loop_poles)
         self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, self.gains)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
+    def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
-        attitude_error_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
-        control_torque = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ attitude_error_derivative
-        return control_torque
+        control_variable_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        control_output = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ control_variable_derivative
+        return control_output
     
     @property
     def proportional_gain(self) -> np.ndarray:
