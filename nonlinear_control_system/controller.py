@@ -113,7 +113,7 @@ class NDIController(Controller):
         self.disturbance_torque = disturbance_torque
 
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
-        self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
+        self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
     def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
         virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error)
@@ -160,7 +160,7 @@ class TSSController(Controller):
         self.disturbance_torque = disturbance_torque
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
-        self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
+        self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
     def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
         # outer loop
