@@ -7,7 +7,7 @@ from spacecraft import Spacecraft
 from simulation import Simulation
 from attitude import YawPitchRoll, BodyRates
 from orbit import Orbit
-from controller import PDController, NDIController, TSSController
+from controller import PDController, NDIController, TSSController, INDIController
 import dynamics
 
 
@@ -42,7 +42,7 @@ def main():
     system_poles = PDController.calculate_poles(INERTIA_TENSOR, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
-    pd_controller = PDController(PDController.get_system_model(sc), system_poles)
+    pd_controller = PDController(sc, PDController.get_system_model(sc), system_poles)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, pd_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
@@ -58,6 +58,12 @@ def main():
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
+
+    indi_controller = INDIController(sc, DISTURBANCE_TORQUE, system_poles)
+    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for INDI simulation
+    simulation_indi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, indi_controller)
+    simulation_indi.plot_attitudes()
+    simulation_indi.plot_attitude_errors()
 
     plt.show()
 
