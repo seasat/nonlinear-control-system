@@ -204,7 +204,7 @@ class INDIController(Controller):
         self.last_control_torque = np.zeros((3, 1))
         self.last_angular_acceleration = np.zeros((3, 1))
 
-        self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
+        self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
     def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
         # outer loop
