@@ -206,7 +206,7 @@ class INDIController(Controller):
 
         self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+    def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
         # outer loop
         target_ypr_rates: YPRRates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
         target_body_rates: BodyRates = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
