@@ -6,26 +6,29 @@ from attitude.angular_velocity import YPRRates, BodyRates
 
 
 class Controller:
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+    def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
         raise NotImplementedError("This method should be implemented by subclasses.")
 
     
 class PDController(Controller):
     """ Proportional-Derivative (PD) Controller for spacecraft attitude control. """
-    def __init__(self, linear_plant: control.StateSpace, closed_loop_poles: list[complex]) -> None:
+    def __init__(self, spacecraft: Spacecraft, linear_plant: control.StateSpace, closed_loop_poles: list[complex]) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
         :param linear_plant: The linear state-space representation of the plant.
         :param closed_loop_poles: The desired closed-loop poles for the PD controlled system.
         """
+        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
+        self.sc = spacecraft # for derivative calculation
         self.gains = PDController.design_pd_controller(linear_plant, closed_loop_poles)
         self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, self.gains)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+    def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
-        control_torque = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ angular_velocity_error
+        attitude_error_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        control_torque = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ attitude_error_derivative
         return control_torque
     
     @property
@@ -112,8 +115,8 @@ class NDIController(Controller):
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
-        virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error, angular_velocity_error)
+    def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
+        virtual_control_output = self.linear_controller.calculate_control_torque(attitude_error)
         ypr_rates_derivative = self.sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion)
 
         transform_matrix = ypr_rates_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
@@ -159,7 +162,7 @@ class TSSController(Controller):
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(self.get_system_model(), closed_loop_poles)
 
-    def calculate_control_torque(self, attitude_error: np.ndarray, angular_velocity_error: np.ndarray) -> np.ndarray:
+    def calculate_control_torque(self, attitude_error: np.ndarray) -> np.ndarray:
         # outer loop
         target_ypr_rates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
         target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
