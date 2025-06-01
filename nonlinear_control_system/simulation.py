@@ -146,12 +146,12 @@ class Simulation:
         """ Plot the control torques over time. """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        ax.plot(self.times, self.control_torques[:, 0, 0], label="Control Torque X")
-        ax.plot(self.times, self.control_torques[:, 1, 0], label="Control Torque Y")
-        ax.plot(self.times, self.control_torques[:, 2, 0], label="Control Torque Z")
+        ax.plot(self.times, self.control_torques[:, 0, 0], label=r"${T}_{c,1}$")
+        ax.plot(self.times, self.control_torques[:, 1, 0], label=r"${T}_{c,2}$")
+        ax.plot(self.times, self.control_torques[:, 2, 0], label=r"${T}_{c,3}$")
 
         magnitudes = np.linalg.norm(self.control_torques, axis=1)
-        ax.plot(self.times, magnitudes, label="Magnitude", linestyle='--', color='k')
+        ax.plot(self.times, magnitudes, label=r"$|\underline{T}_c|$", linestyle='--', color='k')
 
         ax.legend()
         ax.set_yscale('log')
