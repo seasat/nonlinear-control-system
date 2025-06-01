@@ -69,7 +69,7 @@ class Simulation:
     def _run_simulation(self) -> None:
         for idx, time in enumerate(self.times):
             target_attitude: YawPitchRoll = self.target_attitudes[idx]
-            attitude_error: YawPitchRoll = target_attitude - self.spacecraft.attitude
+            attitude_error: YawPitchRoll = self.spacecraft.attitude - target_attitude
 
             # calculate control torque
             control_torque = self.controller.calculate_control_output(attitude_error.to_vector())
