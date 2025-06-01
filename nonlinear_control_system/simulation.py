@@ -136,6 +136,7 @@ class Simulation:
         yaws = np.array([error.yaw for error in self.attitude_errors])
         ax.plot(self.times, np.abs(yaws), label="Yaw Error")
 
+        ax.legend()
         ax.set_yscale('log')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
