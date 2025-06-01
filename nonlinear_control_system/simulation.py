@@ -151,5 +151,6 @@ class Simulation:
         ax.plot(self.times, magnitudes, label="Magnitude", color='k')
 
         ax.legend()
+        ax.set_yscale('log')
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Control Torque $[\mathrm{Nm}]$")
