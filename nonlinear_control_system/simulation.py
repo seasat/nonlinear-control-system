@@ -151,7 +151,7 @@ class Simulation:
         ax.plot(self.times, self.control_torques[:, 2, 0], label="Control Torque Z")
 
         magnitudes = np.linalg.norm(self.control_torques, axis=1)
-        ax.plot(self.times, magnitudes, label="Magnitude", color='k')
+        ax.plot(self.times, magnitudes, label="Magnitude", linestyle='--', color='k')
 
         ax.legend()
         ax.set_yscale('log')
