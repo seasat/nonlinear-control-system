@@ -45,3 +45,11 @@ omega_3_dot approx
 
 
 ## θi(t) * ωi(t) = 0
+omega_1_dot approx
+((θ2(t)*tc3)/(j33))+((θ2(t)*td3)/(j33))+2*ω3(t)*mm+((tc1)/(j11))+((td1)/(j11))
+
+omega_2_dot approx
+((−θ1(t)*tc3)/(j33))-((θ1(t)*td3)/(j33))+((tc2)/(j22))+((td2)/(j22))
+
+omega_3_dot approx
+((θ1(t)*tc2)/(j22))+((θ1(t)*td2)/(j22))+θ3(t)*mm^(2)+((tc3)/(j33))+((td3)/(j33))
