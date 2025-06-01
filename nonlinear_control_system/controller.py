@@ -78,17 +78,13 @@ class PDController(Controller):
         y = C @ x + D @ u
         with state vector x and output vector y.
         """
-        J = spacecraft.inertia_tensor
-        n = spacecraft.orbit.mean_motion
-        J_INV = np.linalg.inv(J)
-    
         a = np.zeros((6, 6))
         a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-        a[0, 2] = n
+        a[0, 2] = spacecraft.orbit.mean_motion
     
         b = np.zeros((6, 3))
         # control torque affect the angular velocity
-        b[3:6, 0:3] = J_INV
+        b[3:6, 0:3] = np.linalg.inv(spacecraft.inertia_tensor)
     
         # track attitude
         c = np.zeros((6, 6))
