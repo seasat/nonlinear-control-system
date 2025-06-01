@@ -74,7 +74,9 @@ class PDController(Controller):
     def get_system_model(spacecraft: Spacecraft) -> control.StateSpace:
         """
         Get the system matrices A and B for the linearized system
-        dy/dt = A @ y + B @ u
+        dx/dt = A @ x + B @ u
+        y = C @ x + D @ u
+        with state vector x and output vector y.
         """
         J = spacecraft.inertia_tensor
         n = spacecraft.orbit.mean_motion
