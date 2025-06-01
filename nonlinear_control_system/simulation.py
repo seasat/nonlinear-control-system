@@ -138,3 +138,18 @@ class Simulation:
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")
+    
+    def plot_control_torques(self) -> None:
+        """ Plot the control torques over time. """
+        fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
+
+        ax.plot(self.times, self.control_torques[:, 0, 0], label="Control Torque X")
+        ax.plot(self.times, self.control_torques[:, 1, 0], label="Control Torque Y")
+        ax.plot(self.times, self.control_torques[:, 2, 0], label="Control Torque Z")
+
+        magnitudes = np.linalg.norm(self.control_torques, axis=1)
+        ax.plot(self.times, magnitudes, label="Magnitude", color='k')
+
+        ax.legend()
+        ax.set_xlabel(r"Time $[\mathrm{s}]$")
+        ax.set_ylabel(r"Control Torque $[\mathrm{Nm}]$")
