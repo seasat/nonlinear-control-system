@@ -22,30 +22,22 @@ class PDController(Controller):
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
         self.sc = spacecraft # for derivative calculation
-        self.gains = PDController.design_pd_controller(linear_plant, closed_loop_poles)
-        self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, self.gains)
+        self.proportional_gains, self.derivative_gains = PDController.design_pd_controller(linear_plant, closed_loop_poles)
+        self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, np.hstack((self.proportional_gains, self.derivative_gains)))
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
         control_variable_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
-        control_output = self.gains[:, 0:3] @ attitude_error + self.gains[:, 3:6] @ control_variable_derivative
+        control_output = self.proportional_gains @ attitude_error + self.derivative_gains @ control_variable_derivative
         return control_output
-    
-    @property
-    def proportional_gain(self) -> np.ndarray:
-        """ Get the proportional gain matrix from the controller gains. """
-        return self.gains[:, 0:3]
-
-    @property
-    def derivative_gain(self) -> np.ndarray:
-        """ Get the derivative gain matrix from the controller gains. """
-        return self.gains[:, 3:6]
 
     @staticmethod
-    def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> control.StateSpace:
+    def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> tuple[np.ndarray, np.ndarray]:
         """Design a PD controller for a linear system using the pole placement method. """
-        feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
-        return feedback_gains
+        #feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
+        proportional_gains = np.diag([10, 10, 0.5])
+        derivative_gains = np.diag([50, 50, 1.2])
+        return proportional_gains, derivative_gains
 
     @staticmethod
     def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> np.ndarray:
