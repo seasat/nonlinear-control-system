@@ -43,6 +43,7 @@ class Simulation:
         self.angular_velocities = np.zeros_like(self.attitudes)
         self.target_attitudes = np.zeros_like(self.attitudes)
         self.attitude_errors = np.zeros_like(self.attitudes)
+        self.control_torques = np.zeros((self.sample_points, 3))
 
         self._calculate_target_attitudes(target_attitude_commands)
         self._run_simulation()
@@ -96,6 +97,7 @@ class Simulation:
             self.attitudes[idx] = self.spacecraft.attitude
             self.angular_velocities[idx] = angular_velocity
             self.attitude_errors[idx] = attitude_error
+            self.control_torques[idx] = control_torque
     
     def plot_attitudes(self) -> None:
         """
