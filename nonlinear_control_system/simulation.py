@@ -151,7 +151,7 @@ class Simulation:
         ax.plot(self.times, self.control_torques[:, 2, 0], label=r"${T}_{c,3}$")
 
         magnitudes = np.linalg.norm(self.control_torques, axis=1)
-        ax.plot(self.times, magnitudes, label=r"$|\underline{T}_c|$", linestyle='--', color='k')
+        ax.plot(self.times, magnitudes, label=r"$|\mathbf{T}_c|$", linestyle='--', color='k')
 
         ax.legend()
         ax.set_yscale('log')
