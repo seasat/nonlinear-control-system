@@ -82,13 +82,7 @@ class PDController(Controller):
     
         a = np.zeros((6, 6))
         a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-        a[0, 1] = n
-        orbital_coupling = np.array([
-            [0, 0, -n * (J[2,2] + J[1,1])],
-            [0, 0, 0],
-            [n * (J[0,0] + J[1,1]), 0, 0],
-        ])
-        a[3:6, 3:6] = -J_INV @ orbital_coupling
+        a[0, 2] = n
     
         b = np.zeros((6, 3))
         # control torque affect the angular velocity
