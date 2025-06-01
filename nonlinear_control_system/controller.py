@@ -41,17 +41,11 @@ class PDController(Controller):
 
     @staticmethod
     def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> np.ndarray:
-        inertia_ratios = np.asarray([
-            1,
-            inertia_tensor[1, 1] / inertia_tensor[0, 0],
-            inertia_tensor[2, 2] / inertia_tensor[0, 0]
-        ])
         pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
         conjugate_pole = complex(pole.real, -pole.imag)
-        poles = [[pole * inertia_ratio, conjugate_pole * inertia_ratio] for inertia_ratio in inertia_ratios]
-        poles = np.array(poles).flatten()
+        poles = [pole, conjugate_pole] * 3
 
-        return poles
+        return np.asarray(poles, dtype=complex)
 
     @staticmethod
     def get_closed_loop_system(open_loop_system: control.StateSpace, feedback_gains: np.matrix) -> control.StateSpace:

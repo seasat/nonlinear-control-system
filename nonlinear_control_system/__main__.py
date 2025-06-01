@@ -36,8 +36,8 @@ def main():
         500.1: YawPitchRoll([np.deg2rad(-60), np.deg2rad(-60), np.deg2rad(-60)]),
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
-    NATURAL_FREQUENCY = 3 # rad/s
-    DAMPING_RATIO = 0.9
+    NATURAL_FREQUENCY = 0.1 # rad/s
+    DAMPING_RATIO = 0.99
 
     system_poles = PDController.calculate_poles(INERTIA_TENSOR, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
