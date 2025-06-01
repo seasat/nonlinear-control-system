@@ -27,16 +27,16 @@ class PDController(Controller):
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
         """ Calculate the control torque based on the attitude and angular velocity errors. """
-        control_variable_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
-        control_output = self.proportional_gains @ attitude_error + self.derivative_gains @ control_variable_derivative
+        control_variable_derivative = self.sc.angular_velocity
+        control_output = -self.proportional_gains @ attitude_error + -self.derivative_gains @ control_variable_derivative
         return control_output
 
     @staticmethod
     def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> tuple[np.ndarray, np.ndarray]:
         """Design a PD controller for a linear system using the pole placement method. """
-        #feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
-        proportional_gains = np.diag([10, 10, 0.5])
-        derivative_gains = np.diag([50, 50, 1.2])
+        feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
+        proportional_gains = feedback_gains[:, 0:3] # np.diag([10, 10, 0.5])
+        derivative_gains = feedback_gains[:, 3:6] # np.diag([50, 50, 1.2])
         return proportional_gains, derivative_gains
 
     @staticmethod
