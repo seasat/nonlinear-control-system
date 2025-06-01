@@ -88,8 +88,9 @@ class PDController(Controller):
         # control torque affect the angular velocity
         b[3:6, 0:3] = J_INV
     
-        # track all outputs
-        c = np.eye(6)
+        # track attitude
+        c = np.zeros((6, 6))
+        c[0:3, 0:3] = np.eye(3)
         # no feedthrough
         d = np.zeros((6, 3))
     
