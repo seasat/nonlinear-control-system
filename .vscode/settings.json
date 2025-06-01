@@ -2,6 +2,7 @@
     "makefile.configureOnOpen": false,
     "cSpell.words": [
         "eigenangle",
-        "Eigenaxis"
+        "Eigenaxis",
+        "feedthrough"
     ]
 }
