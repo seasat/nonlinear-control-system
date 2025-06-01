@@ -71,7 +71,7 @@ class Simulation:
             attitude_error: YawPitchRoll = target_attitude - self.spacecraft.attitude
 
             # calculate control torque
-            control_torque = self.controller.calculate_control_torque(attitude_error.to_vector())
+            control_torque = self.controller.calculate_control_output(attitude_error.to_vector())
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
