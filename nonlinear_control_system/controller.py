@@ -48,7 +48,7 @@ class PDController(Controller):
         return feedback_gains
 
     @staticmethod
-    def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> list:
+    def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> np.ndarray:
         inertia_ratios = np.asarray([
             1,
             inertia_tensor[1, 1] / inertia_tensor[0, 0],
