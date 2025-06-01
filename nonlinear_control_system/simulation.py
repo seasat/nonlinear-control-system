@@ -105,20 +105,22 @@ class Simulation:
         """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        yaws = np.array([attitude.yaw for attitude in self.attitudes])
-        ax.plot(self.times, yaws, label="Yaw")
-        pitches = np.array([attitude.pitch for attitude in self.attitudes])
-        ax.plot(self.times, pitches, label="Pitch")
         rolls = np.array([attitude.roll for attitude in self.attitudes])
         ax.plot(self.times, rolls, label="Roll")
+        pitches = np.array([attitude.pitch for attitude in self.attitudes])
+        ax.plot(self.times, pitches, label="Pitch")
+        yaws = np.array([attitude.yaw for attitude in self.attitudes])
+        ax.plot(self.times, yaws, label="Yaw")
 
-        ax.set_prop_cycle(None)
+        #ax.set_prop_cycle(None)
         command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
-        ax.plot(self.times, command_yaws, label="Command Yaw", linestyle='--')
-        command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
-        ax.plot(self.times, command_pitches, label="Command Pitch", linestyle='--')
-        command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
-        ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
+        ax.plot(self.times, command_yaws, label="Command", linestyle='--', color='k')
+        #command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
+        #ax.plot(self.times, command_pitches, label="Command Pitch", linestyle='--')
+        #command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
+        #ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
+
+        ax.legend()
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
@@ -127,12 +129,12 @@ class Simulation:
         """ Plot the attitude errors over time. """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        yaws = np.array([error.yaw for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
-        pitches = np.array([error.pitch for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
         rolls = np.array([error.roll for error in self.attitude_errors])
         ax.plot(self.times, np.abs(rolls), label="Roll Error")
+        pitches = np.array([error.pitch for error in self.attitude_errors])
+        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
+        yaws = np.array([error.yaw for error in self.attitude_errors])
+        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
 
         ax.set_yscale('log')
 
