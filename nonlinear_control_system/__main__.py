@@ -41,7 +41,7 @@ def main():
 
     #plt.rc('text', usetex=True)
 
-    system_poles = PDController.calculate_poles(INERTIA_TENSOR, NATURAL_FREQUENCY, DAMPING_RATIO)
+    system_poles = PDController.calculate_poles(NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
 
     state_feedback_controller = StateFeedbackController(sc, StateFeedbackController.get_nadir_linearized_state_space(sc), system_poles)

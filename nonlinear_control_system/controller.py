@@ -34,7 +34,7 @@ class StateFeedbackController(Controller):
         return np.hstack((self.sc.attitude.to_vector(), self.sc.angular_velocity.flatten()))
 
     @staticmethod
-    def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> np.ndarray:
+    def calculate_poles(natural_frequency: float, damping_ratio: float) -> np.ndarray:
         pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
         conjugate_pole = complex(pole.real, -pole.imag)
         poles = [pole, conjugate_pole] * 3
