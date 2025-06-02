@@ -83,7 +83,7 @@ class PDController(Controller):
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K_d * x_e - K_p * x_e_dot, where K_d is the derivative gain and K_p is the proportional gain. """
-        attitude_error = target_attitude - self.sc.attitude
+        attitude_error = target_attitude - self.sc.attitude # Δθ = θ_d - θ
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
         attitude_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
 
@@ -122,11 +122,9 @@ class NDIController(Controller):
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
-        attitude_error = attitude_error.to_vector()  # convert to vector for calculations
         ypr_rates_state_derivative = self.sc.angular_velocity.calculate_ypr_rate_state_derivative(self.sc.attitude, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω)
 
-        target_ypr_accelerations = self.linear_controller.calculate_control_output(attitude_error) # virtual control output nu(x)
+        target_ypr_accelerations = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
         current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
         ypr_acceleration_error = target_ypr_accelerations - current_ypr_accelerations # nu(x) - l(x)
 
