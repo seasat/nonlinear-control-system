@@ -144,24 +144,6 @@ class NDIController(Controller):
         dynamic_transfer_matrix = ypr_rates_state_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
         return dynamic_transfer_matrix
 
-    @staticmethod
-    def get_system_model() -> control.StateSpace:
-        """
-        Get state space of double integrator system after dynamic inversion where plant is
-        G(s) = 1/s^2
-        """
-        # double integrator system
-        a = np.zeros((6, 6))
-        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-
-        b = np.zeros((6, 3))
-        b[3:6, 0:3] = np.eye(3)  # Control torque affects the angular velocity
-
-        c = np.eye(6)  # Track all outputs
-        d = np.zeros((6, 3))  # No feedthrough
-        
-        return control.StateSpace(a, b, c, d)
-
 
 class TSSController(Controller):
     """ Time-Scale Separation (TSS) Controller for spacecraft attitude control. """
