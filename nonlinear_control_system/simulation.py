@@ -47,6 +47,7 @@ class Simulation:
 
         self._calculate_target_attitudes(target_attitude_commands)
         self._run_simulation()
+        self._calculate_errors()
     
     def _calculate_target_attitudes(self, target_attitude_commands: dict[float: Attitude]) -> None:
         """
@@ -95,8 +96,12 @@ class Simulation:
             # log step data
             self.attitudes[idx] = self.spacecraft.attitude
             self.angular_velocities[idx] = angular_velocity
-            self.attitude_errors[idx] = attitude_error
             self.control_torques[idx] = control_torque
+
+    def _calculate_errors(self) -> None:
+        for idx in range(len(self.attitude_errors)):
+            error = self.attitudes[idx] - self.target_attitudes[idx]
+            self.attitude_errors[idx] = error
     
     def plot_attitudes(self) -> None:
         """
