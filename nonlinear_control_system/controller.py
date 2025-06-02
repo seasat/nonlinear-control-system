@@ -102,7 +102,7 @@ class NDIController(Controller):
         current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
         ypr_acceleration_error = target_ypr_accelerations - current_ypr_accelerations # nu(x) - l(x)
 
-        torque_to_ypr_acceleration_matrix = self._calculate_dynamic_transfer_matrix(self.sc) # M(x)
+        torque_to_ypr_acceleration_matrix = self._calculate_dynamic_transfer_matrix(ypr_rates_state_derivative) # M(x)
         ypr_acceleration_to_control_torque_matrix = np.linalg.inv(torque_to_ypr_acceleration_matrix) # M(x)^-1
         control_torque = ypr_acceleration_to_control_torque_matrix @ ypr_acceleration_error # M(x)^-1 * (nu(x) - l(x))
 
@@ -114,9 +114,8 @@ class NDIController(Controller):
         ypr_accelerations = ypr_rates_state_derivative @ np.vstack((ypr_rates, angular_accelerations))
         return ypr_accelerations
     
-    def _calculate_dynamic_transfer_matrix(self, sc: Spacecraft) -> np.ndarray:
-        ypr_rate_state_derivative = sc.angular_velocity.calculate_ypr_rate_state_derivative(self.sc.attitude, self.sc.orbit.mean_motion)  
-        dynamic_transfer_matrix = ypr_rate_state_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
+    def _calculate_dynamic_transfer_matrix(self, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
+        dynamic_transfer_matrix = ypr_rates_state_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
         return dynamic_transfer_matrix
 
     @staticmethod
