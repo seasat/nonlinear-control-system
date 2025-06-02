@@ -8,7 +8,7 @@ from attitude import Attitude
 
 
 class Controller:
-    def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
+    def calculate_control_output(self, target_attitude: np.ndarray) -> np.ndarray:
         raise NotImplementedError("This method should be implemented by subclasses.")
 
     
@@ -86,7 +86,8 @@ class NDIController(Controller):
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
-    def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
+    def calculate_control_output(self, target_attitude: np.ndarray) -> np.ndarray:
+        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
         ypr_rates_state_derivative = self.sc.angular_velocity.calculate_ypr_rate_state_derivative(self.sc.attitude, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω)
 
         target_ypr_accelerations = self.linear_controller.calculate_control_output(attitude_error) # virtual control output nu(x)
@@ -140,7 +141,9 @@ class TSSController(Controller):
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
         self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
-    def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
+    def calculate_control_output(self, target_attitude: np.ndarray) -> np.ndarray:
+        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
+
         # outer loop
         target_ypr_rates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
         target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
@@ -184,7 +187,9 @@ class INDIController(Controller):
 
         self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
-    def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
+    def calculate_control_output(self, target_attitude: np.ndarray) -> np.ndarray:
+        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
+
         # outer loop
         target_ypr_rates: YPRRates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
         target_body_rates: BodyRates = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
