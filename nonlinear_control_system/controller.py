@@ -24,7 +24,6 @@ class StateFeedbackController(Controller):
 
         self.sc = spacecraft # for derivative calculation
         self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
-        self.get_closed_loop_system = StateFeedbackController.get_closed_loop_system(linear_plant, self.gains))
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
         """ Control law u = -K * x, where K is the feedback gain matrix and x is the state vector. """
@@ -41,15 +40,6 @@ class StateFeedbackController(Controller):
         poles = [pole, conjugate_pole] * 3
 
         return np.asarray(poles, dtype=complex)
-
-    @staticmethod
-    def get_closed_loop_system(open_loop_system: control.StateSpace, feedback_gains: np.matrix) -> control.StateSpace:
-        """
-        Get the closed-loop system by combining an open-loop system with a controller.
-        dy/dt = (A - B*K) @ y + B @ u
-        """
-        closed_loop_a = open_loop_system.A - open_loop_system.B @ feedback_gains
-        return control.StateSpace(closed_loop_a, open_loop_system.B, open_loop_system.C, open_loop_system.D)
     
     @staticmethod
     def get_nadir_linearized_state_space(spacecraft: Spacecraft) -> control.StateSpace:
