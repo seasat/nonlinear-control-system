@@ -96,7 +96,7 @@ class NDIController(Controller):
         self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
-        ypr_rates_state_derivative = self.sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω)
+        ypr_rates_state_derivative = self.sc.angular_velocity.calculate_ypr_rate_state_derivative(self.sc.attitude, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω)
 
         target_ypr_accelerations = self.linear_controller.calculate_control_output(attitude_error) # virtual control output nu(x)
         current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
@@ -115,7 +115,7 @@ class NDIController(Controller):
         return ypr_accelerations
     
     def _calculate_dynamic_transfer_matrix(self, sc: Spacecraft) -> np.ndarray:
-        ypr_rate_state_derivative = sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion)  
+        ypr_rate_state_derivative = sc.angular_velocity.calculate_ypr_rate_state_derivative(self.sc.attitude, self.sc.orbit.mean_motion)  
         dynamic_transfer_matrix = ypr_rate_state_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
         return dynamic_transfer_matrix
 
