@@ -11,9 +11,9 @@ class Controller:
         raise NotImplementedError("This method should be implemented by subclasses.")
 
     
-class PDController(Controller):
-    """ Proportional-Derivative (PD) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, linear_plant: control.StateSpace, closed_loop_poles: list[complex]) -> None:
+class StateFeedbackController(Controller):
+    """ State Feedback Controller for spacecraft attitude control. """
+    def __init__(self, spacecraft: Spacecraft, state_space: control.StateSpace, closed_loop_poles: list[complex]) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
@@ -23,22 +23,16 @@ class PDController(Controller):
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
         self.sc = spacecraft # for derivative calculation
-        self.proportional_gains, self.derivative_gains = PDController.design_pd_controller(linear_plant, closed_loop_poles)
-        self.get_closed_loop_system = PDController.get_closed_loop_system(linear_plant, np.hstack((self.proportional_gains, self.derivative_gains)))
+        self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
+        self.get_closed_loop_system = StateFeedbackController.get_closed_loop_system(linear_plant, self.gains))
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
-        """ Calculate the control torque based on the attitude and angular velocity errors. """
-        control_variable_derivative = self.sc.angular_velocity
-        control_output = -self.proportional_gains @ attitude_error + -self.derivative_gains @ control_variable_derivative
+        """ Control law u = -K * x, where K is the feedback gain matrix and x is the state vector. """
+        control_output = -self.gains @ self.get_state_vector()
         return control_output
-
-    @staticmethod
-    def design_pd_controller(linear_system: control.StateSpace, desired_poles: list[complex]) -> tuple[np.ndarray, np.ndarray]:
-        """Design a PD controller for a linear system using the pole placement method. """
-        feedback_gains = control.place(linear_system.A, linear_system.B, desired_poles)
-        proportional_gains = feedback_gains[:, 0:3] # np.diag([10, 10, 0.5])
-        derivative_gains = feedback_gains[:, 3:6] # np.diag([50, 50, 1.2])
-        return proportional_gains, derivative_gains
+    
+    def get_state_vector(self) -> np.ndarray:
+        return np.hstack((self.sc.attitude.to_vector(), self.sc.angular_velocity.flatten()))
 
     @staticmethod
     def calculate_poles(inertia_tensor: np.ndarray, natural_frequency: float, damping_ratio: float) -> np.ndarray:
@@ -58,7 +52,7 @@ class PDController(Controller):
         return control.StateSpace(closed_loop_a, open_loop_system.B, open_loop_system.C, open_loop_system.D)
     
     @staticmethod
-    def get_system_model(spacecraft: Spacecraft) -> control.StateSpace:
+    def get_nadir_linearized_state_space(spacecraft: Spacecraft) -> control.StateSpace:
         """
         Get the state space representation for the linearized system
         dx/dt = A @ x + B @ u
