@@ -3,6 +3,7 @@ import control
 
 from spacecraft import Spacecraft
 from attitude.angular_velocity import YPRRates, BodyRates
+import dynamics
 
 
 class Controller:
@@ -96,21 +97,20 @@ class NDIController(Controller):
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
         dynamic_transfer_matrix = self._calculate_dynamic_transfer_matrix(self.sc) # M(x)
+        ypr_rates_state_derivative = self.sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω)
 
         target_ypr_accelerations = self.linear_controller.calculate_control_output(attitude_error) # virtual control output nu(x)
-        current_ypr_accelerations = self._calculate_ypr_accelerations(...) # l(x)
+        current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
         ypr_acceleration_error = target_ypr_accelerations - current_ypr_accelerations # nu(x) - l(x)
 
         control_torque = dynamic_inversion_matrix @ (ypr_acceleration_error - self.disturbance_torque) # M(x)^-1 * (nu(x) - l(x))
         return control_torque
     
-    def _calculate_ypr_accelerations(self, ypr_rates_derivative: np.ndarray, transform_matrix: np.ndarray) -> np.ndarray:
-        angular_velocity = self.sc.angular_velocity
-
-        ypr_rates = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
-        accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.sc.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
-
-        return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
+    def _calculate_ypr_accelerations(self, sc: Spacecraft, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
+        ypr_rates = sc.angular_velocity.calculate_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        angular_accelerations = dynamics.calculate_angular_acceleration(sc.angular_velocity, sc.inertia_tensor, self.disturbance_torque, sc.orbit.mean_motion)
+        ypr_accelerations = ypr_rates_state_derivative @ np.vstack((ypr_rates, angular_accelerations))
+        return ypr_accelerations
     
     def _calculate_dynamic_transfer_matrix(self, sc: Spacecraft) -> np.ndarray:
         ypr_rate_state_derivative = sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion)  
