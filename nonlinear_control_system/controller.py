@@ -72,6 +72,41 @@ class StateFeedbackController(Controller):
     
         return control.StateSpace(a, b, c, d)
 
+
+class PDController(Controller):
+    """ Proportional-Derivative (PD) Controller for spacecraft attitude control assuming a double integrator plant. """
+    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
+        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
+
+        self.sc = spacecraft
+        self._calculate_gains(natural_frequency, damping_ratio)
+
+    def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
+        """ Control law u = -K_d * x_e - K_p * x_e_dot, where K_d is the derivative gain and K_p is the proportional gain. """
+        attitude_error = target_attitude - self.sc.attitude
+        attitude_error = attitude_error.to_vector()  # convert to vector for calculations
+        attitude_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+
+        control_output = -self.derivative_gain @ attitude_derivative - self.proportional_gain @ attitude_error
+        return control_output
+    
+    def _calculate_gains(self, natural_frequency: float, damping_ratio: float) -> None:
+        """
+        Calculate the gains for the PD controller using pole placement.
+        Characteristic polynomial of closed-loop system with double integrator plant is:
+        s^2 + K_d * s + K_p = 0
+        where K_d is the derivative gain and K_p is the proportional gain.
+        Reference form for pole placement is:
+        s^2 + 2ζω_0 s + ω_0^2 = 0
+        where ζ is the damping ratio and ω_0 is the natural frequency.
+        """
+        # assuming decoupled control for each axis -> diagonal gain matrices
+        K_p = np.eye(3) * natural_frequency**2  # Proportional gain
+        K_d = np.eye(3) * 2 * damping_ratio * natural_frequency  # Derivative gain
+
+        self.proportional_gain = K_p
+        self.derivative_gain = K_d
+
     
 class NDIController(Controller):
     """ Nonlinear Dynamic Inversion (NDI) Controller for spacecraft attitude control. """
