@@ -95,12 +95,12 @@ class NDIController(Controller):
         self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
 
     def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
-        virtual_control_output = self.linear_controller.calculate_control_output(attitude_error)
-        ypr_rates_derivative = self.sc.angular_velocity.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion)
-
-        transform_matrix = ypr_rates_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
-        inversion_offset = self._calculate_inversion_offset(ypr_rates_derivative, transform_matrix)
-        return np.linalg.inv(transform_matrix) @ (virtual_control_output - inversion_offset)
+        target_ypr_accelerations = self.linear_controller.calculate_control_output(attitude_error) # virtual control output nu(x)
+        current_ypr_accelerations = self.sc.angular_velocity.calculate_ypr_acceleration(self.sc.attitude, self.sc.orbit.mean_motion) # l(x)
+        ypr_acceleration_error = target_ypr_accelerations - current_ypr_accelerations # nu(x) - l(x)
+        dynamic_inversion_matrix = self._calculate_dynamic_inversion_matrix(ypr_acceleration_error) # M(x)
+        control_torque = dynamic_inversion_matrix @ (ypr_acceleration_error - self.disturbance_torque) # M(x)^-1 * (nu(x) - l(x))
+        return control_torque
     
     def _calculate_inversion_offset(self, ypr_rates_derivative: np.ndarray, transform_matrix: np.ndarray) -> np.ndarray:
         angular_velocity = self.sc.angular_velocity
@@ -109,6 +109,11 @@ class NDIController(Controller):
         accelerations = -self.j_inv @ np.cross(angular_velocity.flatten(), (self.sc.inertia_tensor @ angular_velocity).flatten()).reshape(3, 1)
 
         return ypr_rates_derivative @ np.vstack((ypr_rates, accelerations)) + transform_matrix @ self.disturbance_torque
+    
+    def _calculate_dynamic_inversion_matrix(self, ypr_rates: BodyRates) -> np.ndarray:
+        ypr_rate_state_derivative = ypr_rates.calculate_ypr_rate_derivative(self.sc.attitude, self.sc.orbit.mean_motion)  
+        dynamic_transfer_matrix = ypr_rate_state_derivative @ np.vstack((np.zeros((3, 3)), self.j_inv))
+        return np.linalg.inv(dynamic_transfer_matrix)
     
     @staticmethod
     def get_system_model() -> control.StateSpace:
