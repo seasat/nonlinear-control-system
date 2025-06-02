@@ -165,7 +165,7 @@ class NDIController(Controller):
 
 class TSSController(Controller):
     """ Time-Scale Separation (TSS) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex]) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
@@ -173,40 +173,38 @@ class TSSController(Controller):
         self.disturbance_torque = disturbance_torque
 
         self.J_INV = np.linalg.inv(spacecraft.inertia_tensor)
-        self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
+        self._calculate_gains(natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
-        target_ypr_rates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
+        target_ypr_rates = YPRRates(self.outer_loop_gains @ attitude_error)
         target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
-        target_angular_acceleration = self.linear_controller.derivative_gain @ angular_velocity_error
+        target_angular_acceleration = self.inner_loop_gains @ angular_velocity_error
 
         control_torque = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1) - self.disturbance_torque
         return control_torque
     
-    @staticmethod
-    def get_system_model() -> control.StateSpace:
+    def _calculate_gains(self, natural_frequency: float, damping_ratio: float) -> None:
         """
-        Get state space of double integrator system after dynamic inversion where plant is
-        G(s) = 1/s^2
+        Calculate the gains for the TSS controller using pole placement.
+        Characteristic polynomial of closed-loop system with double integrator plant is:
+        s^2 + K_1 * s + K_1 * K_2 = 0
+        where K_d is the derivative gain and K_p is the proportional gain.
+        Reference form for pole placement is:
+        s^2 + 2ζω_0 s + ω_0^2 = 0
+        where ζ is the damping ratio and ω_0 is the natural frequency.
         """
-        # double integrator system
-        a = np.zeros((6, 6))
-        a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
-
-        b = np.zeros((6, 3))
-        b[3:6, 0:3] = np.eye(3)  # Control torque affects the angular velocity
-
-        c = np.eye(6)  # Track all outputs
-        d = np.zeros((6, 3))  # No feedthrough
-        
-        return control.StateSpace(a, b, c, d)
+        # assuming decoupled control for each axis -> diagonal gain matrices
+        K_1 = np.eye(3) * 2 * natural_frequency * damping_ratio  # inner loop gain
+        K_2 = np.eye(3) * natural_frequency / 2 / damping_ratio  # outer loop gain
+        self.inner_loop_gains = K_1
+        self.outer_loop_gains = K_2
 
 
 class INDIController(Controller):
