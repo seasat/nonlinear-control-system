@@ -59,7 +59,7 @@ class PDController(Controller):
     @staticmethod
     def get_system_model(spacecraft: Spacecraft) -> control.StateSpace:
         """
-        Get the system matrices A and B for the linearized system
+        Get the state space representation for the linearized system
         dx/dt = A @ x + B @ u
         y = C @ x + D @ u
         with state vector x and output vector y.
