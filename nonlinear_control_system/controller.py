@@ -4,6 +4,7 @@ import control
 from spacecraft import Spacecraft
 from attitude.angular_velocity import YPRRates, BodyRates
 import dynamics
+from attitude import Attitude
 
 
 class Controller:
@@ -24,14 +25,20 @@ class StateFeedbackController(Controller):
 
         self.sc = spacecraft # for derivative calculation
         self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
+        self.target_body_rates = BodyRates([0, 0, 0])  # Initialize target body rates
 
-    def calculate_control_output(self, attitude_error: np.ndarray) -> np.ndarray:
-        """ Control law u = -K * x, where K is the feedback gain matrix and x is the state vector. """
-        control_output = -self.gains @ self.get_state_vector()
+    def calculate_control_output(self, target_attitude: np.ndarray) -> np.ndarray:
+        """ Control law u = -K * x_e, where K is the feedback gain matrix and x_e is the state error. """
+        target_state = self.get_state_vector(self.sc.attitude, self.sc.angular_velocity)
+        sc_state = self.get_state_vector(self.sc.attitude, self.sc.angular_velocity)
+        state_error = sc_state - target_state
+
+        control_output = -self.gains @ state_error
         return control_output
     
-    def get_state_vector(self) -> np.ndarray:
-        return np.vstack((self.sc.attitude.to_vector(), self.sc.angular_velocity))
+    @staticmethod
+    def get_state_vector(attitude: Attitude, body_rates: BodyRates) -> np.ndarray:
+        return np.vstack((attitude.to_vector(), body_rates))
 
     @staticmethod
     def calculate_poles(natural_frequency: float, damping_ratio: float) -> np.ndarray:
