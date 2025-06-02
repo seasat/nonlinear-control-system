@@ -98,8 +98,9 @@ class NDIController(Controller):
         dynamic_transfer_matrix = self._calculate_dynamic_transfer_matrix(self.sc) # M(x)
 
         target_ypr_accelerations = self.linear_controller.calculate_control_output(attitude_error) # virtual control output nu(x)
-        current_ypr_accelerations = self.sc.angular_velocity.calculate_ypr_acceleration(self.sc.attitude, self.sc.orbit.mean_motion) # l(x)
+        current_ypr_accelerations = self._calculate_ypr_accelerations(...) # l(x)
         ypr_acceleration_error = target_ypr_accelerations - current_ypr_accelerations # nu(x) - l(x)
+
         control_torque = dynamic_inversion_matrix @ (ypr_acceleration_error - self.disturbance_torque) # M(x)^-1 * (nu(x) - l(x))
         return control_torque
     
