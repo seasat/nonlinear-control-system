@@ -31,7 +31,7 @@ class StateFeedbackController(Controller):
         return control_output
     
     def get_state_vector(self) -> np.ndarray:
-        return np.hstack((self.sc.attitude.to_vector(), self.sc.angular_velocity.flatten()))
+        return np.vstack((self.sc.attitude.to_vector(), self.sc.angular_velocity))
 
     @staticmethod
     def calculate_poles(natural_frequency: float, damping_ratio: float) -> np.ndarray:
