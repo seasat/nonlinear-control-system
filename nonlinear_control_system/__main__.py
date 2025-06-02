@@ -50,7 +50,7 @@ def main():
     simulation.plot_attitude_errors()
     simulation.plot_control_torques()
 
-    #ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, system_poles)
+    #ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
     #sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for NDI simulation
     #simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     #simulation_ndi.plot_attitudes()

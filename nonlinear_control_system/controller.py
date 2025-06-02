@@ -110,7 +110,7 @@ class PDController(Controller):
     
 class NDIController(Controller):
     """ Nonlinear Dynamic Inversion (NDI) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex]) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency, damping_ratio) -> None:
         """ Initialize the NDIController class with a spacecraft and linear controller parameters. """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
@@ -119,7 +119,7 @@ class NDIController(Controller):
         self.disturbance_torque = disturbance_torque
 
         self.j_inv = np.linalg.inv(spacecraft.inertia_tensor)
-        self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
+        self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
