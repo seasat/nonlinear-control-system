@@ -37,7 +37,7 @@ def main():
         900.1: YawPitchRoll([np.deg2rad(0), np.deg2rad(0), np.deg2rad(0)])
     }
     NATURAL_FREQUENCY = 0.1 # rad/s
-    DAMPING_RATIO = 0.99
+    DAMPING_RATIO = 0.9
 
     #plt.rc('text', usetex=True)
 
