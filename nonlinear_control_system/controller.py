@@ -83,7 +83,7 @@ class PDController(Controller):
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K_d * x_e - K_p * x_e_dot, where K_d is the derivative gain and K_p is the proportional gain. """
-        attitude_error = target_attitude - self.sc.attitude # Δθ = θ_d - θ
+        attitude_error =  self.sc.attitude - target_attitude # Δθ = θ - θ_d
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
         attitude_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
 
