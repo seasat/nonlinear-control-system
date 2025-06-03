@@ -191,7 +191,7 @@ class TSSController(Controller):
 
 class INDIController(Controller):
     """ Inverse Nonlinear Dynamic Inversion (INDI) Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, closed_loop_poles: list[complex]) -> None:
+    def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
         assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
 
@@ -200,7 +200,7 @@ class INDIController(Controller):
         self.last_control_torque = np.zeros((3, 1))
         self.last_angular_acceleration = np.zeros((3, 1))
 
-        self.linear_controller = PDController(spacecraft, self.get_system_model(), closed_loop_poles)
+        self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ

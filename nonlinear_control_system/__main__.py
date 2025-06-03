@@ -56,17 +56,17 @@ def main():
     #simulation_ndi.plot_attitudes()
     #simulation_ndi.plot_attitude_errors()
 
-    tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
-    simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
-    simulation_tss.plot_attitudes()
-    simulation_tss.plot_attitude_errors()
+    #tsss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
+    #sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
+    #simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
+    #simulation_tss.plot_attitudes()
+    #simulation_tss.plot_attitude_errors()
 
-    #indi_controller = INDIController(sc, DISTURBANCE_TORQUE, system_poles)
-    #sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for INDI simulation
-    #simulation_indi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, indi_controller)
-    #simulation_indi.plot_attitudes()
-    #simulation_indi.plot_attitude_errors()
+    indi_controller = INDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
+    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for INDI simulation
+    simulation_indi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, indi_controller)
+    simulation_indi.plot_attitudes()
+    simulation_indi.plot_attitude_errors()
 
     plt.show()
 
