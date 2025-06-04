@@ -7,7 +7,7 @@ class Attitude:
     def __init__(self) -> None:
         pass
 
-    def calculate_derivative(self, body_rates: BodyRates, n: float) -> np.ndarray:
+    def calculate_derivative(self, body_rates: BodyRates, mean_motion: float) -> np.ndarray:
         """
         Calculate the derivative of the attitude based on body rates and mean motion.
         """
