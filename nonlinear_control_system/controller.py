@@ -24,7 +24,7 @@ class StateFeedbackController(Controller):
 
         self.sc = spacecraft # for derivative calculation
         self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
-        self.target_body_rates = np.array([0, 0, 0])  # linearization point
+        self.target_body_rates = np.zeros((3, 1))  # linearization point
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K * x_e, where K is the feedback gain matrix and x_e is the state error. """
