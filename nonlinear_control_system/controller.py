@@ -162,7 +162,7 @@ class TSSController(Controller):
 
         # outer loop
         target_ypr_rates: np.ndarray = self.outer_loop_gains @ attitude_error
-        target_angular_velocity = sc.attitude.derivative_to_body_rates(target_ypr_rates, self.sc.orbit.mean_motion)
+        target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_ypr_rates, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
