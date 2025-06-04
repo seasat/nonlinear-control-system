@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 
-from . import YawPitchRoll
+from attitude import YawPitchRoll
 
 class AngularVelocity(np.ndarray):
     def __new__(cls, input_array: np.ndarray) -> AngularVelocity:
