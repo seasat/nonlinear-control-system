@@ -5,7 +5,7 @@ import control
 
 from spacecraft import Spacecraft
 from simulation import Simulation
-from attitude import YawPitchRoll, BodyRates
+from attitude import YawPitchRoll
 from orbit import Orbit
 from controller import StateFeedbackController, NDIController, TSSController, INDIController
 import dynamics
@@ -42,7 +42,7 @@ def main():
     #plt.rc('text', usetex=True)
 
     system_poles = StateFeedbackController.calculate_poles(NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, BodyRates([0, 0, 0]), ORBIT)
+    sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.array([0, 0, 0]), ORBIT)
 
     state_feedback_controller = StateFeedbackController(sc, StateFeedbackController.get_nadir_linearized_state_space(sc), system_poles)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, state_feedback_controller)
@@ -51,19 +51,19 @@ def main():
     simulation.plot_control_torques()
 
     ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for NDI simulation
+    sc.set_state(INITIAL_ATTITUDE, np.array([0, 0, 0]))  # Reset attitude and angular velocity for NDI simulation
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
     tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
+    sc.set_state(INITIAL_ATTITUDE, np.array([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
 
     indi_controller = INDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, BodyRates([0, 0, 0]))  # Reset attitude and angular velocity for INDI simulation
+    sc.set_state(INITIAL_ATTITUDE, np.array([0, 0, 0]))  # Reset attitude and angular velocity for INDI simulation
     simulation_indi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, indi_controller)
     simulation_indi.plot_attitudes()
     simulation_indi.plot_attitude_errors()
