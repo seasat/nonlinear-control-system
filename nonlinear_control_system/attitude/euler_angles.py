@@ -82,7 +82,50 @@ class YawPitchRoll(EulerAngles):
         return np.array([self.roll, self.pitch, self.yaw]).reshape(3, 1)
 
     def calculate_derivative(self, body_rates: BodyRates, mean_motion: float) -> np.ndarray:
-        return body_rates.to_ypr_rates(self, mean_motion)
+        matrix = self._calculate_ypr_rate_matrix()
+        affine_vector = self._calculate_ypr_rate_vector(mean_motion)
+        return matrix @ body_rates + affine_vector
+
+    def _calculate_ypr_rate_matrix(self) -> np.ndarray:
+        matrix = np.array([
+            [1, np.sin(self.roll) * np.tan(self.pitch), np.cos(self.roll) * np.tan(self.pitch)],
+            [0, np.cos(self.roll), -np.sin(self.roll)],
+            [0, np.sin(self.roll) / np.cos(self.pitch), np.cos(self.roll) / np.cos(self.pitch)]
+        ])
+        return matrix
+    
+    def _calculate_ypr_rate_vector(self, mean_motion: float) -> np.ndarray:
+        affine_vector = mean_motion * np.array([
+            [np.sin(self.yaw) / np.cos(self.pitch)],
+            [np.cos(self.yaw)],
+            [np.tan(self.pitch) * np.sin(self.yaw)]
+        ])
+        return affine_vector
+
+    def calculate_ypr_rate_state_derivative(self, body_rates: BodyRates, n: float) -> np.ndarray:
+        """
+        Calculate the derivative of the yaw, pitch, and roll rates.
+        """
+        assert isinstance(body_rates, BodyRates), "Body rates must be an instance of BodyRates"
+        roll, pitch, yaw = self.roll, self.pitch, self.yaw
+        omega_1, omega_2, omega_3 = body_rates.flatten()
+
+        a11 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) * np.tan(pitch)
+        a12 = (np.sin(roll) * omega_2 + np.cos(roll) * omega_3) / np.cos(pitch)**2 + n * np.sin(yaw) * np.tan(pitch) / np.cos(pitch)
+        a13 = -n / np.cos(pitch) * np.cos(yaw)
+        a21 = -np.sin(roll) * omega_2 - np.cos(roll) * omega_3
+        a22 = 0
+        a23 = -n * np.sin(yaw)
+        a31 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) / np.cos(pitch)
+        a32 = (np.sin(roll) * omega_2 + np.cos(roll) * omega_3) * np.tan(pitch) / np.cos(pitch) + n * np.sin(yaw) / np.cos(pitch)**2
+        a33 = n * np.tan(pitch) * np.cos(yaw)
+        a = np.array([
+            [a11, a12, a13],
+            [a21, a22, a23],
+            [a31, a32, a33]
+        ])
+
+        return np.hstack([a, self._calculate_ypr_rate_matrix()])
 
     def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
