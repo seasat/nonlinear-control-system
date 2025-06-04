@@ -37,11 +37,11 @@ class Quaternion(Attitude):
         return matrix
     
     def _calculate_quaternion_rate_vector(self, mean_motion: float) -> np.ndarray:
-        return mean_motion * np.array([
-            [2 * (self.q1 * self.q2 + self.q3 * self.q4)],
-            [1 - 2 * (self.q1**2 + self.q3**2)],
-            [2 * (self.q3 * self.q2 - self.q1 * self.q4)],
-            [0]
+        return 0.5 * mean_motion * np.array([
+            [self.q3],
+            [self.q4],
+            [-self.q1],
+            [-self.q2]
         ])
     
     def to_vector(self) -> np.ndarray:
