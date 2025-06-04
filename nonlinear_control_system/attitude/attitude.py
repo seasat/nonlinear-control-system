@@ -12,6 +12,18 @@ class Attitude:
         """
         raise NotImplementedError("This method should be implemented by subclasses.")
     
+    def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        """
+        Convert the derivative of the attitude to body rates.
+        """
+        raise NotImplementedError("This method should be implemented by subclasses.")
+
+    def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        """
+        Calculate the change of attitude derivative with respect to attitude rates and angular accelerations.
+        """
+        raise NotImplementedError("This method should be implemented by subclasses.")
+    
     def to_vector(self) -> np.ndarray:
         """
         Convert the attitude to a vector representation.

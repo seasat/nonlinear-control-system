@@ -102,13 +102,14 @@ class YawPitchRoll(EulerAngles):
         ])
         return affine_vector
 
-    def calculate_ypr_rate_state_derivative(self, body_rates: np.ndarray, n: float) -> np.ndarray:
+    def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
         """
         Calculate the derivative of the yaw, pitch, and roll rates.
         """
         assert body_rates.shape == (3, 1), "Body rates must be a 3x1 ndarray"
         roll, pitch, yaw = self.roll, self.pitch, self.yaw
         omega_1, omega_2, omega_3 = body_rates.flatten()
+        n = mean_motion
 
         a11 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) * np.tan(pitch)
         a12 = (np.sin(roll) * omega_2 + np.cos(roll) * omega_3) / np.cos(pitch)**2 + n * np.sin(yaw) * np.tan(pitch) / np.cos(pitch)
