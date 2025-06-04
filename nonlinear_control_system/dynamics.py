@@ -1,6 +1,6 @@
 import numpy as np
 
-from attitude import YawPitchRoll, BodyRates
+from attitude import YawPitchRoll
 
 
 def calculate_angular_acceleration(angular_velocity: np.ndarray, inertia_tensor: np.matrix, torque: np.ndarray, mean_motion: float) -> np.ndarray:
@@ -15,7 +15,7 @@ def calculate_angular_acceleration(angular_velocity: np.ndarray, inertia_tensor:
 def calculate_state_change(state: np.ndarray, time: None, inertia_tensor: np.ndarray, torque: np.ndarray, mean_motion: float) -> np.ndarray:
     roll, pitch, yaw = state[:3]
     attitude = YawPitchRoll([roll, pitch, yaw])
-    angular_velocity = BodyRates(state[3:6])
+    angular_velocity = state[3:6]
 
     angular_acceleration = calculate_angular_acceleration(angular_velocity, inertia_tensor, torque, mean_motion)
     ypr_rates = angular_velocity.to_ypr_rates(attitude, mean_motion)
