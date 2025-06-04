@@ -26,6 +26,15 @@ class Quaternion(Attitude):
         """ Return as column vector. """
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
     
+
+    def __sub__(self, other: Quaternion) -> Quaternion:
+        return Quaternion(
+            self.q1 - other.q1,
+            self.q2 - other.q2,
+            self.q3 - other.q3,
+            self.q4 - other.q4
+        )
+    
     def __matmul__(self, other: Quaternion) -> Quaternion:
         """
         Successive rotations of two quaternions.
