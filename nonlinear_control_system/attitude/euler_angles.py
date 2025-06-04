@@ -127,6 +127,13 @@ class YawPitchRoll(EulerAngles):
 
         return np.hstack([a, self._calculate_ypr_rate_matrix()])
 
+    def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        assert attitude_rates.shape == (3, 1), "Attitude rates must be a 3x1 ndarray"
+        
+        matrix = self._calculate_ypr_rate_matrix()
+        affine_vector = self._calculate_ypr_rate_vector(mean_motion)
+        return np.linalg.inv(matrix) @ (self - affine_vector)
+
     def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
         Add two attitudes in yaw-pitch-roll representation together.
