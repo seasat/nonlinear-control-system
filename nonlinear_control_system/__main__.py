@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-import control
 
 from spacecraft import Spacecraft
 from simulation import Simulation
 from attitude import YawPitchRoll
 from orbit import Orbit
 from controller import StateFeedbackController, NDIController, TSSController, INDIController
-import dynamics
 
 
 def main():
