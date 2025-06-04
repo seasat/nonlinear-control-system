@@ -2,7 +2,6 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-from angular_rates import YPRRates, BodyRates, AngularVelocity
 import dynamics
 from attitude import Attitude
 
@@ -25,7 +24,7 @@ class StateFeedbackController(Controller):
 
         self.sc = spacecraft # for derivative calculation
         self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
-        self.target_body_rates = BodyRates([0, 0, 0])  # linearization point
+        self.target_body_rates = np.array([0, 0, 0])  # linearization point
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K * x_e, where K is the feedback gain matrix and x_e is the state error. """
@@ -37,7 +36,7 @@ class StateFeedbackController(Controller):
         return control_output
     
     @staticmethod
-    def get_state_vector(attitude: Attitude, body_rates: BodyRates) -> np.ndarray:
+    def get_state_vector(attitude: Attitude, body_rates: np.ndarray) -> np.ndarray:
         return np.vstack((attitude.to_vector(), body_rates))
 
     @staticmethod
@@ -122,7 +121,7 @@ class NDIController(Controller):
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        ypr_rates_state_derivative = self.sc.angular_velocity.calculate_ypr_rate_state_derivative(self.sc.attitude, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω)
+        ypr_rates_state_derivative = self.sc.attitude.calculate_ypr_rate_state_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω + n*b(θ))
 
         target_ypr_accelerations = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
         current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
@@ -135,7 +134,7 @@ class NDIController(Controller):
         return control_torque
     
     def _calculate_ypr_accelerations(self, sc: Spacecraft, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
-        ypr_rates = sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        ypr_rates = sc.attitude.calculate_derivative(sc.angular_velocity, sc.orbit.mean_motion) 
         angular_accelerations = dynamics.calculate_angular_acceleration(sc.angular_velocity, sc.inertia_tensor, self.disturbance_torque, sc.orbit.mean_motion)
         ypr_accelerations = ypr_rates_state_derivative @ np.vstack((ypr_rates, angular_accelerations))
         return ypr_accelerations
@@ -162,8 +161,8 @@ class TSSController(Controller):
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
-        target_ypr_rates = YPRRates(self.outer_loop_gains @ attitude_error)
-        target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        target_ypr_rates: np.ndarray = self.outer_loop_gains @ attitude_error
+        target_angular_velocity = sc.attitude.derivative_to_body_rates(target_ypr_rates, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
@@ -201,8 +200,8 @@ class INDIController(TSSController):
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
-        target_ypr_rates = YPRRates(self.outer_loop_gains @ attitude_error)
-        target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        target_ypr_rates: np.ndarray = self.outer_loop_gains @ attitude_error
+        target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_ypr_rates, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
