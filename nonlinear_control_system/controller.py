@@ -2,7 +2,7 @@ import numpy as np
 import control
 
 from spacecraft import Spacecraft
-from attitude.angular_velocity import YPRRates, BodyRates
+from attitude.angular_velocity import YPRRates, BodyRates, AngularVelocity
 import dynamics
 from attitude import Attitude
 
@@ -83,9 +83,9 @@ class PDController(Controller):
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K_d * x_e - K_p * x_e_dot, where K_d is the derivative gain and K_p is the proportional gain. """
-        attitude_error =  self.sc.attitude - target_attitude # Δθ = θ - θ_d
-        attitude_error = attitude_error.to_vector()  # convert to vector for calculations
-        attitude_derivative = self.sc.angular_velocity.to_ypr_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        attitude_difference: Attitude =  self.sc.attitude - target_attitude # Δθ = θ - θ_d
+        attitude_error: np.ndarray = attitude_difference.to_vector()  # convert to vector for calculations
+        attitude_derivative: np.ndarray = self.sc.attitude.calculate_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion)
 
         control_output = -self.derivative_gain @ attitude_derivative - self.proportional_gain @ attitude_error
         return control_output
