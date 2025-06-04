@@ -22,6 +22,10 @@ class Quaternion(Attitude):
         self.q3 = q3
         self.q4 = q4
     
+    def to_vector(self) -> np.ndarray:
+        """ Return as column vector. """
+        return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
+    
     def __matmul__(self, other: Quaternion) -> Quaternion:
         """
         Successive rotations of two quaternions.
