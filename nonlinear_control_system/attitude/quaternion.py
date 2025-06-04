@@ -22,10 +22,31 @@ class Quaternion(Attitude):
         self.q3 = q3
         self.q4 = q4
     
+    def calculate_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        matrix = self._calculate_quaternion_rate_matrix()
+        affine_vector = self._calculate_quaternion_rate_vector(mean_motion)
+        return matrix @ body_rates + affine_vector
+    
+    def _calculate_quaternion_rate_matrix(self) -> np.ndarray:
+        matrix =  0.5 * np.array([
+            [self.q4, -self.q3, self.q2, self.q1],
+            [self.q3, self.q4, -self.q1, self.q2],
+            [-self.q2, self.q1, self.q4, self.q3],
+            [-self.q1, -self.q2, -self.q3, self.q4]
+        ])
+        return matrix
+    
+    def _calculate_quaternion_rate_vector(self, mean_motion: float) -> np.ndarray:
+        return mean_motion * np.array([
+            [2 * (self.q1 * self.q2 + self.q3 * self.q4)],
+            [1 - 2 * (self.q1**2 + self.q3**2)],
+            [2 * (self.q3 * self.q2 - self.q1 * self.q4)],
+            [0]
+        ])
+    
     def to_vector(self) -> np.ndarray:
         """ Return as column vector. """
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
-    
 
     def __sub__(self, other: Quaternion) -> Quaternion:
         return Quaternion(
