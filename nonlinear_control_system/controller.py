@@ -203,20 +203,21 @@ class INDIController(Controller):
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
-        attitude_error = attitude_error.to_vector()
+        # linear control input
+        target_angular_acceleration = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
+        measured_angular_acceleration = dynamics.calculate_angular_acceleration(
+            self.sc.angular_velocity, 
+            self.sc.inertia_tensor, 
+            self.disturbance_torque, 
+            self.sc.orbit.mean_motion
+        ) # assuming ideal measurement of angular acceleration
+        angular_acceleration_error = target_angular_acceleration - measured_angular_acceleration
 
-        # outer loop
-        target_ypr_rates: YPRRates = YPRRates(self.linear_controller.proportional_gain @ attitude_error)
-        target_body_rates: BodyRates = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+        # incremental dynamic inversion
+        torque_increment = self.sc.inertia_tensor @ angular_acceleration_error
+        control_torque = self.last_control_torque + torque_increment
 
-        # inner loop
-        body_rate_error = target_body_rates - self.sc.angular_velocity # control variable
-        target_angular_acceleration = self.linear_controller.derivative_gain @ body_rate_error # virtual control output
-        control_torque_increment = self.sc.inertia_tensor @ (target_angular_acceleration - self.last_angular_acceleration) # dynamic inversion
-        control_torque = self.last_control_torque + control_torque_increment # incremental control
-
-        # log reference values for linearization at next step
-        self.last_angular_acceleration = target_angular_acceleration
+        # log torque for next iteration
         self.last_control_torque = control_torque
+
         return control_torque
