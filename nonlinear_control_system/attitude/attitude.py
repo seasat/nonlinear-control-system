@@ -9,35 +9,25 @@ class Attitude(ABC):
 
     @abstractmethod
     def calculate_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
-        """
-        Calculate the derivative of the attitude based on body rates and mean motion.
-        """
+        """ Calculate the derivative of the attitude based on body rates and mean motion.  """
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     @abstractmethod
     def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
-        """
-        Convert the derivative of the attitude to body rates.
-        """
+        """ Convert the derivative of the attitude to body rates.  """
         raise NotImplementedError("This method should be implemented by subclasses.")
 
     @abstractmethod
     def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
-        """
-        Calculate the change of attitude derivative with respect to attitude rates and angular accelerations.
-        """
+        """ Calculate the change of attitude derivative with respect to attitude rates and angular accelerations.  """
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     @abstractmethod
     def to_vector(self) -> np.ndarray:
-        """
-        Convert the attitude to a vector representation.
-        """
+        """ Convert the attitude to a vector representation.  """
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     @abstractmethod
     def __sub__(self, other: Attitude) -> Attitude:
-        """
-        Subtract two attitudes.
-        """
+        """ Subtract two attitudes.  """
         raise NotImplementedError("This method should be implemented by subclasses.")
