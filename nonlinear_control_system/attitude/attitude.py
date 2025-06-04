@@ -1,3 +1,6 @@
+from __future__ import annotations
+import numpy as np
+
 from . import BodyRates
 
 class Attitude:
@@ -13,5 +16,11 @@ class Attitude:
     def to_vector(self) -> np.ndarray:
         """
         Convert the attitude to a vector representation.
+        """
+        raise NotImplementedError("This method should be implemented by subclasses.")
+    
+    def __sub__(self, other: Attitude) -> Attitude:
+        """
+        Subtract two attitudes.
         """
         raise NotImplementedError("This method should be implemented by subclasses.")
