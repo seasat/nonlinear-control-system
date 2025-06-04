@@ -4,7 +4,6 @@ import numpy as np
 
 from . import Attitude
 from . import DirectionCosineMatrix as dcm
-from . import BodyRates
 
 
 class Axis(Enum):
@@ -81,7 +80,8 @@ class YawPitchRoll(EulerAngles):
         """Return roll, pitch and yaw as a column vector."""
         return np.array([self.roll, self.pitch, self.yaw]).reshape(3, 1)
 
-    def calculate_derivative(self, body_rates: BodyRates, mean_motion: float) -> np.ndarray:
+    def calculate_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        assert body_rates.shape == (3, 1), "Body rates must be a 3x1 ndarray"
         matrix = self._calculate_ypr_rate_matrix()
         affine_vector = self._calculate_ypr_rate_vector(mean_motion)
         return matrix @ body_rates + affine_vector
@@ -102,11 +102,11 @@ class YawPitchRoll(EulerAngles):
         ])
         return affine_vector
 
-    def calculate_ypr_rate_state_derivative(self, body_rates: BodyRates, n: float) -> np.ndarray:
+    def calculate_ypr_rate_state_derivative(self, body_rates: np.ndarray, n: float) -> np.ndarray:
         """
         Calculate the derivative of the yaw, pitch, and roll rates.
         """
-        assert isinstance(body_rates, BodyRates), "Body rates must be an instance of BodyRates"
+        assert body_rates.shape == (3, 1), "Body rates must be a 3x1 ndarray"
         roll, pitch, yaw = self.roll, self.pitch, self.yaw
         omega_1, omega_2, omega_3 = body_rates.flatten()
 
