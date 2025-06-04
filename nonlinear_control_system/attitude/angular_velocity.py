@@ -35,7 +35,7 @@ class BodyRates(AngularVelocity):
         affine_vector = YPRRates._calculate_ypr_rate_vector(attitude, n)
         return matrix @ self + affine_vector
 
-    def calculate_ypr_rate_derivative(self, attitude: YawPitchRoll, n: float) -> np.ndarray:
+    def calculate_ypr_rate_state_derivative(self, attitude: YawPitchRoll, n: float) -> np.ndarray:
         """
         Calculate the derivative of the yaw, pitch, and roll rates.
         """

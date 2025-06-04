@@ -43,9 +43,11 @@ class Simulation:
         self.angular_velocities = np.zeros_like(self.attitudes)
         self.target_attitudes = np.zeros_like(self.attitudes)
         self.attitude_errors = np.zeros_like(self.attitudes)
+        self.control_torques = np.zeros((self.sample_points, 3, 1))
 
         self._calculate_target_attitudes(target_attitude_commands)
         self._run_simulation()
+        self._calculate_errors()
     
     def _calculate_target_attitudes(self, target_attitude_commands: dict[float: Attitude]) -> None:
         """
@@ -68,10 +70,9 @@ class Simulation:
     def _run_simulation(self) -> None:
         for idx, time in enumerate(self.times):
             target_attitude: YawPitchRoll = self.target_attitudes[idx]
-            attitude_error: YawPitchRoll = target_attitude - self.spacecraft.attitude
 
             # calculate control torque
-            control_torque = self.controller.calculate_control_torque(attitude_error.to_vector())
+            control_torque = self.controller.calculate_control_output(target_attitude)
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
@@ -95,7 +96,12 @@ class Simulation:
             # log step data
             self.attitudes[idx] = self.spacecraft.attitude
             self.angular_velocities[idx] = angular_velocity
-            self.attitude_errors[idx] = attitude_error
+            self.control_torques[idx] = control_torque
+
+    def _calculate_errors(self) -> None:
+        for idx in range(len(self.attitude_errors)):
+            error = self.attitudes[idx] - self.target_attitudes[idx]
+            self.attitude_errors[idx] = error
     
     def plot_attitudes(self) -> None:
         """
@@ -103,20 +109,22 @@ class Simulation:
         """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        yaws = np.array([attitude.yaw for attitude in self.attitudes])
-        ax.plot(self.times, yaws, label="Yaw")
-        pitches = np.array([attitude.pitch for attitude in self.attitudes])
-        ax.plot(self.times, pitches, label="Pitch")
         rolls = np.array([attitude.roll for attitude in self.attitudes])
         ax.plot(self.times, rolls, label="Roll")
+        pitches = np.array([attitude.pitch for attitude in self.attitudes])
+        ax.plot(self.times, pitches, label="Pitch")
+        yaws = np.array([attitude.yaw for attitude in self.attitudes])
+        ax.plot(self.times, yaws, label="Yaw")
 
-        ax.set_prop_cycle(None)
+        #ax.set_prop_cycle(None)
         command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
-        ax.plot(self.times, command_yaws, label="Command Yaw", linestyle='--')
-        command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
-        ax.plot(self.times, command_pitches, label="Command Pitch", linestyle='--')
-        command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
-        ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
+        ax.plot(self.times, command_yaws, label="Command", linestyle='--', color='k')
+        #command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
+        #ax.plot(self.times, command_pitches, label="Command Pitch", linestyle='--')
+        #command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
+        #ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
+
+        ax.legend()
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
@@ -125,14 +133,31 @@ class Simulation:
         """ Plot the attitude errors over time. """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        yaws = np.array([error.yaw for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
-        pitches = np.array([error.pitch for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
         rolls = np.array([error.roll for error in self.attitude_errors])
         ax.plot(self.times, np.abs(rolls), label="Roll Error")
+        pitches = np.array([error.pitch for error in self.attitude_errors])
+        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
+        yaws = np.array([error.yaw for error in self.attitude_errors])
+        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
 
+        ax.legend()
         ax.set_yscale('log')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")
+    
+    def plot_control_torques(self) -> None:
+        """ Plot the control torques over time. """
+        fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
+
+        ax.plot(self.times, self.control_torques[:, 0, 0], label=r"${T}_{c,1}$")
+        ax.plot(self.times, self.control_torques[:, 1, 0], label=r"${T}_{c,2}$")
+        ax.plot(self.times, self.control_torques[:, 2, 0], label=r"${T}_{c,3}$")
+
+        magnitudes = np.linalg.norm(self.control_torques, axis=1)
+        ax.plot(self.times, magnitudes, label=r"$|\mathbf{T}_c|$", linestyle='--', color='k')
+
+        ax.legend()
+        ax.set_yscale('log')
+        ax.set_xlabel(r"Time $[\mathrm{s}]$")
+        ax.set_ylabel(r"Control Torque $[\mathrm{Nm}]$")
