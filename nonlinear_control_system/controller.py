@@ -189,20 +189,36 @@ class TSSController(Controller):
         self.outer_loop_gains = K_2
 
 
-class INDIController(Controller):
+class INDIController(TSSController):
     """ Inverse Nonlinear Dynamic Inversion (INDI) Controller for spacecraft attitude control. """
     def __init__(self, spacecraft: Spacecraft, disturbance_torque: np.ndarray, natural_frequency: float, damping_ratio: float) -> None:
-        assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
-        assert disturbance_torque.shape == (3, 1), "disturbance_torque must be a 3x1 matrix"
+        super().__init__(spacecraft, disturbance_torque, natural_frequency, damping_ratio)
 
-        self.sc = spacecraft
-        self.disturbance_torque = disturbance_torque
-        self.last_control_torque = np.zeros((3, 1))
-        self.last_angular_acceleration = np.zeros((3, 1))
-
-        self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
+        self.last_control_torque = np.zeros((3, 1))  # last control torque for incremental dynamic inversion
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
+        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
+        attitude_error = attitude_error.to_vector()  # convert to vector for calculations
+
+        # outer loop
+        target_ypr_rates = YPRRates(self.outer_loop_gains @ attitude_error)
+        target_angular_velocity = target_ypr_rates.to_body_rates(self.sc.attitude, self.sc.orbit.mean_motion)
+
+        # inner loop
+        angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
+        target_angular_acceleration = self.inner_loop_gains @ angular_velocity_error
+
+        # measured angular acceleration
+        measured_angular_acceleration = dynamics.calculate_angular_acceleration(
+            self.sc.angular_velocity, 
+            self.sc.inertia_tensor, 
+            self.disturbance_torque, 
+            self.sc.orbit.mean_motion
+        )
+
+        control_torque = self.sc.inertia_tensor @ (target_angular_acceleration - measured_angular_acceleration) + self.last_control_torque
+        return control_torque
+
         # linear control input
         target_angular_acceleration = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
         measured_angular_acceleration = dynamics.calculate_angular_acceleration(
@@ -214,8 +230,7 @@ class INDIController(Controller):
         angular_acceleration_error = target_angular_acceleration - measured_angular_acceleration
 
         # incremental dynamic inversion
-        torque_increment = self.sc.inertia_tensor @ angular_acceleration_error
-        control_torque = self.last_control_torque + torque_increment
+        control_torque = self.last_control_torque + self.j @ (target_angular_acceleration - self.last_angular_acceleration)
 
         # log torque for next iteration
         self.last_control_torque = control_torque
