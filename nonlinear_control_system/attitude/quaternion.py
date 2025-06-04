@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 
-from . import Attitude, DirectionCosineMatrix
+from . import Attitude#, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
 
 
 class Quaternion(Attitude):
@@ -57,49 +57,49 @@ class Quaternion(Attitude):
         q4 = result[3, 0]
         return cls(q1, q2, q3, q4)
     
-    # conversion methods
-    def to_dcm(self) -> DirectionCosineMatrix:
-        """
-        Convert the quaternion to a direction cosine matrix.
+    ## conversion methods
+    #def to_dcm(self) -> DirectionCosineMatrix:
+        #"""
+        #Convert the quaternion to a direction cosine matrix.
 
-        :return: An instance of DirectionCosineMatrix.
-        """
-        c11 = 1 - 2 * (self.q2**2 + self.q3**2)
-        c12 = 2 * (self.q1 * self.q2 + self.q3 * self.q4)
-        c13 = 2 * (self.q1 * self.q3 - self.q2 * self.q4)
-        c21 = 2 * (self.q1 * self.q2 - self.q3 * self.q4)
-        c22 = 1 - 2 * (self.q1**2 + self.q3**2)
-        c23 = 2 * (self.q2 * self.q3 + self.q1 * self.q4)
-        c31 = 2 * (self.q1 * self.q3 + self.q2 * self.q4)
-        c32 = 2 * (self.q2 * self.q3 - self.q1 * self.q4)
-        c33 = 1 - 2 * (self.q1**2 + self.q2**2)
+        #:return: An instance of DirectionCosineMatrix.
+        #"""
+        #c11 = 1 - 2 * (self.q2**2 + self.q3**2)
+        #c12 = 2 * (self.q1 * self.q2 + self.q3 * self.q4)
+        #c13 = 2 * (self.q1 * self.q3 - self.q2 * self.q4)
+        #c21 = 2 * (self.q1 * self.q2 - self.q3 * self.q4)
+        #c22 = 1 - 2 * (self.q1**2 + self.q3**2)
+        #c23 = 2 * (self.q2 * self.q3 + self.q1 * self.q4)
+        #c31 = 2 * (self.q1 * self.q3 + self.q2 * self.q4)
+        #c32 = 2 * (self.q2 * self.q3 - self.q1 * self.q4)
+        #c33 = 1 - 2 * (self.q1**2 + self.q2**2)
 
-        return DirectionCosineMatrix(np.asmatrix([
-            [c11, c12, c13],
-            [c21, c22, c23],
-            [c31, c32, c33]
-        ]))
+        #return DirectionCosineMatrix(np.asmatrix([
+            #[c11, c12, c13],
+            #[c21, c22, c23],
+            #[c31, c32, c33]
+        #]))
         
-    def to_crp(self) -> ClassicalRodriguezParameter:
-        """
-        Convert the quaternion to a Classical Rodriguez parameter.
+    #def to_crp(self) -> ClassicalRodriguezParameter:
+        #"""
+        #Convert the quaternion to a Classical Rodriguez parameter.
 
-        :return: An instance of ClassicalRodriguezParameter.
-        """
-        from . import ClassicalRodriguezParameter
-        tau1 = self.q1 / self.q4
-        tau2 = self.q2 / self.q4
-        tau3 = self.q3 / self.q4
-        return ClassicalRodriguezParameter(tau1, tau2, tau3)
+        #:return: An instance of ClassicalRodriguezParameter.
+        #"""
+        #from . import ClassicalRodriguezParameter
+        #tau1 = self.q1 / self.q4
+        #tau2 = self.q2 / self.q4
+        #tau3 = self.q3 / self.q4
+        #return ClassicalRodriguezParameter(tau1, tau2, tau3)
     
-    def to_mrp(self) -> ModifiedRodriguezParameter:
-        """
-        Convert the quaternion to a modified Rodriguez parameter.
+    #def to_mrp(self) -> ModifiedRodriguezParameter:
+        #"""
+        #Convert the quaternion to a modified Rodriguez parameter.
 
-        :return: An instance of ModifiedRodriguezParameter.
-        """
-        from . import ModifiedRodriguezParameter
-        sigma1 = self.q1 / (1 + self.q4)
-        sigma2 = self.q2 / (1 + self.q4)
-        sigma3 = self.q3 / (1 + self.q4)
-        return ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
+        #:return: An instance of ModifiedRodriguezParameter.
+        #"""
+        #from . import ModifiedRodriguezParameter
+        #sigma1 = self.q1 / (1 + self.q4)
+        #sigma2 = self.q2 / (1 + self.q4)
+        #sigma3 = self.q3 / (1 + self.q4)
+        #return ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
