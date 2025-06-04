@@ -4,6 +4,7 @@ import numpy as np
 
 from . import Attitude
 from . import DirectionCosineMatrix as dcm
+from . import BodyRates
 
 
 class Axis(Enum):
@@ -79,6 +80,9 @@ class YawPitchRoll(EulerAngles):
     def to_vector(self) -> np.ndarray:
         """Return roll, pitch and yaw as a column vector."""
         return np.array([self.roll, self.pitch, self.yaw]).reshape(3, 1)
+
+    def calculate_derivative(self, body_rates: BodyRates, mean_motion: float) -> np.ndarray:
+        return body_rates.to_ypr_rates(self, mean_motion)
 
     def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
