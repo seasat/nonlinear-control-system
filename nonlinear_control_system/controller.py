@@ -220,21 +220,3 @@ class INDIController(Controller):
         self.last_angular_acceleration = target_angular_acceleration
         self.last_control_torque = control_torque
         return control_torque
-
-    @staticmethod
-    def get_system_model() -> control.StateSpace:
-        """
-        Get state space of double integrator system after dynamic inversion where plant is
-        G(s) = 1/s^2
-        """
-        # double integrator system
-        a = np.zeros((6, 6))
-        a[0:3, 3:6] = np.eye(3)  # Identity matrix
-
-        b = np.zeros((6, 3))
-        b[3:6, 0:3] = np.eye(3)
-
-        c = np.eye(6)  # Track all outputs
-        d = np.zeros((6, 3))
-
-        return control.StateSpace(a, b, c, d)
