@@ -3,7 +3,7 @@ import control
 
 from spacecraft import Spacecraft
 import dynamics
-from attitude import Attitude
+from attitude import Attitude, YawPitchRoll, Quaternion
 
 
 class Controller:
@@ -23,7 +23,7 @@ class StateFeedbackController(Controller):
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
         self.sc = spacecraft # for derivative calculation
-        state_space = self.get_nadir_linearized_ypr_state_space(spacecraft)
+        state_space = self.get_state_space()
         self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
         self.target_body_rates = np.zeros((3, 1))  # linearization point
 
@@ -35,6 +35,14 @@ class StateFeedbackController(Controller):
 
         control_output = -self.gains @ state_error
         return control_output
+    
+    def get_state_space(self) -> control.StateSpace:
+        if isinstance(self.sc.attitude, YawPitchRoll):
+            return self.get_nadir_linearized_ypr_state_space(self.sc)
+        elif isinstance(self.sc.attitude, Quaternion):
+            return self.get_nadir_linearized_quaternion_state_space(self.sc)
+        else:
+            raise ValueError("Unsupported attitude representation. Use YawPitchRoll or Quaternion.")
     
     @staticmethod
     def get_state_vector(attitude: Attitude, body_rates: np.ndarray) -> np.ndarray:
