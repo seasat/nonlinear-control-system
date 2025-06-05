@@ -39,18 +39,17 @@ def main():
 
     #plt.rc('text', usetex=True)
 
-    system_poles = StateFeedbackController.calculate_poles(NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
     quaternion_commands = {t: att.to_quaternion() for t, att in ATTITUDE_COMMANDS.items()}
 
-    state_feedback_controller = StateFeedbackController(sc, system_poles)
+    state_feedback_controller = StateFeedbackController(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, state_feedback_controller)
     simulation.plot_attitudes()
     simulation.plot_attitude_errors()
     simulation.plot_control_torques()
 
     sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for linear quaternion simulation
-    state_feedback_quaternion_controller = StateFeedbackController(sc, system_poles)
+    state_feedback_quaternion_controller = StateFeedbackController(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation_linear_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, state_feedback_quaternion_controller)
 
     ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
