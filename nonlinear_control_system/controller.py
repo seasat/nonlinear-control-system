@@ -13,7 +13,7 @@ class Controller:
     
 class StateFeedbackController(Controller):
     """ State Feedback Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, state_space: control.StateSpace, closed_loop_poles: list[complex]) -> None:
+    def __init__(self, spacecraft: Spacecraft, closed_loop_poles: list[complex]) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
