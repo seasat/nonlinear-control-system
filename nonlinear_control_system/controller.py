@@ -13,7 +13,7 @@ class Controller:
     
 class StateFeedbackController(Controller):
     """ State Feedback Controller for spacecraft attitude control. """
-    def __init__(self, spacecraft: Spacecraft, closed_loop_poles: list[complex]) -> None:
+    def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
         """
         Initialize the Controller class with a spacecraft and controller parameters.
         
@@ -24,7 +24,8 @@ class StateFeedbackController(Controller):
 
         self.sc = spacecraft # for derivative calculation
         state_space = self.get_state_space()
-        self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
+        desired_poles = self.calculate_poles(natural_frequency, damping_ratio)
+        self.gains = control.place(state_space.A, state_space.B, desired_poles)
         self.target_body_rates = np.zeros((3, 1))  # linearization point
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
@@ -44,18 +45,27 @@ class StateFeedbackController(Controller):
         else:
             raise ValueError("Unsupported attitude representation. Use YawPitchRoll or Quaternion.")
     
+    def calculate_poles(self, natural_frequency: float, damping_ratio: float) -> list[complex]:
+        """
+        Calculate the poles for system with a characteristic formula of form
+        s^2 + 2ζω_0 s + ω_0^2 = 0
+        where ζ is the damping ratio and ω_0 is the natural frequency.
+        """
+        pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
+        conjugate_pole = complex(pole.real, -pole.imag)
+        if isinstance(self.sc.attitude, YawPitchRoll):
+            # For YawPitchRoll, we have 3 pairs of conjugate poles
+            return [pole, conjugate_pole] * 3
+        elif isinstance(self.sc.attitude, Quaternion):
+            # For Quaternion, we have 4 poles (1 real and 3 complex conjugates)
+            return [pole, conjugate_pole] * 3 + [pole]
+        else:
+            raise ValueError("Unsupported attitude representation. Use YawPitchRoll or Quaternion.")
+    
     @staticmethod
     def get_state_vector(attitude: Attitude, body_rates: np.ndarray) -> np.ndarray:
         return np.vstack((attitude.to_vector(), body_rates))
 
-    @staticmethod
-    def calculate_poles(natural_frequency: float, damping_ratio: float) -> np.ndarray:
-        pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
-        conjugate_pole = complex(pole.real, -pole.imag)
-        poles = [pole, conjugate_pole] * 3
-
-        return np.asarray(poles, dtype=complex)
-    
     @staticmethod
     def get_nadir_linearized_ypr_state_space(spacecraft: Spacecraft) -> control.StateSpace:
         """
