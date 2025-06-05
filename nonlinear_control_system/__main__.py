@@ -50,7 +50,8 @@ def main():
     simulation.plot_control_torques()
 
     sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for linear quaternion simulation
-    simulation_linear_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, state_feedback_controller)
+    state_feedback_quaternion_controller = StateFeedbackController(sc, StateFeedbackController.get_nadir_linearized_state_space(sc), system_poles)
+    simulation_linear_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, state_feedback_quaternion_controller)
 
     ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc.set_state(INITIAL_ATTITUDE, np.zeros((3, 1)))  # Reset attitude and angular velocity for NDI simulation
