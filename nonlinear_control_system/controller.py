@@ -58,7 +58,7 @@ class StateFeedbackController(Controller):
             return [pole, conjugate_pole] * 3
         elif isinstance(self.sc.attitude, Quaternion):
             # For Quaternion, we have 4 poles (1 real and 3 complex conjugates)
-            return [pole, conjugate_pole] * 3 + [pole]
+            return [pole, conjugate_pole] * 3 + [pole.real]
         else:
             raise ValueError("Unsupported attitude representation. Use YawPitchRoll or Quaternion.")
     
