@@ -49,6 +49,39 @@ class Quaternion(Attitude):
             [-self.q2]
         ])
     
+    def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        """
+        Return the derivative of the quaternion rates with respect to the state vector.
+        x = [q1, q2, q3, q4, omega1, omega2, omega3]^T
+
+        return: The 4x7 state derivative matrix.
+        """
+        # define shorthands
+        q1, q2, q3, q4 = self.q1, self.q2, self.q3, self.q4
+        omega1, omega2, omega3 = body_rates
+        n = mean_motion
+
+        # matrix components
+        a11 = -q1/q4 * omega1 + q1/q3 * omega2 - q1/q2 * omega3 - n * q1/q3
+        a12 = -q2/q4 * omega2 + omega3 - n * q2/q3
+        a13 = -q3/q4 * omega1 - omega2 - q3/q2 * omega3 + n
+        a14 = omega1 + q4/q3 * omega2 - q4/q2 * omega3 - n * q4/q3
+
+        a21 = -q1/q3 * omega1 - q1/q4 * omega2 - omega3 - n * q1/q4
+        a22 = -q2/q3 * omega1 - q2/q4 * omega2 + q2/q1 * omega3 -n * q2/q4
+        a23 = omega1 - q3/q4 * omega2 + q3/q1 * omega3 - n * q3/q4
+        a24 = -q4/q3 * omega1 + omega2 + q4/q1 * omega3 + n
+
+        a31 = q1/q2 * omega1 + omega2 - q1/q4 * omega3 -n
+        a32 = -omega1 - q2/q1 * omega2 - q2/q4 * omega3 + n * q2/q1
+        a33 = q3/q2 * omega1 - q3/q1 * omega2 - q3/q4 * omega3 + n * q3/q1
+        a34 = q4/q1 * omega1 + q4/q2 * omega2 + q4/q3 * omega3 + n * q4/q2
+
+        a41 = -omega1 + q1/q2 * omega2 + q1/q3 * omega3 + n * q1/q2
+        a42 = q2/q1 * omega1 - omega2 - q2/q3 * omega3 - n
+        a43 = q3/q1 * omega1 + q3/q2 * omega2 - omega3 + n * q3/q2
+        a44 = q4/q1 * omega1 + q4/q2 * omega2 + q4/q2 * omega3 + n * q4/q2
+    
     def to_vector(self) -> np.ndarray:
         """ Return as column vector. """
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
