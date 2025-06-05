@@ -4,6 +4,7 @@ import numpy as np
 
 from . import Attitude
 from . import DirectionCosineMatrix as dcm
+from . import Quaternion
 
 
 class Axis(Enum):
@@ -152,3 +153,14 @@ class YawPitchRoll(EulerAngles):
         assert isinstance(other, YawPitchRoll), "Can only subtract YawPitchRoll objects"
         new_angles = [self.wrap_angle(angle) for angle in [self.roll - other.roll, self.pitch - other.pitch, self.yaw - other.yaw]]
         return YawPitchRoll(new_angles)
+
+    def to_quaternion(self) -> Quaternion:
+        """ Convert the yaw-pitch-roll angles to a quaternion.  """
+        roll, pitch, yaw = self.roll, self.pitch, self.yaw
+
+        q1 = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+        q2 = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+        q3 = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+        q4 = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+
+        return Quaternion(q1, q2, q3, q4)
