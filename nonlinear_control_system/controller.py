@@ -23,6 +23,7 @@ class StateFeedbackController(Controller):
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
         self.sc = spacecraft # for derivative calculation
+        state_space = self.get_nadir_linearized_ypr_state_space(spacecraft)
         self.gains = control.place(state_space.A, state_space.B, closed_loop_poles)
         self.target_body_rates = np.zeros((3, 1))  # linearization point
 
@@ -48,12 +49,12 @@ class StateFeedbackController(Controller):
         return np.asarray(poles, dtype=complex)
     
     @staticmethod
-    def get_nadir_linearized_state_space(spacecraft: Spacecraft) -> control.StateSpace:
+    def get_nadir_linearized_ypr_state_space(spacecraft: Spacecraft) -> control.StateSpace:
         """
         Get the state space representation for the linearized system
         dx/dt = A @ x + B @ u
         y = C @ x + D @ u
-        with state vector x and output vector y.
+        with state vector x = [roll, pitch, yaw, omega1, omega2, omega3] and output vector y.
         """
         a = np.zeros((6, 6))
         a[0:3, 3:6] = np.eye(3)  # Identity matrix for angular velocity
