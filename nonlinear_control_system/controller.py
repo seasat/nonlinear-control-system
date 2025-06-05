@@ -71,6 +71,29 @@ class StateFeedbackController(Controller):
         d = np.zeros((6, 3))
     
         return control.StateSpace(a, b, c, d)
+    
+    @staticmethod
+    def get_nadir_linearized_quaternion_state_space(spacecraft: Spacecraft) -> control.StateSpace:
+        """
+        Get state space representation for the linearized system
+        dx/dt = A @ x + B @ u
+        y = C @ x + D @ u
+        with state vector x = [q1, q2, q3, q4, omega1, omega2, omega3] and output vector y = [q1, q2, q3, q4].
+        linearized around nadir pointing x = [0, 0, 0, 1, 0, 0, 0].
+        """
+        a = np.zeros((7, 7))
+        a[0, 4] = 0.5  # dq1/dt = 0.5 * ω1
+        a[1, 5] = 0.5  # dq2/dt = 0.5 * ω2
+        a[2, 6] = 0.5  # dq3/dt = 0.5 * ω3
+        
+        b = np.zeros((7, 3))
+        b[4:7, 0:3] = np.linalg.inv(spacecraft.inertia_tensor)
+
+        c = np.zeros((4, 7))
+        c[0:4, 0:4] = np.eye(4)  # quaternion output
+        d = np.zeros((4, 3))  # no feedthrough
+
+        return control.StateSpace(a, b, c, d)
 
 
 class PDController(Controller):
