@@ -81,6 +81,13 @@ class Quaternion(Attitude):
         a42 = q2/q1 * omega1 - omega2 - q2/q3 * omega3 - n
         a43 = q3/q1 * omega1 + q3/q2 * omega2 - omega3 + n * q3/q2
         a44 = q4/q1 * omega1 + q4/q2 * omega2 + q4/q2 * omega3 + n * q4/q2
+
+        return 0.5 * np.array([
+            [a11, a12, a13, a14, q4, -q3, q2],
+            [a21, a22, a23, a24, q3, q4, -q1],
+            [a31, a32, a33, a34, -q2, q1, q4],
+            [a41, a42, a43, a44, -q1, -q2, -q3]
+        ])
     
     def to_vector(self) -> np.ndarray:
         """ Return as column vector. """
