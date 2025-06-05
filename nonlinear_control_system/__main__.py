@@ -41,6 +41,7 @@ def main():
 
     system_poles = StateFeedbackController.calculate_poles(NATURAL_FREQUENCY, DAMPING_RATIO)
     sc = Spacecraft(INERTIA_TENSOR, INITIAL_ATTITUDE, np.zeros((3, 1)), ORBIT)
+    quaternion_commands = {t: att.to_quaternion() for t, att in ATTITUDE_COMMANDS.items()}
 
     state_feedback_controller = StateFeedbackController(sc, StateFeedbackController.get_nadir_linearized_state_space(sc), system_poles)
     simulation = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, state_feedback_controller)
