@@ -48,23 +48,23 @@ def main():
     simulation.plot_attitude_errors()
     simulation.plot_control_torques()
 
-    sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.array([0, 0, 0]))  # Reset attitude and angular velocity for linear quaternion simulation
+    sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for linear quaternion simulation
     simulation_linear_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, state_feedback_controller)
 
     ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, np.array([0, 0, 0]))  # Reset attitude and angular velocity for NDI simulation
+    sc.set_state(INITIAL_ATTITUDE, np.zeros((3, 1)))  # Reset attitude and angular velocity for NDI simulation
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
     tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, np.array([0, 0, 0]))  # Reset attitude and angular velocity for TSS simulation
+    sc.set_state(INITIAL_ATTITUDE, np.zeros((3, 1)))  # Reset attitude and angular velocity for TSS simulation
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
 
     indi_controller = INDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
-    sc.set_state(INITIAL_ATTITUDE, np.array([0, 0, 0]))  # Reset attitude and angular velocity for INDI simulation
+    sc.set_state(INITIAL_ATTITUDE, np.zeros((3, 1)))  # Reset attitude and angular velocity for INDI simulation
     simulation_indi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, indi_controller)
     simulation_indi.plot_attitudes()
     simulation_indi.plot_attitude_errors()
