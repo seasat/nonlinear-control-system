@@ -165,4 +165,4 @@ class YawPitchRoll(EulerAngles):
         q3 = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
         q4 = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
 
-        return Quaternion(q1, q2, q3, q4)
+        return Quaternion([q1, q2, q3, q4])

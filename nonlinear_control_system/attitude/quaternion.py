@@ -7,7 +7,7 @@ from . import Attitude#, DirectionCosineMatrix, ClassicalRodriguezParameter, Mod
 class Quaternion(Attitude):
     vector_length: int = 4  # Length of the vector representation of the quaternion
 
-    def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
+    def __init__(self, components: list[float]) -> None:
         """
         Initialize the Quaternion class with a quaternion.
 
@@ -17,6 +17,8 @@ class Quaternion(Attitude):
         :param q4: The fourth component of the quaternion.
         """
         super().__init__()
+        assert len(components) == 4, "Quaternion must have four components"
+        q1, q2, q3, q4 = components
         assert np.isclose(np.linalg.norm([q1, q2, q3, q4]), 1), "Quaternion must be a unit quaternion"
         
         self.q1 = q1
