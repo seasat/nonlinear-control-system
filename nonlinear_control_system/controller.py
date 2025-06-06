@@ -163,7 +163,7 @@ class NDIController(Controller):
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        ypr_rates_state_derivative = self.sc.attitude.calculate_ypr_rate_state_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω + n*b(θ))
+        ypr_rates_state_derivative = self.sc.attitude.calculate_derivative_state_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω + n*b(θ))
 
         target_ypr_accelerations = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
         current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
