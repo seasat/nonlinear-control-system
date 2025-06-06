@@ -17,6 +17,8 @@ class Axis(Enum):
 
 
 class EulerAngles(Attitude):
+    vector_length: int = 3  # Length of the vector representation of the Euler angles
+
     def __init__(self,
         first_axis: Axis, first_angle: float,
         second_axis: Axis, second_angle: float,

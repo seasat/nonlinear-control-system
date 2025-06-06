@@ -5,6 +5,8 @@ from . import Attitude#, DirectionCosineMatrix, ClassicalRodriguezParameter, Mod
 
 
 class Quaternion(Attitude):
+    vector_length: int = 4  # Length of the vector representation of the quaternion
+
     def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
         """
         Initialize the Quaternion class with a quaternion.

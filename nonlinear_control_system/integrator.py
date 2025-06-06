@@ -27,7 +27,7 @@ def derivative(state_vector: np.ndarray, time: float, old_attitude: Attitude, in
 
 def decompose_state_vector(state_vector: np.ndarray, attitude_type: type[Attitude]) -> tuple[Attitude, np.ndarray]:
     """ Decompose a state vector into an attitude and angular rates. """
-    attitude_length: int = len(attitude_type().to_vector())
+    attitude_length: int = attitude_type.vector_length
     attitude_components: np.ndarray = state_vector[:attitude_length]
     angular_rates: np.ndarray = state_vector[attitude_length:]
     

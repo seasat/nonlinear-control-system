@@ -4,6 +4,8 @@ import numpy as np
 
 
 class Attitude(ABC):
+    vector_length: int = 0  # Length of the vector representation of the attitude
+
     def __init__(self) -> None:
         pass
 
