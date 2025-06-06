@@ -5,6 +5,7 @@ from spacecraft import Spacecraft
 from attitude import Attitude, YawPitchRoll
 import dynamics, integrator
 from controller import Controller
+from state_vector import StateVector
 
 
 class Simulation:
@@ -76,10 +77,10 @@ class Simulation:
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
-            state = np.vstack([self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity])
+            state: StateVector = StateVector(self.spacecraft.attitude, self.spacecraft.angular_velocity)
             state = integrator.rk4(
-                dynamics.calculate_state_change,
-                state,
+                state.calculate_state_derivative,
+                state.to_vector(),
                 time,
                 self.sample_time,
                 self.spacecraft.inertia_tensor,
