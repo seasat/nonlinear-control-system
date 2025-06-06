@@ -51,7 +51,7 @@ class Quaternion(Attitude):
             [self.q4],
             [-self.q1],
             [-self.q2]
-        ])
+        ]).reshape((4, 1))
     
     def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
         """
