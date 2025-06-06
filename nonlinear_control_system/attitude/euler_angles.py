@@ -111,7 +111,7 @@ class YawPitchRoll(EulerAngles):
         """
         assert body_rates.shape == (3, 1), "Body rates must be a 3x1 ndarray"
         roll, pitch, yaw = self.roll, self.pitch, self.yaw
-        omega_1, omega_2, omega_3 = body_rates.flatten()
+        omega_1, omega_2, omega_3 = body_rates[0, 0], body_rates[1, 0], body_rates[2, 0]
         n = mean_motion
 
         a11 = (np.cos(roll) * omega_2 - np.sin(roll) * omega_3) * np.tan(pitch)
