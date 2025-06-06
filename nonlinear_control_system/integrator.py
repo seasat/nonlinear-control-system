@@ -13,16 +13,22 @@ def rk4(attitude: Attitude, angular_rates: np.ndarray, time_step: float, inertia
     k4 = derivative(state_vector + time_step * k3, time + time_step, attitude, inertia_tensor, torque, mean_motion)
     
     new_state_vector = state_vector + (time_step / 6) * (k1 + 2*k2 + 2*k3 + k4)
+    return decompose_state_vector(new_state_vector, type(attitude))
     
 
 def derivative(state_vector: np.ndarray, time: float, old_attitude: Attitude, inertia_tensor: np.ndarray, torque: np.ndarray, mean_motion: float) -> np.ndarray:
     """ Calculate the derivative of the state vector. """
-    attitude_length: int = len(old_attitude.to_vector())
-    attitude_components: np.ndarray = state_vector[:attitude_length]
-    angular_rates: np.ndarray = state_vector[attitude_length:]
-    new_attitude: Attitude = old_attitude.__class__(attitude_components)
+    attitude, angular_rates = decompose_state_vector(state_vector, type(old_attitude))
 
-    attitude_rates: np.ndarray = new_attitude.calculate_derivative(state_vector[attitude_length:], mean_motion)
+    attitude_rates: np.ndarray = attitude.calculate_derivative(angular_rates, mean_motion)
     angular_accelerations: np.ndarray = dynamics.calculate_angular_acceleration(angular_rates, inertia_tensor, torque, mean_motion)
     
     return np.vstack([attitude_rates, angular_accelerations])
+
+def decompose_state_vector(state_vector: np.ndarray, attitude_type: type[Attitude]) -> tuple[Attitude, np.ndarray]:
+    """ Decompose a state vector into an attitude and angular rates. """
+    attitude_length: int = len(attitude_type().to_vector())
+    attitude_components: np.ndarray = state_vector[:attitude_length]
+    angular_rates: np.ndarray = state_vector[attitude_length:]
+    
+    return attitude_type(attitude_components), angular_rates
