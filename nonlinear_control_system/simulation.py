@@ -77,18 +77,14 @@ class Simulation:
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
-            state: StateVector = StateVector(self.spacecraft.attitude, self.spacecraft.angular_velocity)
-            state = integrator.rk4(
-                state.calculate_state_derivative,
-                state.to_vector(),
-                time,
+            attitude, angular_velocity = integrator.rk4(
+                self.spacecraft.attitude,
+                self.spacecraft.angular_velocity,
                 self.sample_time,
                 self.spacecraft.inertia_tensor,
                 torque,
-                self.spacecraft.orbit.mean_motion
+                self.spacecraft.orbit.mean_motion,
             )
-            attitude = YawPitchRoll(state[:3])
-            angular_velocity: np.ndarray = state[3:6]
 
             # update spacecraft state
             self.spacecraft.angular_velocity = angular_velocity
