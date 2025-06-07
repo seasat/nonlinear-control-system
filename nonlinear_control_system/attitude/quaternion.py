@@ -28,33 +28,30 @@ class Quaternion(Attitude):
         self.q4 = float(q4)
     
     def calculate_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
-        matrix = self._calculate_quaternion_rate_matrix()
-        affine_vector = self._calculate_quaternion_rate_vector(mean_motion)
-        return matrix @ np.vstack([body_rates, 0]) + affine_vector
+        inertial_angular_rates = np.vstack([body_rates, 0]) + mean_motion * self._calculate_gyroscopic_vector()
+        component_rates = 0.5 * self._calculate_q_matrix() @ inertial_angular_rates
+        return component_rates
 
     def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
-        matrix = self._calculate_quaternion_rate_matrix()
-        affine_vector = self._calculate_quaternion_rate_vector(mean_motion)
-        extended_body_rates = np.linalg.inv(matrix) @ (attitude_rates - affine_vector)
-        return extended_body_rates[:3]
+        ...
     
-    def _calculate_quaternion_rate_matrix(self) -> np.ndarray:
-        matrix =  0.5 * np.array([
+    def _calculate_q_matrix(self) -> np.ndarray:
+        matrix = np.array([
             [self.q4, -self.q3, self.q2, self.q1],
             [self.q3, self.q4, -self.q1, self.q2],
             [-self.q2, self.q1, self.q4, self.q3],
             [-self.q1, -self.q2, -self.q3, self.q4]
         ])
-        return matrix.reshape((4, 4))
-    
-    def _calculate_quaternion_rate_vector(self, mean_motion: float) -> np.ndarray:
-        return 0.5 * mean_motion * np.array([
-            [self.q3],
-            [self.q4],
-            [-self.q1],
-            [-self.q2]
-        ]).reshape((4, 1))
-    
+        return matrix
+
+    def _calculate_gyroscopic_vector(self) -> np.ndarray:
+        return np.array([
+            [2 * (self.q1 * self.q2 + self.q3 * self.q4)],
+            [1 - 2 * (self.q1**2 + self.q3**2)],
+            [2 * (self.q3 * self.q1 - self.q1 * self.q4)],
+            [0]
+        ])
+
     def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
         """
         Return the derivative of the quaternion rates with respect to the state vector.
