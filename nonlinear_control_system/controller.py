@@ -160,7 +160,7 @@ class NDIController(Controller):
         attitude_acceleration_error = target_attitude_accelerations - current_attitude_accelerations[0:3] # nu(x) - l(x), only first three components are used as control variables
 
         torque_to_attitude_acceleration_matrix = self._calculate_dynamic_transfer_matrix(attitude_rate_state_derivative) # M(x)
-        ypr_acceleration_to_control_torque_matrix = np.linalg.inv(torque_to_attitude_acceleration_matrix) # M(x)^-1
+        ypr_acceleration_to_control_torque_matrix = np.linalg.inv(torque_to_attitude_acceleration_matrix[0:3, :]) # M(x)^-1, only use angular acceleration on first three components of attitude rate
         control_torque = ypr_acceleration_to_control_torque_matrix @ attitude_acceleration_error # M(x)^-1 * (nu(x) - l(x))
 
         return control_torque
