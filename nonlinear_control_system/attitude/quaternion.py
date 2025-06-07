@@ -33,7 +33,7 @@ class Quaternion(Attitude):
         return component_rates
 
     def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
-        truncated_attitude_rates = attitude_rates[:3]  # Exclude 4th component (q4)
+        assert len(attitude_rates) == 3, "Attitude rates must be truncated to 3 components"
         m = 0.5 * self._calculate_q_matrix()
         l = m * mean_motion * self._calculate_gyroscopic_vector()
         body_rates = np.linalg.solve(m[0:3, :], truncated_attitude_rates - l[0:3])

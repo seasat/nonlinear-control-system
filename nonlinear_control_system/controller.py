@@ -194,8 +194,6 @@ class TSSController(Controller):
 
         # outer loop
         target_angular_rates: np.ndarray = -self.outer_loop_gains @ attitude_error[0:3]  # only use first three components for control
-        if isinstance(self.sc.attitude, Quaternion):
-            target_angular_rates = np.vstack([target_angular_rates, 0])  # add zero for quaternion case
         target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_angular_rates, self.sc.orbit.mean_motion)
 
         # inner loop
