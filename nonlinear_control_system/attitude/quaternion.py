@@ -6,6 +6,7 @@ from . import Attitude#, DirectionCosineMatrix, ClassicalRodriguezParameter, Mod
 
 class Quaternion(Attitude):
     vector_length: int = 4  # Length of the vector representation of the quaternion
+    symbol: str = 'q'  # Symbol representing the quaternion
 
     def __init__(self, components: list[float]) -> None:
         """

@@ -57,6 +57,8 @@ class YawPitchRoll(EulerAngles):
     """
     Yaw-Pitch-Roll (Z-Y-X) Euler angles.
     """
+    symbol: str = 'θ'  # Symbol representing the YawPitchRoll attitude type
+
     def __init__(self, angles: np.ndarray) -> None:
         """
         Initialize YawPitchRoll with vector of roll then pitch then yaw angle.

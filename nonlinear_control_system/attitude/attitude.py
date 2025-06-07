@@ -5,6 +5,7 @@ import numpy as np
 
 class Attitude(ABC):
     vector_length: int = 0  # Length of the vector representation of the attitude
+    symbol: str = '' # Symbol representing the attitude type, e.g., 'q' for quaternion, 'θ' for yaw pitch roll angles.
 
     def __init__(self) -> None:
         pass
