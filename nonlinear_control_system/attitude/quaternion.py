@@ -99,7 +99,7 @@ class Quaternion(Attitude):
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
     
     def calculate_error(self, other: Quaternion) -> Quaternion:
-        matrix = np.asmatrix([
+        matrix = np.array([
             [other.q4, other.q3, -other.q2, other.q1],
             [-other.q3, other.q4, other.q1, -other.q2],
             [other.q2, -other.q1, other.q4, -other.q3],
@@ -138,13 +138,13 @@ class Quaternion(Attitude):
         """
         super().__init__()
         
-        quaternion_matrix = np.asmatrix([
+        quaternion_matrix = np.array([
             [q2.q4, q2.q3, -q2.q2, q2.q1],
             [-q2.q3, q2.q4, q2.q1, q2.q2],
             [q2.q2, -q2.q1, q2.q4, q2.q3],
             [-q2.q1, -q2.q2, -q2.q3, q2.q4]
         ])
-        result = quaternion_matrix @ np.asmatrix([q1.q1, q1.q2, q1.q3, q1.q4]).T
+        result = quaternion_matrix @ q1.to_vector()
 
         q1 = result[0, 0]
         q2 = result[1, 0]
