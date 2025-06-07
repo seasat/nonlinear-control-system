@@ -232,12 +232,12 @@ class INDIController(TSSController):
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
-        target_ypr_rates: np.ndarray = self.outer_loop_gains @ attitude_error
+        target_ypr_rates: np.ndarray = -self.outer_loop_gains @ attitude_error
         target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_ypr_rates, self.sc.orbit.mean_motion)
 
         # inner loop
-        angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
-        target_angular_acceleration = self.inner_loop_gains @ angular_velocity_error
+        angular_velocity_error = self.sc.angular_velocity - target_angular_velocity
+        target_angular_acceleration = -self.inner_loop_gains @ angular_velocity_error
 
         # measured angular acceleration
         measured_angular_acceleration = dynamics.calculate_angular_acceleration(
