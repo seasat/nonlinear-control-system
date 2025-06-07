@@ -70,7 +70,7 @@ class Simulation:
     
     def _run_simulation(self) -> None:
         for idx, time in enumerate(self.times):
-            target_attitude: YawPitchRoll = self.target_attitudes[idx]
+            target_attitude: Attitude = self.target_attitudes[idx]
 
             # calculate control torque
             control_torque = self.controller.calculate_control_output(target_attitude)
