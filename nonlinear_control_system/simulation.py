@@ -97,7 +97,7 @@ class Simulation:
 
     def _calculate_errors(self) -> None:
         for idx in range(len(self.attitude_errors)):
-            error = self.attitudes[idx] - self.target_attitudes[idx]
+            error = self.attitudes[idx].calculate_error(self.target_attitudes[idx])
             self.attitude_errors[idx] = error
     
     def plot_attitudes(self) -> None:
@@ -128,8 +128,7 @@ class Simulation:
         """ Plot the attitude errors over time. """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        attitude_errors: list[Attitude] = [self.attitudes[idx].calculate_error(self.target_attitudes[idx]) for idx in range(len(self.attitudes))]
-        vector_list: list[np.ndarray] = [error.to_vector() for error in attitude_errors]
+        vector_list: list[np.ndarray] = [error.to_vector() for error in self.attitude_errors]
         component_matrix: np.ndarray = np.array(vector_list)
         for component_idx in range(component_matrix.shape[1]):
             ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},e}}$")
