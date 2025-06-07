@@ -119,7 +119,7 @@ class Simulation:
         for component_idx in range(3): # only first 3 components are control variables
             ax.plot(self.times, command_matrix[:, component_idx], '--', label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},c}}$")
 
-        ax.legend()
+        ax.legend(loc='right')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
@@ -134,7 +134,7 @@ class Simulation:
         for component_idx in range(component_matrix.shape[1]):
             ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},e}}$")
 
-        ax.legend()
+        ax.legend(loc='right')
         ax.set_yscale('log')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
@@ -151,7 +151,7 @@ class Simulation:
         magnitudes = np.linalg.norm(self.control_torques, axis=1)
         ax.plot(self.times, magnitudes, label=r"$|\mathbf{T}_c|$", linestyle='--', color='k')
 
-        ax.legend()
+        ax.legend(loc='right')
         ax.set_yscale('log')
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Control Torque $[\mathrm{Nm}]$")
