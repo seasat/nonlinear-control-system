@@ -30,6 +30,6 @@ class Attitude(ABC):
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     @abstractmethod
-    def __sub__(self, other: Attitude) -> Attitude:
-        """ Subtract two attitudes.  """
+    def get_error(self, other: Attitude) -> np.ndarray:
+        """ Calculate the error between this attitude and another attitude.  """
         raise NotImplementedError("This method should be implemented by subclasses.")
