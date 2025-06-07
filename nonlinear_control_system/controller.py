@@ -165,10 +165,10 @@ class NDIController(Controller):
 
         return control_torque
     
-    def _calculate_attitude_accelerations(self, sc: Spacecraft, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
+    def _calculate_attitude_accelerations(self, sc: Spacecraft, attitude_rates_state_derivative: np.ndarray) -> np.ndarray:
         attitude_rates = sc.attitude.calculate_derivative(sc.angular_velocity, sc.orbit.mean_motion) 
         angular_accelerations = dynamics.calculate_angular_acceleration(sc.angular_velocity, sc.inertia_tensor, self.disturbance_torque, sc.orbit.mean_motion)
-        ypr_accelerations = ypr_rates_state_derivative @ np.vstack((attitude_rates, angular_accelerations))
+        ypr_accelerations = attitude_rates_state_derivative @ np.vstack((attitude_rates, angular_accelerations))
         return ypr_accelerations
     
     def _calculate_dynamic_transfer_matrix(self, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
