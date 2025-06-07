@@ -35,7 +35,8 @@ class Quaternion(Attitude):
     def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
         matrix = self._calculate_quaternion_rate_matrix()
         affine_vector = self._calculate_quaternion_rate_vector(mean_motion)
-        return np.linalg.inv(matrix) @ (attitude_rates - affine_vector)
+        extended_body_rates = np.linalg.inv(matrix) @ (attitude_rates - affine_vector)
+        return extended_body_rates[:3]
     
     def _calculate_quaternion_rate_matrix(self) -> np.ndarray:
         matrix =  0.5 * np.array([
