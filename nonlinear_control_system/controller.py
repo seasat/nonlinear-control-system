@@ -153,15 +153,15 @@ class NDIController(Controller):
         self.linear_controller = PDController(spacecraft, natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        ypr_rates_state_derivative = self.sc.attitude.calculate_derivative_state_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω + n*b(θ))
+        attitude_rate_state_derivative = self.sc.attitude.calculate_derivative_state_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω + n*b(θ))
 
-        target_ypr_accelerations = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
-        current_ypr_accelerations = self._calculate_ypr_accelerations(self.sc, ypr_rates_state_derivative) # l(x)
-        ypr_acceleration_error = target_ypr_accelerations - current_ypr_accelerations # nu(x) - l(x)
+        target_attitude_accelerations = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
+        current_attitude_accelerations = self._calculate_ypr_accelerations(self.sc, attitude_rate_state_derivative) # l(x)
+        attitude_acceleration_error = target_attitude_accelerations - current_attitude_accelerations # nu(x) - l(x)
 
-        torque_to_ypr_acceleration_matrix = self._calculate_dynamic_transfer_matrix(ypr_rates_state_derivative) # M(x)
-        ypr_acceleration_to_control_torque_matrix = np.linalg.inv(torque_to_ypr_acceleration_matrix) # M(x)^-1
-        control_torque = ypr_acceleration_to_control_torque_matrix @ ypr_acceleration_error # M(x)^-1 * (nu(x) - l(x))
+        torque_to_attitude_acceleration_matrix = self._calculate_dynamic_transfer_matrix(attitude_rate_state_derivative) # M(x)
+        ypr_acceleration_to_control_torque_matrix = np.linalg.inv(torque_to_attitude_acceleration_matrix) # M(x)^-1
+        control_torque = ypr_acceleration_to_control_torque_matrix @ attitude_acceleration_error # M(x)^-1 * (nu(x) - l(x))
 
         return control_torque
     
