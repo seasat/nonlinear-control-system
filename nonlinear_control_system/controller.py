@@ -172,7 +172,7 @@ class NDIController(Controller):
         return ypr_accelerations
     
     def _calculate_dynamic_transfer_matrix(self, attitude_rates_state_derivative: np.ndarray) -> np.ndarray:
-        dynamic_transfer_matrix = attitude_rates_state_derivative @ np.vstack((np.zeros((self.sc.attitude.vector_length, self.sc.attitude.vector_length)), self.j_inv))
+        dynamic_transfer_matrix = attitude_rates_state_derivative @ np.vstack((np.zeros((self.sc.attitude.vector_length, 3)), self.j_inv))
         return dynamic_transfer_matrix
 
 
