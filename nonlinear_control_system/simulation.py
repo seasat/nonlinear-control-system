@@ -113,13 +113,15 @@ class Simulation:
         yaws = np.array([attitude.yaw for attitude in self.attitudes])
         ax.plot(self.times, yaws, label="Yaw")
 
-        #ax.set_prop_cycle(None)
-        command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
-        ax.plot(self.times, command_yaws, label="Command", linestyle='--', color='k')
-        #command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
-        #ax.plot(self.times, command_pitches, label="Command Pitch", linestyle='--')
-        #command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
-        #ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
+        #command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
+        #ax.plot(self.times, command_yaws, label="Command", linestyle='--', color='k')
+        ax.set_prop_cycle(None)
+        command_components_1 = np.array([attitude.to_vector()[0] for attitude in self.target_attitudes])
+        ax.plot(self.times, command_components_1, label=f"Command --", linestyle='--')
+        command_components_2 = np.array([attitude.to_vector()[1] for attitude in self.target_attitudes])
+        ax.plot(self.times, command_components_2, label=f"Command --", linestyle='--')
+        command_components_3 = np.array([attitude.to_vector()[2] for attitude in self.target_attitudes])
+        ax.plot(self.times, command_components_3, label=f"Command --", linestyle='--')
 
         ax.legend()
 
