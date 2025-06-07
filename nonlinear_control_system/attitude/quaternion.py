@@ -36,7 +36,7 @@ class Quaternion(Attitude):
         assert len(attitude_rates) == 3, "Attitude rates must be truncated to 3 components"
         m = 0.5 * self._calculate_q_matrix()
         l = m * mean_motion * self._calculate_gyroscopic_vector()
-        body_rates = np.linalg.solve(m[0:3, :], truncated_attitude_rates - l[0:3])
+        body_rates = np.linalg.solve(m[0:3, :], attitude_rates - l[0:3])
         return body_rates
     
     def _calculate_q_matrix(self) -> np.ndarray:
