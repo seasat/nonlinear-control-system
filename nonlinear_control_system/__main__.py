@@ -52,6 +52,7 @@ def main():
     state_feedback_quaternion_controller = StateFeedbackController(sc, NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation_linear_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, state_feedback_quaternion_controller)
     simulation_linear_quaternion.plot_attitudes()
+    simulation_linear_quaternion.plot_attitude_errors()
 
     ndi_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc.set_state(INITIAL_ATTITUDE, np.zeros((3, 1)))  # Reset attitude and angular velocity for NDI simulation

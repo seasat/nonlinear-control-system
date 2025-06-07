@@ -128,12 +128,11 @@ class Simulation:
         """ Plot the attitude errors over time. """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        rolls = np.array([error.roll for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(rolls), label="Roll Error")
-        pitches = np.array([error.pitch for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
-        yaws = np.array([error.yaw for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
+        attitude_errors: list[Attitude] = [self.attitudes[idx].calculate_error(self.target_attitudes[idx]) for idx in range(len(self.attitudes))]
+        vector_list: list[np.ndarray] = [error.to_vector() for error in attitude_errors]
+        component_matrix: np.ndarray = np.array(vector_list)
+        for component_idx in range(component_matrix.shape[1]):
+            ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},e}}$")
 
         ax.legend()
         ax.set_yscale('log')
