@@ -193,8 +193,8 @@ class TSSController(Controller):
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
-        target_angular_rates: np.ndarray = -self.outer_loop_gains @ attitude_error[0:3]  # only use first three components for control
-        target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_angular_rates, self.sc.orbit.mean_motion)
+        target_attitude_rates: np.ndarray = -self.outer_loop_gains @ attitude_error[0:3]  # only use first three components for control
+        target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_attitude_rates, self.sc.orbit.mean_motion)
 
         # inner loop
         angular_velocity_error = self.sc.angular_velocity - target_angular_velocity  # Δω = ω - ω_d
