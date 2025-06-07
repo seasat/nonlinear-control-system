@@ -63,6 +63,12 @@ def main():
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
 
+    sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for NDI quaternion simulation
+    ndi_quaternion_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
+    simulation_ndi_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, ndi_quaternion_controller)
+    simulation_ndi_quaternion.plot_attitudes()
+    simulation_ndi_quaternion.plot_attitude_errors()
+
     # tss controller
     tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
     sc.set_state(INITIAL_ATTITUDE, np.zeros((3, 1)))  # Reset attitude and angular velocity for TSS simulation
