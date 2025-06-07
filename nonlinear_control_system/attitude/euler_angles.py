@@ -138,7 +138,7 @@ class YawPitchRoll(EulerAngles):
         
         matrix = self._calculate_ypr_rate_matrix()
         affine_vector = self._calculate_ypr_rate_vector(mean_motion)
-        return np.linalg.inv(matrix) @ (self - affine_vector)
+        return np.linalg.inv(matrix) @ (self.to_vector() - affine_vector)
 
     def __add__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
