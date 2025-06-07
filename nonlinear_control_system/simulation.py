@@ -106,22 +106,18 @@ class Simulation:
         """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        rolls = np.array([attitude.roll for attitude in self.attitudes])
-        ax.plot(self.times, rolls, label="Roll")
-        pitches = np.array([attitude.pitch for attitude in self.attitudes])
-        ax.plot(self.times, pitches, label="Pitch")
-        yaws = np.array([attitude.yaw for attitude in self.attitudes])
-        ax.plot(self.times, yaws, label="Yaw")
+        # attitudes
+        vector_list: list[np.ndarray] = [attitude.to_vector() for attitude in self.attitudes]
+        component_matrix: np.ndarray = np.array(vector_list)
+        for component_idx in range(component_matrix.shape[1]):
+            ax.plot(self.times, component_matrix[:, component_idx], label=f"Attitude {component_idx + 1}")
 
-        #command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
-        #ax.plot(self.times, command_yaws, label="Command", linestyle='--', color='k')
-        ax.set_prop_cycle(None)
-        command_components_1 = np.array([attitude.to_vector()[0] for attitude in self.target_attitudes])
-        ax.plot(self.times, command_components_1, label=f"Command --", linestyle='--')
-        command_components_2 = np.array([attitude.to_vector()[1] for attitude in self.target_attitudes])
-        ax.plot(self.times, command_components_2, label=f"Command --", linestyle='--')
-        command_components_3 = np.array([attitude.to_vector()[2] for attitude in self.target_attitudes])
-        ax.plot(self.times, command_components_3, label=f"Command --", linestyle='--')
+        # commands
+        command_vector_list = [attitude.to_vector() for attitude in self.target_attitudes]
+        command_matrix = np.array(command_vector_list)
+        ax.set_prop_cycle(None) # plot in same colors as corresponding attitude component
+        for component_idx in range(3): # only first 3 components are control variables
+            ax.plot(self.times, command_matrix[:, component_idx], '--', label=f"Attitude {component_idx + 1}")
 
         ax.legend()
 
