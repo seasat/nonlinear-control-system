@@ -96,6 +96,16 @@ class Quaternion(Attitude):
     def to_vector(self) -> np.ndarray:
         """ Return as column vector. """
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
+    
+    def get_error(self, other: Quaternion) -> Quaternion:
+        matrix = np.asmatrix([
+            [other.q4, other.q3, -other.q2, other.q1],
+            [-other.q3, other.q4, other.q1, -other.q2],
+            [other.q2, -other.q1, other.q4, -other.q3],
+            [other.q1, other.q2, other.q3, other.q4]
+        ])
+        error_vector = matrix @ self.to_vector()
+        return Quaternion(error_vector.flatten().tolist())
 
     def __sub__(self, other: Quaternion) -> Quaternion:
         return Quaternion([
