@@ -6,10 +6,11 @@ from attitude import YawPitchRoll
 def calculate_angular_acceleration(angular_velocity: np.ndarray, inertia_tensor: np.matrix, torque: np.ndarray, mean_motion: float) -> np.ndarray:
     lvlh_velocity = np.array([[0], [-mean_motion], [0]])
     inertial_velocity = angular_velocity + lvlh_velocity
-    angular_acceleration = np.linalg.inv(inertia_tensor) @ (torque - np.cross(
+    angular_acceleration_matrix: np.matrix = np.linalg.inv(inertia_tensor) @ (torque - np.cross(
         inertial_velocity.flatten(),
         (inertia_tensor @ inertial_velocity).flatten()
     ).reshape(3, 1))
+    angular_acceleration: np.ndarray = np.asarray(angular_acceleration_matrix)
     return angular_acceleration
 
 
