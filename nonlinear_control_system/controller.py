@@ -96,20 +96,21 @@ class StateFeedbackController(Controller):
         Get state space representation for the linearized system
         dx/dt = A @ x + B @ u
         y = C @ x + D @ u
-        with state vector x = [q1, q2, q3, q4, omega1, omega2, omega3] and output vector y = [q1, q2, q3, q4].
-        linearized around nadir pointing x = [0, 0, 0, 1, 0, 0, 0].
+        with state vector x = [q1, q2, q3, omega1, omega2, omega3] and output vector y = [q1, q2, q3].
+        linearized around nadir pointing x = [0, 0, 0, 0, 0, 0]
+        as only first three quaternion components are used as control variables.
         """
-        a = np.zeros((7, 7))
-        a[0, 4] = 0.5  # dq1/dt = 0.5 * ω1
-        a[1, 5] = 0.5  # dq2/dt = 0.5 * ω2
-        a[2, 6] = 0.5  # dq3/dt = 0.5 * ω3
+        a = np.zeros((6, 6))
+        a[0, 3] = 0.5  # dq1/dt = 0.5 * ω1
+        a[1, 4] = 0.5  # dq2/dt = 0.5 * ω2
+        a[2, 5] = 0.5  # dq3/dt = 0.5 * ω3
         
-        b = np.zeros((7, 3))
-        b[4:7, 0:3] = np.linalg.inv(spacecraft.inertia_tensor)
+        b = np.zeros((6, 3))
+        b[3:6, 0:3] = np.linalg.inv(spacecraft.inertia_tensor)
 
-        c = np.zeros((4, 7))
-        c[0:4, 0:4] = np.eye(4)  # quaternion output
-        d = np.zeros((4, 3))  # no feedthrough
+        c = np.zeros((3, 6))
+        c[0:3, 0:3] = np.eye(3)  # quaternion output
+        d = np.zeros((3, 3))  # no feedthrough
 
         return control.StateSpace(a, b, c, d)
 
