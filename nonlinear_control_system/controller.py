@@ -32,7 +32,7 @@ class StateFeedbackController(Controller):
         """ Control law u = -K * x_e, where K is the feedback gain matrix and x_e is the state error. """
         target_state = self.get_state_vector(target_attitude, self.target_body_rates)
         sc_state = self.get_state_vector(self.sc.attitude, self.sc.angular_velocity)
-        state_error = sc_state - target_state
+        state_error = sc_state.calculate_error(target_state)  # Δx = x - x_d
 
         control_output = -self.gains @ state_error
         return control_output
@@ -124,7 +124,7 @@ class PDController(Controller):
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K_d * x_e - K_p * x_e_dot, where K_d is the derivative gain and K_p is the proportional gain. """
-        attitude_difference: Attitude =  self.sc.attitude - target_attitude # Δθ = θ - θ_d
+        attitude_difference: Attitude =  self.sc.attitude.calculate_error(target_attitude) # Δθ = θ - θ_d
         attitude_error: np.ndarray = attitude_difference.to_vector()  # convert to vector for calculations
         attitude_derivative: np.ndarray = self.sc.attitude.calculate_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion)
 
@@ -199,7 +199,7 @@ class TSSController(Controller):
         self._calculate_gains(natural_frequency, damping_ratio)
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
+        attitude_error = self.sc.attitude.calculate_error(target_attitude)  # Δθ = θ_d - θ
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
@@ -238,7 +238,7 @@ class INDIController(TSSController):
         self.last_control_torque = np.zeros((3, 1))  # last control torque for incremental dynamic inversion
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
-        attitude_error = target_attitude - self.sc.attitude  # Δθ = θ_d - θ
+        attitude_error = self.sc.attitude.calculate_error(target_attitude)  # Δθ = θ_d - θ
         attitude_error = attitude_error.to_vector()  # convert to vector for calculations
 
         # outer loop
