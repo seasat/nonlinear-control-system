@@ -118,7 +118,7 @@ class PDController(Controller):
         attitude_error: np.ndarray = attitude_difference.to_vector()  # convert to vector for calculations
         attitude_derivative: np.ndarray = self.sc.attitude.calculate_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion)
 
-        control_output = -self.derivative_gain @ attitude_derivative - self.proportional_gain @ attitude_error
+        control_output = -self.derivative_gain @ attitude_derivative[0:3] - self.proportional_gain @ attitude_error[0:3] # only first three components are used as control variables
         return control_output
     
     def _calculate_gains(self, natural_frequency: float, damping_ratio: float) -> None:
