@@ -147,6 +147,9 @@ class YawPitchRoll(EulerAngles):
         new_angles = [self.wrap_angle(angle) for angle in [self.roll + other.roll, self.pitch + other.pitch, self.yaw + other.yaw]]
         return YawPitchRoll(new_angles)
     
+    def get_error(self, other: YawPitchRoll) -> YawPitchRoll:
+        return self - other
+    
     def __sub__(self, other: YawPitchRoll) -> YawPitchRoll:
         """
         Subtract two attitudes in yaw-pitch-roll representation.
