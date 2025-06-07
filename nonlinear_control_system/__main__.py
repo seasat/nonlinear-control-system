@@ -89,6 +89,11 @@ def main():
     simulation_indi.plot_attitudes()
     simulation_indi.plot_attitude_errors()
 
+    sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for INDI quaternion simulation
+    simulation_indi_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, indi_controller)
+    simulation_indi_quaternion.plot_attitudes()
+    simulation_indi_quaternion.plot_attitude_errors()
+
     plt.show()
 
 
