@@ -96,6 +96,14 @@ class Quaternion(Attitude):
             [a41, a42, a43, a44, -q1, -q2, -q3]
         ])
     
+    def to_ypr(self) -> YawPitchRoll:
+        from . import YawPitchRoll
+        q1, q2, q3, q4 = self.q1, self.q2, self.q3, self.q4
+        yaw = np.atan2(2 * (q1 * q2 + q3 * q4), q4**2 + q1**2 - q2**2 - q3**2)
+        pitch = np.arcsin(2 * (q2 * q4 - q1 * q3))
+        roll = np.arctan2(2 * (q1 * q4 + q2 * q3), q4**2 - q1**2 - q2**2 + q3**2)
+        return YawPitchRoll(np.asarray([roll, pitch, yaw]))
+    
     def to_vector(self) -> np.ndarray:
         """ Return as column vector. """
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
