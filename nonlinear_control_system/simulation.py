@@ -113,11 +113,12 @@ class Simulation:
             ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1}}}$")
 
         # commands
+        command_line_styles = ['--', '-.', ':']
         command_vector_list = [attitude.to_vector() for attitude in self.target_attitudes]
         command_matrix = np.array(command_vector_list)
         ax.set_prop_cycle(None) # plot in same colors as corresponding attitude component
         for component_idx in range(3): # only first 3 components are control variables
-            ax.plot(self.times, command_matrix[:, component_idx], '--', label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},c}}$")
+            ax.plot(self.times, command_matrix[:, component_idx], command_line_styles[component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},c}}$")
 
         ax.legend(loc='right')
 
