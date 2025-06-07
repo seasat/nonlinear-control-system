@@ -110,14 +110,14 @@ class Simulation:
         vector_list: list[np.ndarray] = [attitude.to_vector() for attitude in self.attitudes]
         component_matrix: np.ndarray = np.array(vector_list)
         for component_idx in range(component_matrix.shape[1]):
-            ax.plot(self.times, component_matrix[:, component_idx], label=f"Attitude {component_idx + 1}")
+            ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1}}}$")
 
         # commands
         command_vector_list = [attitude.to_vector() for attitude in self.target_attitudes]
         command_matrix = np.array(command_vector_list)
         ax.set_prop_cycle(None) # plot in same colors as corresponding attitude component
         for component_idx in range(3): # only first 3 components are control variables
-            ax.plot(self.times, command_matrix[:, component_idx], '--', label=f"Attitude {component_idx + 1}")
+            ax.plot(self.times, command_matrix[:, component_idx], '--', label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},c}}$")
 
         ax.legend()
 
