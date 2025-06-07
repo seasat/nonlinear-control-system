@@ -14,12 +14,6 @@ class Controller:
 class StateFeedbackController(Controller):
     """ State Feedback Controller for spacecraft attitude control. """
     def __init__(self, spacecraft: Spacecraft, natural_frequency: float, damping_ratio: float) -> None:
-        """
-        Initialize the Controller class with a spacecraft and controller parameters.
-        
-        :param linear_plant: The linear state-space representation of the plant.
-        :param closed_loop_poles: The desired closed-loop poles for the PD controlled system.
-        """
         assert isinstance(spacecraft, Spacecraft), "spacecraft must be an instance of Spacecraft"
 
         self.sc = spacecraft # for derivative calculation
