@@ -30,9 +30,10 @@ class StateFeedbackController(Controller):
 
     def calculate_control_output(self, target_attitude: Attitude) -> np.ndarray:
         """ Control law u = -K * x_e, where K is the feedback gain matrix and x_e is the state error. """
-        target_state = self.get_state_vector(target_attitude, self.target_body_rates)
-        sc_state = self.get_state_vector(self.sc.attitude, self.sc.angular_velocity)
-        state_error = sc_state.calculate_error(target_state)  # Δx = x - x_d
+        attitude_error = self.sc.attitude.calculate_error(target_attitude)  # Δθ = θ - θ_d
+        attitude_control_variables = attitude_error.to_vector()[0:3]  # take only first three components for control (relevant for quaternion case)
+        body_rate_error = self.sc.angular_velocity - self.target_body_rates  # Δω = ω - ω_d
+        state_error = np.vstack([attitude_control_variables, body_rate_error])  # Δx = [Δθ; Δω]
 
         control_output = -self.gains @ state_error
         return control_output
