@@ -200,8 +200,8 @@ class TSSController(Controller):
         angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
         target_angular_acceleration = self.inner_loop_gains @ angular_velocity_error
 
-        control_torque = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1) - self.disturbance_torque
-        return control_torque
+        control_torque: np.matrix = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1) - self.disturbance_torque
+        return np.asarray(control_torque)
     
     def _calculate_gains(self, natural_frequency: float, damping_ratio: float) -> None:
         """
