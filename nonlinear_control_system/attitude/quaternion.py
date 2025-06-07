@@ -106,7 +106,7 @@ class Quaternion(Attitude):
             [other.q1, other.q2, other.q3, other.q4]
         ])
         error_vector = matrix @ self.to_vector()
-        component_list = error_vector.flatten().tolist()[0]
+        component_list = error_vector.flatten()
         return Quaternion(component_list)
 
     def __sub__(self, other: Quaternion) -> Quaternion:
