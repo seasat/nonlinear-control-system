@@ -156,8 +156,8 @@ class NDIController(Controller):
         attitude_rate_state_derivative = self.sc.attitude.calculate_derivative_state_derivative(self.sc.angular_velocity, self.sc.orbit.mean_motion) # d/dx (N(θ)*ω + n*b(θ))
 
         target_attitude_accelerations = self.linear_controller.calculate_control_output(target_attitude) # virtual control output nu(x)
-        current_attitude_accelerations = self._calculate_ypr_accelerations(self.sc, attitude_rate_state_derivative) # l(x)
-        attitude_acceleration_error = target_attitude_accelerations - current_attitude_accelerations # nu(x) - l(x)
+        current_attitude_accelerations = self._calculate_attitude_accelerations(self.sc, attitude_rate_state_derivative) # l(x)
+        attitude_acceleration_error = target_attitude_accelerations - current_attitude_accelerations[0:3] # nu(x) - l(x), only first three components are used as control variables
 
         torque_to_attitude_acceleration_matrix = self._calculate_dynamic_transfer_matrix(attitude_rate_state_derivative) # M(x)
         ypr_acceleration_to_control_torque_matrix = np.linalg.inv(torque_to_attitude_acceleration_matrix) # M(x)^-1
@@ -165,10 +165,10 @@ class NDIController(Controller):
 
         return control_torque
     
-    def _calculate_ypr_accelerations(self, sc: Spacecraft, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
-        ypr_rates = sc.attitude.calculate_derivative(sc.angular_velocity, sc.orbit.mean_motion) 
+    def _calculate_attitude_accelerations(self, sc: Spacecraft, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
+        attitude_rates = sc.attitude.calculate_derivative(sc.angular_velocity, sc.orbit.mean_motion) 
         angular_accelerations = dynamics.calculate_angular_acceleration(sc.angular_velocity, sc.inertia_tensor, self.disturbance_torque, sc.orbit.mean_motion)
-        ypr_accelerations = ypr_rates_state_derivative @ np.vstack((ypr_rates, angular_accelerations))
+        ypr_accelerations = ypr_rates_state_derivative @ np.vstack((attitude_rates, angular_accelerations))
         return ypr_accelerations
     
     def _calculate_dynamic_transfer_matrix(self, ypr_rates_state_derivative: np.ndarray) -> np.ndarray:
