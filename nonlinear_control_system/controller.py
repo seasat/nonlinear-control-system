@@ -53,14 +53,7 @@ class StateFeedbackController(Controller):
         """
         pole = complex(-damping_ratio * natural_frequency, natural_frequency * np.sqrt(1 - damping_ratio**2))
         conjugate_pole = complex(pole.real, -pole.imag)
-        if isinstance(self.sc.attitude, YawPitchRoll):
-            # For YawPitchRoll, we have 3 pairs of conjugate poles
-            return [pole, conjugate_pole] * 3
-        elif isinstance(self.sc.attitude, Quaternion):
-            # For Quaternion, we have 4 poles (1 real and 3 complex conjugates)
-            return [pole, conjugate_pole] * 3 + [pole.real]
-        else:
-            raise ValueError("Unsupported attitude representation. Use YawPitchRoll or Quaternion.")
+        return [pole, conjugate_pole] * 3
     
     @staticmethod
     def get_state_vector(attitude: Attitude, body_rates: np.ndarray) -> np.ndarray:
