@@ -57,7 +57,8 @@ class StateFeedbackController(Controller):
     
     @staticmethod
     def get_state_vector(attitude: Attitude, body_rates: np.ndarray) -> np.ndarray:
-        return np.vstack((attitude.to_vector(), body_rates))
+        control_variables_attitude = attitude.to_vector()[0:3] # take only first three components for control (relevant for quaternion case)
+        return np.vstack([control_variables_attitude, body_rates])
 
     @staticmethod
     def get_nadir_linearized_ypr_state_space(spacecraft: Spacecraft) -> control.StateSpace:
