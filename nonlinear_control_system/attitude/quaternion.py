@@ -19,12 +19,12 @@ class Quaternion(Attitude):
         super().__init__()
         assert len(components) == 4, "Quaternion must have four components"
         q1, q2, q3, q4 = components
-        assert np.isclose(np.linalg.norm([q1, q2, q3, q4]), 1), "Quaternion must be a unit quaternion"
+        #assert np.isclose(np.linalg.norm([q1, q2, q3, q4]), 1), "Quaternion must be a unit quaternion"
         
-        self.q1 = q1
-        self.q2 = q2
-        self.q3 = q3
-        self.q4 = q4
+        self.q1 = float(q1)
+        self.q2 = float(q2)
+        self.q3 = float(q3)
+        self.q4 = float(q4)
     
     def calculate_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
         matrix = self._calculate_quaternion_rate_matrix()
@@ -98,12 +98,12 @@ class Quaternion(Attitude):
         return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
 
     def __sub__(self, other: Quaternion) -> Quaternion:
-        return Quaternion(
+        return Quaternion([
             self.q1 - other.q1,
             self.q2 - other.q2,
             self.q3 - other.q3,
             self.q4 - other.q4
-        )
+        ])
     
     def __matmul__(self, other: Quaternion) -> Quaternion:
         """
