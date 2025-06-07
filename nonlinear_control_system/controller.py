@@ -197,8 +197,8 @@ class TSSController(Controller):
         target_angular_velocity = self.sc.attitude.derivative_to_body_rates(target_ypr_rates, self.sc.orbit.mean_motion)
 
         # inner loop
-        angular_velocity_error = target_angular_velocity - self.sc.angular_velocity
-        target_angular_acceleration = self.inner_loop_gains @ angular_velocity_error
+        angular_velocity_error = self.sc.angular_velocity - target_angular_velocity  # Δω = ω - ω_d
+        target_angular_acceleration = -self.inner_loop_gains @ angular_velocity_error
 
         control_torque: np.matrix = self.sc.inertia_tensor @ target_angular_acceleration + np.cross(self.sc.angular_velocity.flatten(), (self.sc.inertia_tensor @ self.sc.angular_velocity).flatten()).reshape(3, 1) - self.disturbance_torque
         return np.asarray(control_torque)
