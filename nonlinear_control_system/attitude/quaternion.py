@@ -63,7 +63,7 @@ class Quaternion(Attitude):
         """
         # define shorthands
         q1, q2, q3, q4 = self.q1, self.q2, self.q3, self.q4
-        omega1, omega2, omega3 = body_rates
+        omega1, omega2, omega3 = body_rates.flatten()
         n = mean_motion
 
         # matrix components
