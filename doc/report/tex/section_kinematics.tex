@@ -173,7 +173,12 @@ Body axes angular rates can then be calculated following \cref{eqt:omega_to_q_do
 Using the state vector $\gls{sy:x} = \begin{bmatrix} q_1 & q_2 & q_3 & q_4 & \omega_1 & \omega_2 & \omega_3 \end{bmatrix}^T$, the derivative matrix with respect to the state vector is calculated from \cref{eqt:omega_to_q_dot} using the \gls{ac:cas} \texttt{TI-Nspire CAS} with the results given in \cref{eqt:q_rate_state_derivative}.
 \begin{equation} \label{eqt:q_rate_state_derivative}
     \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}} =
-    \frac{1}{2} A \text{with} A \in \mathbb{R}^{4 \times 7}
+    \frac{1}{2} A = \frac{1}{2} \begin{bmatrix}
+        A_{11} & A_{12} & A_{13} & A_{14} & q_4 & -q_3 & q_2 \\
+        A_{21} & A_{22} & A_{23} & A_{24} & q_3 & q_4 & -q_1 \\
+        A_{31} & A_{32} & A_{33} & A_{34} & -q_2 & q_1 & q_4 \\
+        A_{41} & A_{42} & A_{43} & A_{44} & -q_1 & -q_2 & -q_3
+    \end{bmatrix}
 \end{equation}
 \begin{align*}
     A_{11} &= -\frac{q_1}{q_4} \omega_1 + \frac{q_1}{q_3} \omega_2 - \frac{q_1}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_1}{q_3}
