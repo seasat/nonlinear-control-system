@@ -9,23 +9,17 @@ The orbital frequency or \glsdesc{sy:mean_motion} is calculated using \cref{eqt:
 Using $\gls{sy:mu_earth} = \qty{3.98600442e14}{\meter^3\per\second^2}$ and $\gls{sy:r}_E = \qty{6.378137e6}{\m}$, the mean motion is calculated to be $\gls{sy:mean_motion} = \qty{1.060206e-3}{\per\second}$.
 
 As such, the rotation rate of the \gls{lvlh} frame with respect ot the inertial frame is $\gls{sy:omega} = \gls{sy:mean_motion} \gls{sy:c2}$.
-Depending on the attitude representation used, this results in \cref{eqt:omega_lvlh_ypr, eqt:omega_lvlh_q}.
-
-\parbox{.5\textwidth}{
-\begin{equation} \label{eqt:omega_lvlh_ypr}
-    \vec{\omega}_{\gls{lvlh}} = \begin{bmatrix}
+Depending on the attitude representation used, this results in \cref{eqt:omega_lvlh}.
+\begin{equation} \label{eqt:omega_lvlh}
+    \gls{sy:omega}_{\gls{lvlh}} = \begin{bmatrix}
         \cos{\gls{sy:roll}} \sin{\gls{sy:yaw}} \\
         \sin{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}} + \cos{\gls{sy:roll}} \cos{\gls{sy:yaw}} \\
         \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}} - \sin{\gls{sy:roll}} \cos{\gls{sy:yaw}}
     \end{bmatrix}
-\end{equation}
-}
-\parbox{.5\textwidth}{
-\begin{equation} \label{eqt:omega_lvlh_q}
-    \vec{\omega}_{\gls{lvlh}} = \begin{bmatrix}
+    =
+    \begin{bmatrix}
         2 (q_1 q_2 + q_3 q_4) \\
         1 - 2 (q_1^2 + q_3^2) \\
         2 (q_1 q_3 - q_1 q_4)
     \end{bmatrix}
 \end{equation}
-}
