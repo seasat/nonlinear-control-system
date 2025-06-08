@@ -301,9 +301,29 @@ Applying the TSS principle to the problem, the virtual control variables of the 
 
 While for the inner loop, the virtual control variable is in both cases the angular acceleration:
 \begin{gather}
-    \vec{cv}_1 = \gls{sy:omega} \\
-    \gls{sy:nu}_1 = \dot{\gls{sy:omega}}
+    \gls{sy:u}_2 = \vec{cv}_1 = \gls{sy:omega} \\
+    \gls{sy:nu}_1 = \dot{\gls{sy:omega}} \\
+    \gls{sy:u}_1 = \gls{sy:t_c}
 \end{gather}
+
+To calculate the control outputs for both loops, the dynamic inversion (\cref{eqt:ndi_inversion}) is then applied to the virtual control outputs of the proportional controllers.
+
+\parbox{.49\textwidth}{
+\begin{equation}
+    \gls{sy:u}_2 = \gls{sy:omega}(\gls{sy:nu}_2) = \gls{sy:omega}(\gls{sy:ypr_dot})
+\end{equation}}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \gls{sy:u}_2 = \gls{sy:omega}(\gls{sy:nu}_2) = \gls{sy:t_c}(\gls{sy:q_dot})
+\end{equation}}
+
+The equations for the inversion are given by inverting the relationships \cref{eqt:omega_to_theta_dot,eqt:omega_to_q_dot}.
+
+For the inner loop the dynamic model is used for the inversion.
+\begin{equation}
+    \gls{sy:u}_1 = \gls{sy:t_c}(\gls{sy:nu}_1) = \gls{sy:t_c}(\gls{sy:omega_dot})
+\end{equation}
+Which is given by inverting the relationship ???.
 
 
 \subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
