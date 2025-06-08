@@ -32,7 +32,7 @@ As such both the attitude and the angular velocity form part of the state vector
 \end{equation}
 }
 
-\gls{sy:omega_dot} is defined by the dynamics of the system and calculated through ???.
+\gls{sy:omega_dot} is defined by the dynamics of the system and calculated through \cref{eqt:angular_acceleration}.
 \gls{sy:ypr_dot} and \gls{sy:q_dot} arise from the kinematics of the system and are calculated through \cref{eqt:omega_to_theta_dot,eqt:omega_to_q_dot}.
 Both cases are highly nonlinear systems, to which different control strategies are subsequently applied.
 
@@ -283,7 +283,7 @@ The full inversion for quaternions becomes
     \right)
 \end{equation}
 
-Where \gls{sy:ypr_dot} is calculated using \cref{eqt:omega_to_theta_dot} and \gls{sy:q_dot} is calculated using \cref{eqt:omega_to_q_dot}, the state derivatives according to \cref{eqt:ypr_rate_state_derivative,eqt:q_rate_state_derivative} and \gls{sy:omega_dot} according to the dynamic model ???.
+Where \gls{sy:ypr_dot} is calculated using \cref{eqt:omega_to_theta_dot} and \gls{sy:q_dot} is calculated using \cref{eqt:omega_to_q_dot}, the state derivatives according to \cref{eqt:ypr_rate_state_derivative,eqt:q_rate_state_derivative} and \gls{sy:omega_dot} according to the dynamic model \cref{eqt:angular_acceleration}.
 
 
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}} \label{sec:tss_controller}
@@ -359,7 +359,7 @@ For the inner loop the dynamic model is used for the inversion.
 \begin{equation}
     \gls{sy:u}_1 = \gls{sy:t_c}(\gls{sy:nu}_1) = \gls{sy:t_c}(\gls{sy:omega_dot})
 \end{equation}
-Which is given by inverting the relationship ???.
+Which is given by inverting the relationship \cref{eqt:angular_acceleration}.
 
 
 \subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
