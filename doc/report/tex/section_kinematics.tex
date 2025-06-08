@@ -29,3 +29,32 @@ Depending on the attitude representation used, this results in \cref{eqt:omega_l
 
 
 \subsection{Quaternion Rates}
+\begin{equation} \label{eqt:omega_to_q_dot}
+    \gls{sy:q_dot} = \begin{bmatrix}
+        \dot{q}_1 \\
+        \dot{q}_2 \\
+        \dot{q}_3 \\
+        \dot{q}_4
+    \end{bmatrix}
+    =
+    \frac{1}{2} \begin{bmatrix}
+        q_4 & -q_3 & q_2 & q_1 \\
+        q_3 & q_4 & -q_1 & q_2 \\
+        -q_2 & q_1 & q_4 & q_3 \\
+        -q_1 & -q_2 & -q_3 & q_4
+    \end{bmatrix}
+    \left(
+        \begin{bmatrix}
+            \omega_1 \\
+            \omega_2 \\
+            \omega_3 \\
+            0
+        \end{bmatrix}
+        - n \begin{bmatrix}
+            2 (q_1 q_2 + q_3 q_4) \\
+            1 - 2 (q_1^2 + q_3^2) \\
+            2 (q_1 q_3 - q_1 q_4) \\
+            0
+        \end{bmatrix}
+    \right)
+\end{equation}
