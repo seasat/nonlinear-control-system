@@ -1,5 +1,34 @@
 
 \section{Controller Design}
+\subsection{State Space}
+The system can be represented in state space form, where the state vector depends on the attitude representation used.
+The control problem is a second order system, where the controller acts on the torque which is in turn integrated twice to obtain the attitude, which is the control variable.
+As such both the attitude and the angular velocity form part of the state vector.
+
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} =
+    \begin{bmatrix}
+        \gls{sy:ypr_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} =
+    \begin{bmatrix}
+        \gls{sy:q_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+\end{equation}
+}
+
+\gls{sy:omega_dot} is defined by the dynamics of the system and calculated through ???.
+\gls{sy:ypr_dot} and \gls{sy:q_dot} arise from the kinematics of the system and are calculated through \cref{eqt:omega_to_theta_dot,eqt:omega_to_q_dot}.
+Both cases are highly nonlinear systems, to which different control strategies are subsequently applied.
+
+
 \subsection{Linearization}
 \subsection{\texorpdfstring{\acrlong{pd}}{Proportional Differential} Controller}
 \subsection{\texorpdfstring{\acrlong{ndi}}{Nonlinear Dynamic Inversion}}
