@@ -355,3 +355,27 @@ Which is given by inverting the relationship ???.
 
 
 \subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
+An \gls{indi} controller can in principle act on the most general system 
+\begin{equation}
+    \gls{sy:x_dot} = f(\gls{sy:x}, \gls{sy:u})
+\end{equation}
+
+Using the \gls{indi} method, the system is again split by time scale separation as described previously, with the assumption of the inner loop running much faster than the outer.
+Instead of inverting the control output $\gls{sy:u}_2$ directly, a control correction is calculated incrementally.
+\begin{equation}
+    \Delta \gls{sy:u} = \mat{G}^{-1} (\gls{sy:nu} - \gls{sy:x}_0)
+\end{equation}
+
+$\gls{sy:x}_0$ instead of a modelled value is obtained through observation or a measurement.
+In this case, this assumes being able to measure the angular accelerations which is for example possible using a gyroscope or differential processing of attitude measurements.
+This conveniently includes all non-linear effects of the system, does however introduce measurement errors.
+
+In this case, the control torque increment becomes
+\begin{equation}
+    \Delta \gls{sy:t_c} = \gls{sy:j} (\gls{sy:t_c}_\text{target} - \gls{sy:t_c}_\text{current})
+\end{equation}
+and the control output becomes
+\begin{equation}
+    \gls{sy:t_c} = \gls{sy:t_c}_\text{current} + \Delta \gls{sy:t_c}
+\end{equation}
+
