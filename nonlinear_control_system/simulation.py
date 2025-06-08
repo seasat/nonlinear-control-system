@@ -124,6 +124,8 @@ class Simulation:
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
+
+        fig.savefig(f"fig/attitudes_{self.controller.__class__.__name__}_{self.spacecraft.attitude.__class__.__name__}.pdf", bbox_inches='tight', dpi=300)
     
     def plot_attitude_errors(self) -> None:
         """ Plot the attitude errors over time. """
@@ -139,6 +141,8 @@ class Simulation:
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude Error $[\mathrm{rad}]$")
+
+        fig.savefig(f"fig/attitude_errors_{self.controller.__class__.__name__}_{self.spacecraft.attitude.__class__.__name__}.pdf", bbox_inches='tight', dpi=300)
     
     def plot_control_torques(self) -> None:
         """ Plot the control torques over time. """
@@ -155,3 +159,5 @@ class Simulation:
         ax.set_yscale('log')
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Control Torque $[\mathrm{Nm}]$")
+
+        fig.savefig(f"fig/control_torques_{self.controller.__class__.__name__}_{self.spacecraft.attitude.__class__.__name__}.pdf", bbox_inches='tight', dpi=300)
