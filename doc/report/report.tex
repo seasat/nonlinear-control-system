@@ -154,6 +154,26 @@ This definition allows for a representation of subsequent rotations as given in 
 \end{equation}
 
 
+\subsection*{Quaternions to DCM}
+Using this definition of quaternions, the corresponding \gls{sy:dcm} for a given quaternion can be expressed as shown in \cref{eqt:quaternion_to_dcm}. 
+\begin{equation} \label{eqt:quaternion_to_dcm}
+    \gls{sy:dcm} = \begin{bmatrix}
+        1 - 2(q_2^2 + q_3^2) & 2(q_1 q_2 + q_3 q_4) & 2(q_1 q_3 - q_2 q_4) \\
+        2(q_1 q_2 + q_3 q_4) & 1 - 2(q_1^2 + q_3^2) & 2(q_2 q_3 + q_1 q_4) \\
+        2(q_1 q_3 + q_2 q_4) & 2(q_2 q_3 - q_1 q_4) & 1 - 2(q_1^2 + q_2^2)
+    \end{bmatrix}
+\end{equation}
+
+Inversely, the quaternion can be calculated from the \glsdesc{sy:dcm} as shown in \cref{eqt:dcm_to_quaternion}.
+\begin{equation} \label{eqt:dcm_to_quaternion}
+    \gls{sy:q} = \frac{1}{4 q_4} \begin{bmatrix}
+        \gls{sy:dcm}_{23} - \gls{sy:dcm}_{32} \\
+        \gls{sy:dcm}_{31} - \gls{sy:dcm}_{13} \\
+        \gls{sy:dcm}_{12} - \gls{sy:dcm}_{21}
+    \end{bmatrix}
+\end{equation}
+
+
 \section{Kinematics}
 \subsection{Angular Rates}
 
