@@ -1,4 +1,5 @@
 
+% state feedback controller results
 \begin{figure}
     \centering
     \subcaptionbox{Spacecraft attitudes.\label{fig:attitudes_state_feedback_controller_ypr}}{
@@ -25,4 +26,34 @@
     \includegraphics[width=.95\textwidth]{control_torques_StateFeedbackController_Quaternion}
     }
     \caption{Simulation results of system controlled using a linear state feedback controller with quaternions.}
+\end{figure}
+
+
+% ndi controller results
+\begin{figure}
+    \centering
+    \subcaptionbox{Spacecraft attitudes.\label{fig:attitudes_ndi_controller_ypr}}{
+    \includegraphics[width=.95\textwidth]{attitudes_NDIController_YawPitchRoll}
+    }
+    \subcaptionbox{Attitude errors.\label{fig:attitude_errors_ndi_controller_ypr}}{
+    \includegraphics[width=.95\textwidth]{attitude_errors_NDIController_YawPitchRoll}
+    }
+    \subcaptionbox{Control torques.\label{fig:control_torques_ndi_controller_ypr}}{
+    \includegraphics[width=.95\textwidth]{control_torques_NDIController_YawPitchRoll}
+    }
+    \caption{Simulation results of system controlled using a nonlinear dynamic inversion controller with Euler angles.}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \subcaptionbox{Spacecraft attitudes.\label{fig:attitudes_ndi_controller_quaternions}}{
+    \includegraphics[width=.95\textwidth]{attitudes_NDIController_Quaternion}
+    }
+    \subcaptionbox{Attitude errors.\label{fig:attitude_errors_ndi_controller_quaternions}}{
+    \includegraphics[width=.95\textwidth]{attitude_errors_NDIController_Quaternion}
+    }
+    \subcaptionbox{Control torques.\label{fig:control_torques_ndi_controller_quaternions}}{
+    \includegraphics[width=.95\textwidth]{control_torques_NDIController_Quaternion}
+    }
+    \caption{Simulation results of system controlled using a nonlinear dynamic inversion controller with quaternions.}
 \end{figure}
