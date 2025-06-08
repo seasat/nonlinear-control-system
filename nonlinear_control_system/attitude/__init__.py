@@ -5,3 +5,4 @@ from .eigenaxis import EigenaxisRotation
 from .quaternion import Quaternion
 from .mrp import ClassicalRodriguezParameter, ModifiedRodriguezParameter
 from .euler_angles import YawPitchRoll
+from .angular_velocity import AngularVelocity, BodyRates, YPRRates
