@@ -118,6 +118,23 @@ Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:
 
 
 \subsection{Quaternions}
+We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar and three vector components, as shown in \cref{eqt:quaternion}.
+\begin{equation} \label{eqt:quaternion}
+    \gls{sy:q} = \begin{bmatrix}
+        q_0 \\
+        q_1 \\
+        q_2 \\
+        q_3
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        e_1 \, \sin(\frac{\theta}{2}) \\
+        e_2 \, \sin(\frac{\theta}{2}) \\
+        e_3 \, \sin(\frac{\theta}{2}) \\
+        \cos(\frac{\theta}{2})
+    \end{bmatrix}
+\end{equation}
+Where \gls{sy:e} is the unit vector of the eigenaxis of the rotation and \gls{sy:theta} is the rotation angle.
 
 
 \section{Kinematics}
