@@ -141,10 +141,10 @@ Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:
 We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar and three vector components, as shown in \cref{eqt:quaternion}.
 \begin{equation} \label{eqt:quaternion}
     \gls{sy:q} = \begin{bmatrix}
-        q_0 \\
         q_1 \\
         q_2 \\
-        q_3
+        q_3 \\
+        q_4
     \end{bmatrix}
     =
     \begin{bmatrix}
@@ -155,6 +155,7 @@ We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar a
     \end{bmatrix}
 \end{equation}
 Where \gls{sy:e} is the unit vector of the eigenaxis of the rotation and \gls{sy:theta} is the rotation angle.
+
 
 This definition allows for a representation of subsequent rotations as given in \cref{eqt:quaternion_product} without the use of trigonometric functions.
 \begin{equation} \label{eqt:quaternion_product}
