@@ -169,6 +169,43 @@ The gains can be calculated using coefficient comparison for each component, res
     \end{gather}
 }
 
+The key to this controller design performing as expected is the correct inversion of the system.
+The inversion is performed according to the formula
+\begin{equation} \label{eqt:ndi_inversion}
+    \gls{sy:u} = \mat{M}^{-1}(\gls{sy:x}) \left( \gls{sy:nu} - l(\gls{sy:x}) \right) 
+\end{equation}
+
+$l$ performs the conversion of the state vector components to the virtual control parameter, in this case the attitude acceleration.
+
+\parbox{.49\textwidth}{
+\begin{equation}
+    \ddot{\gls{sy:ypr}} =
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        \gls{sy:ypr_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+    + \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1} 
+    \end{bmatrix} \gls{sy:t_c}
+\end{equation}}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \ddot{\gls{sy:q}} =
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        \gls{sy:q_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+    + \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix} \gls{sy:t_c}
+\end{equation}}
+
 
 
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
