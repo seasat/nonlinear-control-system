@@ -154,7 +154,7 @@ This definition allows for a representation of subsequent rotations as given in 
 \end{equation}
 
 
-\subsection*{Quaternions to DCM}
+\subsubsection*{Quaternions to DCM}
 Using this definition of quaternions, the corresponding \gls{sy:dcm} for a given quaternion can be expressed as shown in \cref{eqt:quaternion_to_dcm}. 
 \begin{equation} \label{eqt:quaternion_to_dcm}
     \gls{sy:dcm} = \begin{bmatrix}
@@ -170,6 +170,56 @@ Inversely, the quaternion can be calculated from the \glsdesc{sy:dcm} as shown i
         \gls{sy:dcm}_{23} - \gls{sy:dcm}_{32} \\
         \gls{sy:dcm}_{31} - \gls{sy:dcm}_{13} \\
         \gls{sy:dcm}_{12} - \gls{sy:dcm}_{21}
+    \end{bmatrix}
+\end{equation}
+
+
+\subsubsection*{Single Axis Rotations}
+Using the definition of single axis rotation in \gls{ac:dcm} representation (\cref{eqt:c1,eqt:c2,eqt:c3}), together with the relationship between \gls{sy:dcm} and quaternions (\cref{eqt:quaternion_to_dcm}), we can derive the single axis rotation matrices in quaternion representation as shown in \cref{eqt:quaternion_c1,eqt:quaternion_c2,eqt:quaternion_c3}.
+
+\parbox{.32\textwidth}{
+\begin{equation} \label{eqt:quaternion_c1}
+    \gls{sy:q}^{C_1} = \begin{bmatrix}
+        \sin \frac{\gls{sy:roll}}{2} \\
+        0 \\
+        0 \\
+        \cos \frac{\gls{sy:roll}}{2}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.32\textwidth}{
+\begin{equation} \label{eqt:quaternion_c2}
+    \gls{sy:q}^{C_2} = \begin{bmatrix}
+        0 \\
+        \sin \frac{\gls{sy:pitch}}{2} \\
+        0 \\
+        \cos \frac{\gls{sy:pitch}}{2}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.32\textwidth}{
+\begin{equation} \label{eqt:quaternion_c3}
+    \gls{sy:q}^{C_3} = \begin{bmatrix}
+        0 \\
+        0 \\
+        \sin \frac{\gls{sy:yaw}}{2} \\
+        \cos \frac{\gls{sy:yaw}}{2}
+    \end{bmatrix}
+\end{equation}
+}
+
+
+\subsubsection*{Quaternions to Euler Angles}
+The yaw, pitch and roll angles can be calculated from the quaternion as shown in \cref{eqt:quaternion_to_euler}.
+\begin{equation} \label{eqt:quaternion_to_euler}
+    \gls{sy:ypr} = \begin{bmatrix}
+        \gls{sy:roll} \\
+        \gls{sy:pitch} \\
+        \gls{sy:yaw}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        
     \end{bmatrix}
 \end{equation}
 
