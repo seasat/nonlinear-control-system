@@ -157,6 +157,8 @@ Inversely, the quaternion can be calculated from the \glsdesc{sy:dcm} as shown i
     \end{bmatrix}
 \end{equation}
 
+This reveals a singularity for $q_4 = 0$, which occurs for rotations about the eigenaxis of $\pi$ radians, for which the quaternion becomes undefined.
+
 
 \subsubsection*{Single Axis Rotations}
 Using the definition of single axis rotation in \gls{ac:dcm} representation (\cref{eqt:c1,eqt:c2,eqt:c3}), together with the relationship between \gls{sy:dcm} and quaternions (\cref{eqt:quaternion_to_dcm}), we can derive the single axis rotation matrices in quaternion representation as shown in \cref{eqt:quaternion_c1,eqt:quaternion_c2,eqt:quaternion_c3}.
