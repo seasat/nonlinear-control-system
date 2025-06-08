@@ -306,6 +306,34 @@ While for the inner loop, the virtual control variable is in both cases the angu
     \gls{sy:u}_1 = \gls{sy:t_c}
 \end{gather}
 
+The characteristic polynomial of the closed loop system then becomes
+\begin{equation}
+    s^2 + \gls{sy:K}_1 s + \gls{sy:K}_1 \gls{sy:K}_2
+\end{equation}
+And the gains can again be calculated using coefficient comparison for each component, resulting in diagonal control matrices.
+\begin{gather}
+    k_1 = 2 \gls{sy:omega_0} \gls{sy:zeta} \\
+    k_2 = \frac{\gls{sy:omega_0}}{2 \gls{sy:zeta}}   
+\end{gather}
+
+\parbox{.49\textwidth}{
+\begin{gather}
+    \gls{sy:K}_1 = \begin{bmatrix}
+        0.1800 & 0 & 0 \\
+        0 & 0.1800 & 0 \\
+        0 & 0 & 0.1800
+    \end{bmatrix}
+\end{gather}
+}
+\parbox{.49\textwidth}{
+\begin{gather}
+    \gls{sy:K}_2 = \begin{bmatrix}
+        0.05556 & 0 & 0 \\
+        0 & 0.05556 & 0 \\
+        0 & 0 & 0.05556
+    \end{bmatrix}
+\end{gather}}
+
 To calculate the control outputs for both loops, the dynamic inversion (\cref{eqt:ndi_inversion}) is then applied to the virtual control outputs of the proportional controllers.
 
 \parbox{.49\textwidth}{
