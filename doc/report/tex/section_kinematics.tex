@@ -14,9 +14,9 @@ Depending on the attitude representation used, this results in \cref{eqt:omega_l
 \parbox{.5\textwidth}{
 \begin{equation} \label{eqt:omega_lvlh_ypr}
     \vec{\omega}_{\gls{lvlh}} = \begin{bmatrix}
-        0 \\
-        0 \\
-        \gls{sy:omega}
+        \cos{\gls{sy:roll}} \sin{\gls{sy:yaw}} \\
+        \sin{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}} + \cos{\gls{sy:roll}} \cos{\gls{sy:yaw}} \\
+        \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}} - \sin{\gls{sy:roll}} \cos{\gls{sy:yaw}}
     \end{bmatrix}
 \end{equation}
 }
