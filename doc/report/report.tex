@@ -136,6 +136,23 @@ We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar a
 \end{equation}
 Where \gls{sy:e} is the unit vector of the eigenaxis of the rotation and \gls{sy:theta} is the rotation angle.
 
+This definition allows for a representation of subsequent rotations as given in \cref{eqt:quaternion_product} without the use of trigonometric functions.
+\begin{equation} \label{eqt:quaternion_product}
+    \gls{sy:q}^B = \begin{bmatrix}
+         q_4^{B/A} &  q_3^{B/A} & -q_2^{B/A} & q_1^{B/A} \\
+        -q_3^{B/A} &  q_4^{B/A} &  q_1^{B/A} & q_2^{B/A} \\
+         q_2^{B/A} & -q_1^{B/A} &  q_4^{B/A} & q_3^{B/A} \\
+        -q_1^{B/A} & -q_2^{B/A} & -q_3^{B/A} & q_4^{B/A} 
+    \end{bmatrix}    
+    \,
+    \begin{bmatrix}
+        q_1^A \\
+        q_2^A \\
+        q_3^A \\
+        q_4^A
+    \end{bmatrix}
+\end{equation}
+
 
 \section{Kinematics}
 \subsection{Angular Rates}
