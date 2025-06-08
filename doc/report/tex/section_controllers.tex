@@ -29,7 +29,72 @@ As such both the attitude and the angular velocity form part of the state vector
 Both cases are highly nonlinear systems, to which different control strategies are subsequently applied.
 
 
-\subsection{Linearization}
+\subsection{Linear Controller}
+A linear controller is designed using a linear system, where the state vector derivative is a linear combination of both the state vector itself and the control input (see \cref{eqt:state_space_linear}).
+\begin{equation} \label{eqt:state_space_linear}
+    \gls{sy:x_dot} = \mat{A} \gls{sy:x} + \mat{B} \gls{sy:u}
+\end{equation}
+
+One possible solution to obtaining a linear model of a nonlinear system is to linearize it around the operation point
+The linearization uses a Taylor expansion that is then truncated after the first order term.
+
+Specifically, this results in the following approximations: $\sin{x_i} \approx x_i$, $\cos{x_i} \approx 1$ and $x_i x_j \approx 0$.
+This results in the following linear descriptions of the system around the operation point $\gls{sy:x} = \vec{0}$ and $\gls{sy:u} = \vec{0}$:
+
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} = 
+    \begin{bmatrix}
+        0 & 0 & \gls{sy:mean_motion} & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        \gls{sy:roll} \\
+        \gls{sy:pitch} \\
+        \gls{sy:yaw} \\
+        \omega_1 \\
+        \omega_2 \\
+        \omega_3
+    \end{bmatrix}
+    + \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \gls{sy:t_c}
+\end{equation}
+}
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} = 
+    \begin{bmatrix}
+        0 & 0 & 0 & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        q_1 \\
+        q_2 \\
+        q_3 \\
+        \omega_1 \\
+        \omega_2 \\
+        \omega_3
+    \end{bmatrix}
+    + \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \gls{sy:t_c}
+\end{equation}
+}
+
+
 \subsection{\texorpdfstring{\acrlong{pd}}{Proportional Differential} Controller}
 \subsection{\texorpdfstring{\acrlong{ndi}}{Nonlinear Dynamic Inversion}}
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
