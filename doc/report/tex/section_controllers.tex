@@ -189,7 +189,7 @@ $l$ performs the conversion of the state vector components to the virtual contro
     \begin{bmatrix}
         0 \\
         \gls{sy:j}^{-1} 
-    \end{bmatrix} \gls{sy:t_c}
+    \end{bmatrix} \gls{sy:t_d}
 \end{equation}}
 \parbox{.49\textwidth}{
 \begin{equation}
@@ -228,6 +228,52 @@ In this case, how the control torques affect the attitude acceleration.
     \end{bmatrix}
 \end{equation}}
 
+The full inversion for Euler angles thus becomes
+\begin{equation}
+    \gls{sy:t_c} = \left( 
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \right)^{-1}
+    \left(
+        \ddot{\gls{sy:ypr}}_c -
+        \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            \gls{sy:ypr_dot} \\
+            \gls{sy:omega_dot}
+        \end{bmatrix}
+        + \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            0 \\
+            \gls{sy:j}^{-1} 
+        \end{bmatrix} \gls{sy:t_d}
+    \right)
+\end{equation}
+The full inversion for quaternions becomes
+\begin{equation}
+    \gls{sy:t_c} = \left( 
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \right)^{-1}
+    \left(
+        \ddot{\gls{sy:q}}_c -
+        \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            \gls{sy:q_dot} \\
+            \gls{sy:omega_dot}
+        \end{bmatrix}
+        + \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            0 \\
+            \gls{sy:j}^{-1} 
+        \end{bmatrix} \gls{sy:t_d}
+    \right)
+\end{equation}
 
 
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
