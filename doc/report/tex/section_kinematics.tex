@@ -26,15 +26,27 @@ Depending on the attitude representation used, this results in \cref{eqt:omega_l
 
 
 \subsection{Yaw Pitch Roll Rates}
-\begin{equation} \label{eqt:theta_dot_to_omega}
-    \gls{sy:omega} = \begin{bmatrix} \omega_1 \\ \omega_2 \\ \omega_3 \end{bmatrix}
+\begin{multline} \label{eqt:theta_dot_to_omega_inertial}
+    \gls{sy:omega}^I = \begin{bmatrix} \omega_1 \\ \omega_2 \\ \omega_3 \end{bmatrix}
     =
     \begin{bmatrix} \gls{sy:roll_dot} \\ 0 \\ 0 \\ \end{bmatrix}
     + \gls{sy:c1}(\gls{sy:roll})
     \begin{bmatrix} 0 \\ \gls{sy:pitch_dot} \\ 0 \\ \end{bmatrix}
     + \gls{sy:c1}{\gls{sy:roll}} \gls{sy:c2}(\gls{sy:pitch})
     \begin{bmatrix} 0 \\ 0 \\ \gls{sy:yaw_dot} \end{bmatrix}
-\end{equation}
+    \\
+    =
+    \begin{bmatrix}
+        1 & 0 & -\sin{\gls{sy:pitch}} \\
+        0 & \cos{\gls{sy:roll}} & \sin{\gls{sy:roll}} \cos{\gls{sy:pitch}} \\
+        0 & -\sin{\gls{sy:roll}} & \cos{\gls{sy:roll}} \cos{\gls{sy:pitch}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \gls{sy:roll_dot} \\
+        \gls{sy:pitch_dot} \\
+        \gls{sy:yaw_dot}
+    \end{bmatrix}
+\end{multline}
 
 
 \subsection{Quaternion Rates}
