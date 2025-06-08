@@ -210,16 +210,21 @@ Using the definition of single axis rotation in \gls{ac:dcm} representation (\cr
 
 
 \subsubsection*{Quaternions to Euler Angles}
-The yaw, pitch and roll angles can be calculated from the quaternion as shown in \cref{eqt:quaternion_to_euler}.
-\begin{equation} \label{eqt:quaternion_to_euler}
-    \gls{sy:ypr} = \begin{bmatrix}
-        \gls{sy:roll} \\
-        \gls{sy:pitch} \\
-        \gls{sy:yaw}
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-        
+Using the yaw $\rightarrow$ pitch $\rightarrow$ roll rotation sequence, the quaternion can be expressed as a function of the Euler angles using the single axis rotation quaternions (\cref{eqt:quaternion_c1,eqt:quaternion_c2,eqt:quaternion_c3}).
+The resulting quaternion as shown in \cref{eqt:ypr_to_quaternion}.
+\begin{equation} \label{eqt:ypr_to_quaternion}
+    \gls{sy:q} = \begin{bmatrix}
+        \sin \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2} 
+        - \cos \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+        \\
+        \cos \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2} 
+        + \sin \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+        \\
+        \cos \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+        - \sin \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2}
+        \\
+        \cos \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2}
+        + \sin \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
     \end{bmatrix}
 \end{equation}
 
