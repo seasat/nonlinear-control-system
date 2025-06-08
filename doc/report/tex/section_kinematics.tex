@@ -47,6 +47,28 @@ Depending on the attitude representation used, this results in \cref{eqt:omega_l
         \gls{sy:yaw_dot}
     \end{bmatrix}
 \end{multline}
+\begin{equation} \label{eqt:omega_to_theta_dot}
+    \gls{sy:ypr_dot}
+    =
+    \begin{bmatrix}
+        \gls{sy:roll_dot} \\
+        \gls{sy:pitch_dot} \\
+        \gls{sy:yaw_dot}
+    \end{bmatrix}
+    =
+    \frac{1}{\cos{\gls{sy:pitch}}}
+    \begin{bmatrix}
+        \cos{\gls{sy:pitch}} & \sin{\gls{sy:roll}} \sin{\gls{sy:pitch}} & \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \\ 
+        0 & \cos{\gls{sy:roll}} \cos{\gls{sy:pitch}} & -\sin{\gls{sy:roll}} \cos{\gls{sy:pitch}} \\
+        0 & \sin{\gls{sy:roll}} & \cos{\gls{sy:roll}}
+    \end{bmatrix}
+    + \frac{\gls{sy:mean_motion}}{\cos{\gls{sy:pitch}}}
+    \begin{bmatrix}
+        \sin{\gls{sy:yaw}} \\
+        \cos{\gls{sy:pitch}} \sin{\gls{sy:yaw}} \\
+        \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}}
+    \end{bmatrix}
+\end{equation}
 
 
 \subsection{Quaternion Rates}
