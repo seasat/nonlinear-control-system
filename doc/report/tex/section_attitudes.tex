@@ -110,6 +110,23 @@ Any rotation can then be described using the eigenaxis of the rotation and the a
 The \gls{ac:dcm} for a rotation about the eigenaxis $\gls{sy:e}$ with angle $\gls{sy:theta}$ is given by \cref{eqt:eigenaxis_dcm}.
 \begin{equation} \label{eqt:eigenaxis_dcm}
     \gls{sy:dcm}(\gls{sy:e}, \gls{sy:theta}) = \begin{bmatrix}
+        \cos{\gls{sy:theta}} + e_1^2 (1 - \cos{\gls{sy:theta}}) 
+        &
+        e_1 e_2 (1 - \cos{\gls{sy:theta}}) + e_3 \sin{\gls{sy:theta}}
+        &
+        e_1 e_3 (1 - \cos{\gls{sy:theta}}) - e_2 \sin{\gls{sy:theta}}
+        \\
+        e_2 e_1 (1 - \cos{\gls{sy:theta}}) - e_3 \sin{\gls{sy:theta}}
+        &
+        \cos{\gls{sy:theta}} + e_2^2 (1 - \cos{\gls{sy:theta}})
+        &
+        e_2 e_3 (1 - \cos{\gls{sy:theta}}) + e_1 \sin{\gls{sy:theta}}
+        \\
+        e_3 e_1 (1 - \cos{\gls{sy:theta}}) + e_2 \sin{\gls{sy:theta}}
+        &
+        e_3 e_2 (1 - \cos{\gls{sy:theta}}) - e_1 \sin{\gls{sy:theta}}
+        &
+        \cos{\gls{sy:theta}} + e_3^2 (1 - \cos{\gls{sy:theta}})
     \end{bmatrix}
 \end{equation}
 
