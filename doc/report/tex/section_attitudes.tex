@@ -100,6 +100,20 @@ Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:
 \end{gather}
 
 
+\subsection{Eigenaxis Rotations}
+For every rotation between two frames, there exists a unique axis of rotation, for which the coordinates are equal in both frames of reference (see \cref{eq:eigenaxis_definition}).
+\begin{equation} \label{eq:eigenaxis_definition}
+    \gls{sy:e} = e_1 \gls{sy:b}_1 + e_2 \gls{sy:b}_2 + e_3 \gls{sy:b}_3 = e_1 \gls{sy:a}_1 + e_2 \gls{sy:a}_2 + e_3 \gls{sy:a}_3
+\end{equation}
+
+Any rotation can then be described using the eigenaxis of the rotation and the angle of rotation about that axis.
+The \gls{ac:dcm} for a rotation about the eigenaxis $\gls{sy:e}$ with angle $\gls{sy:theta}$ is given by \cref{eqt:eigenaxis_dcm}.
+\begin{equation} \label{eqt:eigenaxis_dcm}
+    \gls{sy:dcm}(\gls{sy:e}, \gls{sy:theta}) = \begin{bmatrix}
+    \end{bmatrix}
+\end{equation}
+
+
 \subsection{Quaternions}
 We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar and three vector components, as shown in \cref{eqt:quaternion}.
 \begin{equation} \label{eqt:quaternion}
