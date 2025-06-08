@@ -114,12 +114,27 @@ Defining a triplet with rotation order $3 \rightarrow 2 \rightarrow 1$, any atti
 
 \subsubsection*{Euler Angles to DCM}
 Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:yaw}, \glsfull{sy:pitch} and \glsfull{sy:roll}, the resulting \gls{ac:dcm} is given by \cref{eqt:dcm_euler}.
-\begin{equation} \label{eqt:dcm_euler}
-    \gls{sy:dcm} = \gls{sy:c1}(\gls{sy:roll}) \, \gls{sy:c2}(\gls{sy:pitch}) \, \gls{sy:c3}(\gls{sy:yaw})
-    = \begin{bmatrix}
-        
+\begin{gather} \label{eqt:dcm_euler}
+    \gls{sy:dcm} = \gls{sy:c1}(\gls{sy:roll}) \, \gls{sy:c2}(\gls{sy:pitch}) \, \gls{sy:c3}(\gls{sy:yaw}) \\
+    = \\ \begin{bmatrix}
+        \cos \gls{sy:pitch} \cos \gls{sy:yaw}
+        &
+        \cos \gls{sy:pitch} \sin \gls{sy:yaw}
+        & -\sin \gls{sy:pitch}
+        \\
+        \sin \gls{sy:roll} \sin \gls{sy:pitch} \cos \gls{sy:yaw} - \cos \gls{sy:roll} \sin \gls{sy:yaw}
+        &
+        \cos \gls{sy:roll} \cos \gls{sy:yaw} + \sin \gls{sy:roll} \sin \gls{sy:pitch} \sin \gls{sy:yaw}
+        &
+        \sin \gls{sy:roll} \cos \gls{sy:pitch}
+        \\
+        \sin \gls{sy:roll} \sin \gls{sy:yaw} + \cos \gls{sy:roll} \sin{\gls{sy:pitch}} \cos \gls{sy:yaw}
+        &
+        \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin \gls{sy:yaw} - \sin \gls{sy:roll} \cos \gls{sy:yaw} 
+        &
+        \cos{\gls{sy:roll}} \cos \gls{sy:pitch}
     \end{bmatrix}
-\end{equation}
+\end{gather}
 
 
 \subsection{Quaternions}
