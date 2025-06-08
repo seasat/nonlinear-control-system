@@ -62,12 +62,14 @@ def main():
     simulation_ndi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, ndi_controller)
     simulation_ndi.plot_attitudes()
     simulation_ndi.plot_attitude_errors()
+    simulation_ndi.plot_control_torques()
 
     sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for NDI quaternion simulation
     ndi_quaternion_controller = NDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation_ndi_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, ndi_quaternion_controller)
     simulation_ndi_quaternion.plot_attitudes()
     simulation_ndi_quaternion.plot_attitude_errors()
+    simulation_ndi_quaternion.plot_control_torques()
 
     # tss controller
     tss_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
@@ -75,12 +77,14 @@ def main():
     simulation_tss = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, tss_controller)
     simulation_tss.plot_attitudes()
     simulation_tss.plot_attitude_errors()
+    simulation_tss.plot_control_torques()
 
     sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for TSS quaternion simulation
     tss_quaternion_controller = TSSController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
     simulation_tss_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, tss_quaternion_controller)
     simulation_tss_quaternion.plot_attitudes()
     simulation_tss_quaternion.plot_attitude_errors()
+    simulation_tss_quaternion.plot_control_torques()
 
     # indi controller
     indi_controller = INDIController(sc, DISTURBANCE_TORQUE, NATURAL_FREQUENCY, DAMPING_RATIO)
@@ -88,11 +92,13 @@ def main():
     simulation_indi = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, ATTITUDE_COMMANDS, indi_controller)
     simulation_indi.plot_attitudes()
     simulation_indi.plot_attitude_errors()
+    simulation_indi.plot_control_torques()
 
     sc.set_state(INITIAL_ATTITUDE.to_quaternion(), np.zeros((3, 1)))  # Reset attitude and angular velocity for INDI quaternion simulation
     simulation_indi_quaternion = Simulation(sc, SIMULATION_DURATION, SAMPLE_TIME, DISTURBANCE_TORQUE, quaternion_commands, indi_controller)
     simulation_indi_quaternion.plot_attitudes()
     simulation_indi_quaternion.plot_attitude_errors()
+    simulation_indi_quaternion.plot_control_torques()
 
     plt.show()
 
