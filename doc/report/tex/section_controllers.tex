@@ -1,5 +1,13 @@
 
 \section{Controller Design}
+A second order linear system has a characteristic polynomial of the form
+\begin{equation}
+    s^2 + 2 \gls{sy:zeta} \gls{sy:omega_0} s + \gls{sy:omega_0}^2
+\end{equation}
+
+To ensure comparability of the controller performances, all controllers are designed to have the same natural frequency $\gls{sy:omega_0} = 0.1$ and damping ratio $\gls{sy:zeta} = 0.9$.
+
+
 \subsection{State Space}
 The system can be represented in state space form, where the state vector depends on the attitude representation used.
 The control problem is a second order system, where the controller acts on the torque which is in turn integrated twice to obtain the attitude, which is the control variable.
