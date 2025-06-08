@@ -35,7 +35,7 @@ A linear controller is designed using a linear system, where the state vector de
     \gls{sy:x_dot} = \mat{A} \gls{sy:x} + \mat{B} \gls{sy:u}
 \end{equation}
 
-One possible solution to obtaining a linear model of a nonlinear system is to linearize it around the operation point
+One possible solution to obtaining a linear model of a nonlinear system is to linearize it around the operation point, which in this case in the nadir pointing with no angular velocity.
 The linearization uses a Taylor expansion that is then truncated after the first order term.
 
 Specifically, this results in the following approximations: $\sin{x_i} \approx x_i$, $\cos{x_i} \approx 1$ and $x_i x_j \approx 0$.
@@ -93,6 +93,28 @@ This results in the following linear descriptions of the system around the opera
     \gls{sy:t_c}
 \end{equation}
 }
+
+This is evidently heavily linearized and misses much of the behavior of the system.
+It does however allow for the design of a controller that will perform according to the specifications for small angles, angular velocities and torques.
+Using state feedback control, the control output is defined as 
+\begin{equation}
+    \gls{sy:u} = -\gls{sy:K} \gls{sy:x}
+\end{equation}
+
+Using the \texttt{place} function of Python's \texttt{control} package, the gain matrix \gls{sy:K} can be calculated such that the closed loop poles of the system are at the desired locations.
+
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:K} = \begin{bmatrix}
+        0.5 & 0.5 & 0.5 & 0 & 0 & 0
+    \end{bmatrix}
+\end{equation}}
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:K} = \begin{bmatrix}
+        0.5 & 0.5 & 0.5 & 0 & 0 & 0
+    \end{bmatrix}
+\end{equation}}
 
 
 \subsection{\texorpdfstring{\acrlong{pd}}{Proportional Differential} Controller}
