@@ -26,14 +26,22 @@
 \pagenumbering{arabic}
 \chapter{Methodology}
 \section{Coordinate Systems}
-\subsection{Inertial Frame}
+\begin{figure}
+    \centering
+    \captionbox{Inertial frame}{
+
 \input{tikz/inertial_frame.tex}
+   }
+   \captionbox{LVLH frame}{
+
 \input{tikz/lvlh_frame.tex}
-\input{tikz/body_frame.tex}
-
-
-\subsection{\texorpdfstring{\acrlong{lvlh}}{Local Vertical Local Horizontal} Frame}
-\subsection{Body Frame}
+   }
+\end{figure}
+Three coordinate systems are used in this report: the inertial frame, the \gls{lvlh} frame, and the body frame.
+The inertial frame is supposed to be unaccelerated fixed to the center of Earth.
+The \gls{lvlh} frame is centered at the spacecraft and rotates with the spacecraft's orbit.
+The body frame is the reference frame used for by the spacecraft itself and thus rotates with the spacecraft's attitude.
+The attitude is then the transformation from the \gls{lvlh} frame to the body frame.
 
 
 \input{tex/section_attitudes.tex}
