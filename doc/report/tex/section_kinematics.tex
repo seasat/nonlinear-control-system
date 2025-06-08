@@ -178,33 +178,33 @@ Using the state vector $\gls{sy:x} = \begin{bmatrix} q_1 & q_2 & q_3 & q_4 & \om
 \begin{align*}
     A_{11} &= -\frac{q_1}{q_4} \omega_1 + \frac{q_1}{q_3} \omega_2 - \frac{q_1}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_1}{q_3}
     &
-    A_{12} &= -\frac{q_2}{q_4} \omega_1+\frac{q_2}{q_3} \omega_2+\omega_3-n \frac{q_2}{q_3}
+    A_{12} &= -\frac{q_2}{q_4} \omega_1+\frac{q_2}{q_3} \omega_2+\omega_3- \gls{sy:mean_motion} \frac{q_2}{q_3}
     \\
     A_{13} &= -\frac{q_3}{q_4} \omega_1-\omega_2-\frac{q_3}{q_2} \omega_3 + \gls{sy:mean_motion}
     &
     A_{14} &= \omega_1+\frac{q_4}{q_3} \omega_2-\frac{q_4}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_4}{q_3}       
     \\
-    A_{21} &= -\frac{q_1}{q_3} \omega_1-\frac{q_1}{q_4} \omega_2-\omega_3-n \frac{q_1}{q_4}
+    A_{21} &= -\frac{q_1}{q_3} \omega_1-\frac{q_1}{q_4} \omega_2-\omega_3- \gls{sy:mean_motion} \frac{q_1}{q_4}
     &
-    A_{22} &= -\frac{q_2}{q_3} \omega_1-\frac{q_2}{q_4} \omega_2+\frac{q_2}{q_1} \omega_3-n \frac{q_2}{q_4}
+    A_{22} &= -\frac{q_2}{q_3} \omega_1-\frac{q_2}{q_4} \omega_2+\frac{q_2}{q_1} \omega_3- \gls{sy:mean_motion} \frac{q_2}{q_4}
     \\
-    A_{23} &= \omega_1-\frac{q_3}{q_4} \omega_2+\frac{q_3^{12}}{q_1} \omega_3-n \frac{q_3}{q_4}
+    A_{23} &= \omega_1-\frac{q_3}{q_4} \omega_2+\frac{q_3^{12}}{q_1} \omega_3- \gls{sy:mean_motion} \frac{q_3}{q_4}
     &
     A_{24} &= -\frac{q_4}{q_3} \omega_1+\omega_2+\frac{q_4}{q_1} \omega_3 + \gls{sy:mean_motion}
     \\
     A_{31} &= \frac{q_1}{q_2} \omega_1+\omega_2-\frac{q_1}{q_4} \omega_3 - \gls{sy:mean_motion}
     &
-    A_{32} &= -\omega_1-\frac{q_2}{q_1} \omega_2-\frac{q_2}{q_4} \omega_3+n \frac{q_2}{q_1}
+    A_{32} &= -\omega_1-\frac{q_2}{q_1} \omega_2-\frac{q_2}{q_4} \omega_3+ \gls{sy:mean_motion} \frac{q_2}{q_1}
     \\
-    A_{33} &= \frac{q_3}{q_2} \omega_1-\frac{q_3}{q_1} \omega_2-\frac{q_3}{q_4} \omega_3+n \frac{q_3}{q_1}
+    A_{33} &= \frac{q_3}{q_2} \omega_1-\frac{q_3}{q_1} \omega_2-\frac{q_3}{q_4} \omega_3+ \gls{sy:mean_motion} \frac{q_3}{q_1}
     &
-    A_{34} &= \frac{q_4}{q_2} \omega_1-\frac{q_4}{q_1} \omega_2+\omega_3+n \frac{q_4}{q_1}
+    A_{34} &= \frac{q_4}{q_2} \omega_1-\frac{q_4}{q_1} \omega_2+\omega_3+ \gls{sy:mean_motion} \frac{q_4}{q_1}
     \\
-    A_{41} &= -\omega_1+\frac{q_1}{q_2} \omega_2+\frac{q_1}{q_3} \omega_3+n \frac{q_1}{q_2}
+    A_{41} &= -\omega_1+\frac{q_1}{q_2} \omega_2+\frac{q_1}{q_3} \omega_3+ \gls{sy:mean_motion} \frac{q_1}{q_2}
     &
-    A_{42} &= \frac{q_2}{q_1} \omega_1-\omega_2+\frac{q_2}{q_3} \omega_3-n
+    A_{42} &= \frac{q_2}{q_1} \omega_1-\omega_2+\frac{q_2}{q_3} \omega_3- \gls{sy:mean_motion}
     \\
-    A_{43} &= \frac{q_3}{q_1} \omega_1+\frac{q_3}{q_2} \omega_2-\omega_3+n \frac{q_3}{q_2}
+    A_{43} &= \frac{q_3}{q_1} \omega_1+\frac{q_3}{q_2} \omega_2-\omega_3+ \gls{sy:mean_motion} \frac{q_3}{q_2}
     &
-    A_{44} &= \frac{q_4}{q_1} \omega_1+\frac{q_4}{q_2} \omega_2+\frac{q_4}{q_3} \omega_3+n \frac{q_4}{q_2}
+    A_{44} &= \frac{q_4}{q_1} \omega_1+\frac{q_4}{q_2} \omega_2+\frac{q_4}{q_3} \omega_3+ \gls{sy:mean_motion} \frac{q_4}{q_2}
 \end{align*}
