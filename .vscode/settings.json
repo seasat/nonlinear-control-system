@@ -4,6 +4,7 @@
         "eigenangle",
         "Eigenaxis",
         "feedthrough",
-        "linearization"
+        "linearization",
+        "INDI"
     ]
 }

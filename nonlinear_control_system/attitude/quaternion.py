@@ -1,11 +1,14 @@
 from __future__ import annotations
 import numpy as np
 
-from . import Attitude, DirectionCosineMatrix
+from . import Attitude#, DirectionCosineMatrix, ClassicalRodriguezParameter, ModifiedRodriguezParameter
 
 
 class Quaternion(Attitude):
-    def __init__(self, q1: float, q2: float, q3: float, q4: float) -> None:
+    vector_length: int = 4  # Length of the vector representation of the quaternion
+    symbol: str = 'q'  # Symbol representing the quaternion
+
+    def __init__(self, components: list[float]) -> None:
         """
         Initialize the Quaternion class with a quaternion.
 
@@ -15,12 +18,114 @@ class Quaternion(Attitude):
         :param q4: The fourth component of the quaternion.
         """
         super().__init__()
-        assert np.isclose(np.linalg.norm([q1, q2, q3, q4]), 1), "Quaternion must be a unit quaternion"
+        assert len(components) == 4, "Quaternion must have four components"
+        q1, q2, q3, q4 = components
+        #assert np.isclose(np.linalg.norm([q1, q2, q3, q4]), 1), "Quaternion must be a unit quaternion"
         
-        self.q1 = q1
-        self.q2 = q2
-        self.q3 = q3
-        self.q4 = q4
+        self.q1 = float(q1)
+        self.q2 = float(q2)
+        self.q3 = float(q3)
+        self.q4 = float(q4)
+    
+    def calculate_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        inertial_angular_rates = np.vstack([body_rates, 0]) + mean_motion * self._calculate_gyroscopic_vector()
+        component_rates = 0.5 * self._calculate_q_matrix() @ inertial_angular_rates
+        return component_rates
+
+    def derivative_to_body_rates(self, attitude_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        assert len(attitude_rates) == 3, "Attitude rates must be truncated to 3 components"
+        m = 0.5 * self._calculate_q_matrix()[:, 0:3]  # Extract the first three columns of the quaternion matrix
+        l = m @ (mean_motion * self._calculate_gyroscopic_vector()[0:3])
+        body_rates = np.linalg.solve(m[0:3, :], attitude_rates - l[0:3])
+        return body_rates
+    
+    def _calculate_q_matrix(self) -> np.ndarray:
+        matrix = np.array([
+            [self.q4, -self.q3, self.q2, self.q1],
+            [self.q3, self.q4, -self.q1, self.q2],
+            [-self.q2, self.q1, self.q4, self.q3],
+            [-self.q1, -self.q2, -self.q3, self.q4]
+        ])
+        return matrix
+
+    def _calculate_gyroscopic_vector(self) -> np.ndarray:
+        return np.array([
+            [2 * (self.q1 * self.q2 + self.q3 * self.q4)],
+            [1 - 2 * (self.q1**2 + self.q3**2)],
+            [2 * (self.q3 * self.q1 - self.q1 * self.q4)],
+            [0]
+        ])
+
+    def calculate_derivative_state_derivative(self, body_rates: np.ndarray, mean_motion: float) -> np.ndarray:
+        """
+        Return the derivative of the quaternion rates with respect to the state vector.
+        x = [q1, q2, q3, q4, omega1, omega2, omega3]^T
+
+        return: The 4x7 state derivative matrix.
+        """
+        # define shorthands
+        q1, q2, q3, q4 = self.q1, self.q2, self.q3, self.q4
+        omega1, omega2, omega3 = body_rates.flatten()
+        n = mean_motion
+
+        # matrix components
+        a11 = -q1/q4 * omega1 + q1/q3 * omega2 - q1/q2 * omega3 - n * q1/q3
+        a12 = -q2/q4 * omega2 + omega3 - n * q2/q3
+        a13 = -q3/q4 * omega1 - omega2 - q3/q2 * omega3 + n
+        a14 = omega1 + q4/q3 * omega2 - q4/q2 * omega3 - n * q4/q3
+
+        a21 = -q1/q3 * omega1 - q1/q4 * omega2 - omega3 - n * q1/q4
+        a22 = -q2/q3 * omega1 - q2/q4 * omega2 + q2/q1 * omega3 - n * q2/q4
+        a23 = omega1 - q3/q4 * omega2 + q3/q1 * omega3 - n * q3/q4
+        a24 = -q4/q3 * omega1 + omega2 + q4/q1 * omega3 + n
+
+        a31 = q1/q2 * omega1 + omega2 - q1/q4 * omega3 - n
+        a32 = -omega1 - q2/q1 * omega2 - q2/q4 * omega3 + n * q2/q1
+        a33 = q3/q2 * omega1 - q3/q1 * omega2 - q3/q4 * omega3 + n * q3/q1
+        a34 = q4/q1 * omega1 + q4/q2 * omega2 + q4/q3 * omega3 + n * q4/q2
+
+        a41 = -omega1 + q1/q2 * omega2 + q1/q3 * omega3 + n * q1/q2
+        a42 = q2/q1 * omega1 - omega2 - q2/q3 * omega3 - n
+        a43 = q3/q1 * omega1 + q3/q2 * omega2 - omega3 + n * q3/q2
+        a44 = q4/q1 * omega1 + q4/q2 * omega2 + q4/q2 * omega3 + n * q4/q2
+
+        return 0.5 * np.array([
+            [a11, a12, a13, a14, q4, -q3, q2],
+            [a21, a22, a23, a24, q3, q4, -q1],
+            [a31, a32, a33, a34, -q2, q1, q4],
+            [a41, a42, a43, a44, -q1, -q2, -q3]
+        ])
+    
+    def to_ypr(self) -> YawPitchRoll:
+        from . import YawPitchRoll
+        q1, q2, q3, q4 = self.q1, self.q2, self.q3, self.q4
+        yaw = np.atan2(2 * (q1 * q2 + q3 * q4), q4**2 + q1**2 - q2**2 - q3**2)
+        pitch = np.arcsin(2 * (q2 * q4 - q1 * q3))
+        roll = np.arctan2(2 * (q1 * q4 + q2 * q3), q4**2 - q1**2 - q2**2 + q3**2)
+        return YawPitchRoll(np.asarray([roll, pitch, yaw]))
+    
+    def to_vector(self) -> np.ndarray:
+        """ Return as column vector. """
+        return np.array([[self.q1], [self.q2], [self.q3], [self.q4]])
+    
+    def calculate_error(self, other: Quaternion) -> Quaternion:
+        matrix = np.array([
+            [other.q4, other.q3, -other.q2, other.q1],
+            [-other.q3, other.q4, other.q1, -other.q2],
+            [other.q2, -other.q1, other.q4, -other.q3],
+            [other.q1, other.q2, other.q3, other.q4]
+        ])
+        error_vector = matrix @ self.to_vector()
+        component_list = error_vector.flatten()
+        return Quaternion(component_list)
+
+    def __sub__(self, other: Quaternion) -> Quaternion:
+        return Quaternion([
+            self.q1 - other.q1,
+            self.q2 - other.q2,
+            self.q3 - other.q3,
+            self.q4 - other.q4
+        ])
     
     def __matmul__(self, other: Quaternion) -> Quaternion:
         """
@@ -43,13 +148,13 @@ class Quaternion(Attitude):
         """
         super().__init__()
         
-        quaternion_matrix = np.asmatrix([
+        quaternion_matrix = np.array([
             [q2.q4, q2.q3, -q2.q2, q2.q1],
             [-q2.q3, q2.q4, q2.q1, q2.q2],
             [q2.q2, -q2.q1, q2.q4, q2.q3],
             [-q2.q1, -q2.q2, -q2.q3, q2.q4]
         ])
-        result = quaternion_matrix @ np.asmatrix([q1.q1, q1.q2, q1.q3, q1.q4]).T
+        result = quaternion_matrix @ q1.to_vector()
 
         q1 = result[0, 0]
         q2 = result[1, 0]
@@ -57,49 +162,49 @@ class Quaternion(Attitude):
         q4 = result[3, 0]
         return cls(q1, q2, q3, q4)
     
-    # conversion methods
-    def to_dcm(self) -> DirectionCosineMatrix:
-        """
-        Convert the quaternion to a direction cosine matrix.
+    ## conversion methods
+    #def to_dcm(self) -> DirectionCosineMatrix:
+        #"""
+        #Convert the quaternion to a direction cosine matrix.
 
-        :return: An instance of DirectionCosineMatrix.
-        """
-        c11 = 1 - 2 * (self.q2**2 + self.q3**2)
-        c12 = 2 * (self.q1 * self.q2 + self.q3 * self.q4)
-        c13 = 2 * (self.q1 * self.q3 - self.q2 * self.q4)
-        c21 = 2 * (self.q1 * self.q2 - self.q3 * self.q4)
-        c22 = 1 - 2 * (self.q1**2 + self.q3**2)
-        c23 = 2 * (self.q2 * self.q3 + self.q1 * self.q4)
-        c31 = 2 * (self.q1 * self.q3 + self.q2 * self.q4)
-        c32 = 2 * (self.q2 * self.q3 - self.q1 * self.q4)
-        c33 = 1 - 2 * (self.q1**2 + self.q2**2)
+        #:return: An instance of DirectionCosineMatrix.
+        #"""
+        #c11 = 1 - 2 * (self.q2**2 + self.q3**2)
+        #c12 = 2 * (self.q1 * self.q2 + self.q3 * self.q4)
+        #c13 = 2 * (self.q1 * self.q3 - self.q2 * self.q4)
+        #c21 = 2 * (self.q1 * self.q2 - self.q3 * self.q4)
+        #c22 = 1 - 2 * (self.q1**2 + self.q3**2)
+        #c23 = 2 * (self.q2 * self.q3 + self.q1 * self.q4)
+        #c31 = 2 * (self.q1 * self.q3 + self.q2 * self.q4)
+        #c32 = 2 * (self.q2 * self.q3 - self.q1 * self.q4)
+        #c33 = 1 - 2 * (self.q1**2 + self.q2**2)
 
-        return DirectionCosineMatrix(np.asmatrix([
-            [c11, c12, c13],
-            [c21, c22, c23],
-            [c31, c32, c33]
-        ]))
+        #return DirectionCosineMatrix(np.asmatrix([
+            #[c11, c12, c13],
+            #[c21, c22, c23],
+            #[c31, c32, c33]
+        #]))
         
-    def to_crp(self) -> ClassicalRodriguezParameter:
-        """
-        Convert the quaternion to a Classical Rodriguez parameter.
+    #def to_crp(self) -> ClassicalRodriguezParameter:
+        #"""
+        #Convert the quaternion to a Classical Rodriguez parameter.
 
-        :return: An instance of ClassicalRodriguezParameter.
-        """
-        from . import ClassicalRodriguezParameter
-        tau1 = self.q1 / self.q4
-        tau2 = self.q2 / self.q4
-        tau3 = self.q3 / self.q4
-        return ClassicalRodriguezParameter(tau1, tau2, tau3)
+        #:return: An instance of ClassicalRodriguezParameter.
+        #"""
+        #from . import ClassicalRodriguezParameter
+        #tau1 = self.q1 / self.q4
+        #tau2 = self.q2 / self.q4
+        #tau3 = self.q3 / self.q4
+        #return ClassicalRodriguezParameter(tau1, tau2, tau3)
     
-    def to_mrp(self) -> ModifiedRodriguezParameter:
-        """
-        Convert the quaternion to a modified Rodriguez parameter.
+    #def to_mrp(self) -> ModifiedRodriguezParameter:
+        #"""
+        #Convert the quaternion to a modified Rodriguez parameter.
 
-        :return: An instance of ModifiedRodriguezParameter.
-        """
-        from . import ModifiedRodriguezParameter
-        sigma1 = self.q1 / (1 + self.q4)
-        sigma2 = self.q2 / (1 + self.q4)
-        sigma3 = self.q3 / (1 + self.q4)
-        return ModifiedRodriguezParameter(sigma1, sigma2, sigma3)
+        #:return: An instance of ModifiedRodriguezParameter.
+        #"""
+        #from . import ModifiedRodriguezParameter
+        #sigma1 = self.q1 / (1 + self.q4)
+        #sigma2 = self.q2 / (1 + self.q4)
+        #sigma3 = self.q3 / (1 + self.q4)
+        #return ModifiedRodriguezParameter(sigma1, sigma2, sigma3)

@@ -2,9 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from spacecraft import Spacecraft
-from attitude import Attitude, YawPitchRoll, AngularVelocity, BodyRates, YPRRates
+from attitude import Attitude, YawPitchRoll
 import dynamics, integrator
 from controller import Controller
+from state_vector import StateVector
 
 
 class Simulation:
@@ -69,25 +70,21 @@ class Simulation:
     
     def _run_simulation(self) -> None:
         for idx, time in enumerate(self.times):
-            target_attitude: YawPitchRoll = self.target_attitudes[idx]
+            target_attitude: Attitude = self.target_attitudes[idx]
 
             # calculate control torque
             control_torque = self.controller.calculate_control_output(target_attitude)
             torque = self.external_torque + control_torque
 
             # integrate rotational dynamics
-            state = np.vstack([self.spacecraft.attitude.to_vector(), self.spacecraft.angular_velocity])
-            state = integrator.rk4(
-                dynamics.calculate_state_change,
-                state,
-                time,
+            attitude, angular_velocity = integrator.rk4(
+                self.spacecraft.attitude,
+                self.spacecraft.angular_velocity,
                 self.sample_time,
                 self.spacecraft.inertia_tensor,
                 torque,
-                self.spacecraft.orbit.mean_motion
+                self.spacecraft.orbit.mean_motion,
             )
-            attitude = YawPitchRoll(state[:3])
-            angular_velocity = BodyRates(state[3:6])
 
             # update spacecraft state
             self.spacecraft.angular_velocity = angular_velocity
@@ -100,7 +97,7 @@ class Simulation:
 
     def _calculate_errors(self) -> None:
         for idx in range(len(self.attitude_errors)):
-            error = self.attitudes[idx] - self.target_attitudes[idx]
+            error = self.attitudes[idx].calculate_error(self.target_attitudes[idx])
             self.attitude_errors[idx] = error
     
     def plot_attitudes(self) -> None:
@@ -109,22 +106,21 @@ class Simulation:
         """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        rolls = np.array([attitude.roll for attitude in self.attitudes])
-        ax.plot(self.times, rolls, label="Roll")
-        pitches = np.array([attitude.pitch for attitude in self.attitudes])
-        ax.plot(self.times, pitches, label="Pitch")
-        yaws = np.array([attitude.yaw for attitude in self.attitudes])
-        ax.plot(self.times, yaws, label="Yaw")
+        # attitudes
+        vector_list: list[np.ndarray] = [attitude.to_ypr().to_vector() for attitude in self.attitudes]
+        component_matrix: np.ndarray = np.array(vector_list)
+        for component_idx in range(component_matrix.shape[1]):
+            ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1}}}$")
 
-        #ax.set_prop_cycle(None)
-        command_yaws = np.array([attitude.yaw for attitude in self.target_attitudes])
-        ax.plot(self.times, command_yaws, label="Command", linestyle='--', color='k')
-        #command_pitches = np.array([attitude.pitch for attitude in self.target_attitudes])
-        #ax.plot(self.times, command_pitches, label="Command Pitch", linestyle='--')
-        #command_rolls = np.array([attitude.roll for attitude in self.target_attitudes])
-        #ax.plot(self.times, command_rolls, label="Command Roll", linestyle='--')
+        # commands
+        command_line_styles = ['--', '-.', ':']
+        command_vector_list = [attitude.to_ypr().to_vector() for attitude in self.target_attitudes]
+        command_matrix = np.array(command_vector_list)
+        ax.set_prop_cycle(None) # plot in same colors as corresponding attitude component
+        for component_idx in range(3): # only first 3 components are control variables
+            ax.plot(self.times, command_matrix[:, component_idx], command_line_styles[component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},c}}$")
 
-        ax.legend()
+        ax.legend(loc='right')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Attitude $[\mathrm{rad}]$")
@@ -133,14 +129,12 @@ class Simulation:
         """ Plot the attitude errors over time. """
         fig, ax = plt.subplots(1, 1, figsize=(6, 2.5), tight_layout=True)
 
-        rolls = np.array([error.roll for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(rolls), label="Roll Error")
-        pitches = np.array([error.pitch for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(pitches), label="Pitch Error")
-        yaws = np.array([error.yaw for error in self.attitude_errors])
-        ax.plot(self.times, np.abs(yaws), label="Yaw Error")
+        vector_list: list[np.ndarray] = [error.to_vector() for error in self.attitude_errors]
+        component_matrix: np.ndarray = np.array(vector_list)
+        for component_idx in range(component_matrix.shape[1]):
+            ax.plot(self.times, component_matrix[:, component_idx], label=f"${self.attitudes[0].symbol}_{{{component_idx + 1},e}}$")
 
-        ax.legend()
+        ax.legend(loc='right')
         ax.set_yscale('log')
 
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
@@ -157,7 +151,7 @@ class Simulation:
         magnitudes = np.linalg.norm(self.control_torques, axis=1)
         ax.plot(self.times, magnitudes, label=r"$|\mathbf{T}_c|$", linestyle='--', color='k')
 
-        ax.legend()
+        ax.legend(loc='right')
         ax.set_yscale('log')
         ax.set_xlabel(r"Time $[\mathrm{s}]$")
         ax.set_ylabel(r"Control Torque $[\mathrm{Nm}]$")
