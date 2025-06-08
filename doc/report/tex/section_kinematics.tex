@@ -147,7 +147,7 @@ To predict the impact of changes in both changes in attitude components and angu
 
 The use of the extended body angular rates vector as well as the extended \gls{lvlh} rotation rate vector allows for square matrix that can be used to invert the relationship.
 Body axes angular rates can then be calculated following \cref{eqt:omega_to_q_dot}.
-\begin{equation}
+\begin{equation} \label{eqt:q_dot_to_omega}
     \begin{bmatrix}
         \omega_1 \\
         \omega_2 \\
@@ -169,3 +169,42 @@ Body axes angular rates can then be calculated following \cref{eqt:omega_to_q_do
         0
     \end{bmatrix}
 \end{equation}
+
+Using the state vector $\gls{sy:x} = \begin{bmatrix} q_1 & q_2 & q_3 & q_4 & \omega_1 & \omega_2 & \omega_3 \end{bmatrix}^T$, the derivative matrix with respect to the state vector is calculated from \cref{eqt:omega_to_q_dot} using the \gls{ac:cas} \texttt{TI-Nspire CAS} with the results given in \cref{eqt:q_rate_state_derivative}.
+\begin{equation} \label{eqt:q_rate_state_derivative}
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}} =
+    \frac{1}{2} A \text{with} A \in \mathbb{R}^{4 \times 7}
+\end{equation}
+\begin{align*}
+    A_{11} &= -\frac{q_1}{q_4} \omega_1 + \frac{q_1}{q_3} \omega_2 - \frac{q_1}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_1}{q_3}
+    &
+    A_{12} &= -\frac{q_2}{q_4} \omega_1+\frac{q_2}{q_3} \omega_2+\omega_3-n \frac{q_2}{q_3}
+    \\
+    A_{13} &= -\frac{q_3}{q_4} \omega_1-\omega_2-\frac{q_3}{q_2} \omega_3 + \gls{sy:mean_motion}
+    &
+    A_{14} &= \omega_1+\frac{q_4}{q_3} \omega_2-\frac{q_4}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_4}{q_3}       
+    \\
+    A_{21} &= -\frac{q_1}{q_3} \omega_1-\frac{q_1}{q_4} \omega_2-\omega_3-n \frac{q_1}{q_4}
+    &
+    A_{22} &= -\frac{q_2}{q_3} \omega_1-\frac{q_2}{q_4} \omega_2+\frac{q_2}{q_1} \omega_3-n \frac{q_2}{q_4}
+    \\
+    A_{23} &= \omega_1-\frac{q_3}{q_4} \omega_2+\frac{q_3^{12}}{q_1} \omega_3-n \frac{q_3}{q_4}
+    &
+    A_{24} &= -\frac{q_4}{q_3} \omega_1+\omega_2+\frac{q_4}{q_1} \omega_3 + \gls{sy:mean_motion}
+    \\
+    A_{31} &= \frac{q_1}{q_2} \omega_1+\omega_2-\frac{q_1}{q_4} \omega_3 - \gls{sy:mean_motion}
+    &
+    A_{32} &= -\omega_1-\frac{q_2}{q_1} \omega_2-\frac{q_2}{q_4} \omega_3+n \frac{q_2}{q_1}
+    \\
+    A_{33} &= \frac{q_3}{q_2} \omega_1-\frac{q_3}{q_1} \omega_2-\frac{q_3}{q_4} \omega_3+n \frac{q_3}{q_1}
+    &
+    A_{34} &= \frac{q_4}{q_2} \omega_1-\frac{q_4}{q_1} \omega_2+\omega_3+n \frac{q_4}{q_1}
+    \\
+    A_{41} &= -\omega_1+\frac{q_1}{q_2} \omega_2+\frac{q_1}{q_3} \omega_3+n \frac{q_1}{q_2}
+    &
+    A_{42} &= \frac{q_2}{q_1} \omega_1-\omega_2+\frac{q_2}{q_3} \omega_3-n
+    \\
+    A_{43} &= \frac{q_3}{q_1} \omega_1+\frac{q_3}{q_2} \omega_2-\omega_3+n \frac{q_3}{q_2}
+    &
+    A_{44} &= \frac{q_4}{q_1} \omega_1+\frac{q_4}{q_2} \omega_2+\frac{q_4}{q_3} \omega_3+n \frac{q_4}{q_2}
+\end{align*}
