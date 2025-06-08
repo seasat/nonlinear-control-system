@@ -100,8 +100,6 @@ def main():
     simulation_indi_quaternion.plot_attitude_errors()
     simulation_indi_quaternion.plot_control_torques()
 
-    plt.show()
-
 
 if __name__ == "__main__":
     SystemExit(main())
