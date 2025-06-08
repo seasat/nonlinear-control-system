@@ -206,6 +206,28 @@ $l$ performs the conversion of the state vector components to the virtual contro
     \end{bmatrix} \gls{sy:t_c}
 \end{equation}}
 
+$M$ describes the how the control input affects the virtual control output.
+In this case, how the control torques affect the attitude acceleration.
+
+\parbox{.49\textwidth}{
+\begin{equation}
+    \mat{M} = \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:t_c}} =
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+\end{equation}}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \mat{M} = \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:t_c}} =
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+\end{equation}}
+
 
 
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
