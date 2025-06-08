@@ -279,4 +279,31 @@ Where \gls{sy:ypr_dot} is calculated using \cref{eqt:omega_to_theta_dot} and \gl
 
 
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
+Using the time scale separation method, the system is split into two parts: a fast part and a slow part.
+Instead of a single double integrator loop, it uses two controllers each acting on a single integrator system.
+While ignoring coupling effects between the inner loop and the outer loop control variables, this significantly simplifies the model needed for both the inner and outer loop dynamic inversions.
+While the dynamics of the inner loop are much faster than the outer loop, these effects can be ignored leading to a stable system.
+
+Applying the TSS principle to the problem, the virtual control variables of the outer loop become the attitude rates:
+
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv}_2 = \gls{sy:ypr} \\
+        \gls{sy:nu}_2 = \dot{\gls{sy:ypr}}
+    \end{gather}
+}
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv}_2 = \gls{sy:q} \\
+        \gls{sy:nu}_2 = \dot{\gls{sy:q}}
+    \end{gather}
+}
+
+While for the inner loop, the virtual control variable is in both cases the angular acceleration:
+\begin{gather}
+    \vec{cv}_1 = \gls{sy:omega} \\
+    \gls{sy:nu}_1 = \dot{\gls{sy:omega}}
+\end{gather}
+
+
 \subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
