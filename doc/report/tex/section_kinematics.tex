@@ -71,6 +71,29 @@ Depending on the attitude representation used, this results in \cref{eqt:omega_l
     \end{bmatrix}
 \end{equation}
 
+For system dynamics using Euler angles are described using a state vector $\gls{sy:x} = \begin{bmatrix} \gls{sy:roll} & \gls{sy:pitch} & \gls{sy:yaw} & \omega_1 & \omega_2 & \omega_3 \end{bmatrix}^T$.
+To predict the impact of changes in both changes in attitude components and angular rates on the derivative vector in \cref{eqt:omega_to_theta_dot}, the derivative matrix with respect to the state vector is calculated using the \gls{ac:cas} \texttt{TI-Nspire CAS} with the results given in \cref{eqt:ypr_rate_state_derivative}.
+\begin{equation} \label{eqt:ypr_rate_state_derivative}
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}} =
+    \begin{bmatrix}
+        (\cos{\gls{sy:roll}} \omega_2 - \sin{\gls{sy:roll}} \omega_3) \tan{\gls{sy:pitch}}
+        &
+        \frac{\sin{\gls{sy:roll}} \omega_2 + \cos{\gls{sy:roll}} \omega_3 + \gls{sy:mean_motion} \sin{\gls{sy:yaw}} \sin{\gls{sy:pitch}}}{\cos^2{\gls{sy:pitch}}} 
+        &
+        \gls{sy:mean_motion} \frac{\sin{\gls{sy:yaw}}}{\cos{\gls{sy:pitch}}}
+        & 1 & \sin{\gls{sy:roll}} \tan{\gls{sy:pitch}} & \cos{\gls{sy:roll}} \tan{\gls{sy:pitch}} \\
+        -\sin{\gls{sy:roll}} \omega_2 - \cos{\gls{sy:roll}} \omega_3
+        & 0 & -\gls{sy:mean_motion} \sin{\gls{sy:yaw}} & 0 & \cos{\gls{sy:roll}} & -\sin{\gls{sy:roll}}
+        \\
+        \frac{\cos{\gls{sy:roll}} \omega_2 - \sin{\gls{sy:roll}} \omega_3}{\cos{\gls{sy:pitch}}}
+        &
+        \frac{(\sin{\gls{sy:roll}} \omega_2 + \cos{\gls{sy:roll}} \omega_3) \sin{\gls{sy:roll}} + \gls{sy:mean_motion} \sin{\gls{sy:yaw}}}{\cos^2{\gls{sy:pitch}}}
+        &
+        \gls{sy:mean_motion} \tan{\gls{sy:pitch}} \cos{\gls{sy:yaw}}
+        & 0 & \frac{\sin{\gls{sy:roll}}}{\cos{\gls{sy:pitch}}} & \frac{\cos{\gls{sy:roll}}}{\cos{\gls{sy:pitch}}} \\
+    \end{bmatrix}
+\end{equation}
+
 
 \subsection{Quaternion Rates}
 \begin{equation} \label{eqt:omega_to_q_dot}
