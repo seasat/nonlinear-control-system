@@ -103,18 +103,23 @@ Using state feedback control, the control output is defined as
 
 Using the \texttt{place} function of Python's \texttt{control} package, the gain matrix \gls{sy:K} can be calculated such that the closed loop poles of the system are at the desired locations.
 
-\parbox{.49\linewidth}{
+The resulting gains for Euler angles:
 \begin{equation}
     \gls{sy:K} = \begin{bmatrix}
-        0.5 & 0.5 & 0.5 & 0 & 0 & 0
+        1.245&	1.866&	0.0238&	22.4&	1.41&	0.132 \\
+        0.00	&1.25	&-1.78&	-2.92&	22.4&	-3.95 \\
+        0.00	&0.00	&0.0170&	0.00&	0.00&	0.307 \\
     \end{bmatrix}
-\end{equation}}
-\parbox{.49\linewidth}{
+\end{equation}
+
+Using quaternions:
 \begin{equation}
     \gls{sy:K} = \begin{bmatrix}
-        0.5 & 0.5 & 0.5 & 0 & 0 & 0
+        2.491&	0.000&	0.000&	22.42&	0.000&	0.000\\
+        0.000&	2.492&	0.000&	22.43&	0.000&	0.000\\
+        0.000&	0.000& 	0.03408&	0.000&	0.000&	0.3067\\	
     \end{bmatrix}
-\end{equation}}
+\end{equation}
 
 
 \subsection{\texorpdfstring{\acrlong{pd}}{Proportional Differential} Controller}
