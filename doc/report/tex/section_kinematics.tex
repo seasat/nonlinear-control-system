@@ -7,3 +7,26 @@ The orbital frequency or \glsdesc{sy:mean_motion} is calculated using \cref{eqt:
 \end{equation}
 
 Using $\gls{sy:mu_earth} = \qty{3.98600442e14}{\meter^3\per\second^2}$ and $\gls{sy:r}_E = \qty{6.378137e6}{\m}$, the mean motion is calculated to be $\gls{sy:mean_motion} = \qty{1.060206e-3}{\per\second}$.
+
+As such, the rotation rate of the \gls{lvlh} frame with respect ot the inertial frame is $\gls{sy:omega} = \gls{sy:mean_motion} \gls{sy:c2}$.
+Depending on the attitude representation used, this results in \cref{eqt:omega_lvlh_ypr, eqt:omega_lvlh_q}.
+
+\parbox{.5\textwidth}{
+\begin{equation} \label{eqt:omega_lvlh_ypr}
+    \vec{\omega}_{\gls{lvlh}} = \begin{bmatrix}
+        0 \\
+        0 \\
+        \gls{sy:omega}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.5\textwidth}{
+\begin{equation} \label{eqt:omega_lvlh_q}
+    \vec{\omega}_{\gls{lvlh}} = \begin{bmatrix}
+        0 \\
+        0 \\
+        \gls{sy:omega} \\
+        0
+    \end{bmatrix}
+\end{equation}
+}
