@@ -113,6 +113,16 @@ The \gls{ac:dcm} for a rotation about the eigenaxis $\gls{sy:e}$ with angle $\gl
     \end{bmatrix}
 \end{equation}
 
+For subsequent rotations, the equivalent Eigenaxis rotation can be computed by solving $\gls{sy:dcm}(\gls{sy:e}, \gls{sy:theta}) = \gls{sy:dcm}(\gls{sy:e}_2, \gls{sy:theta}_2) \gls{sy:dcm}(\gls{sy:e}_1, \gls{sy:theta}_1)$.
+This results in the equivalent eigenaxis rotation given in \cref{eqt:eigenaxis_product}.
+\begin{equation} \label{eqt:eigenaxis_product}
+    \gls{sy:e} \sin{\frac{\gls{sy:theta}}{2}}
+    =
+    \gls{sy:e}_1 \sin{\frac{\gls{sy:theta}_1}{2}} \cos{\frac{\gls{sy:theta}_2}{2}}
+    + \gls{sy:e}_2 \sin{\frac{\gls{sy:theta}_2}{2}} \cos{\frac{\gls{sy:theta}_1}{2}}
+    + (\gls{sy:e}_1 \times \gls{sy:e}_2) \sin{\frac{\gls{sy:theta}_1}{2}} \sin{\frac{\gls{sy:theta}_2}{2}}
+\end{equation}
+
 
 \subsection{Quaternions}
 We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar and three vector components, as shown in \cref{eqt:quaternion}.
