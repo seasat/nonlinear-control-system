@@ -38,6 +38,22 @@
 
 \input{tex/section_attitudes.tex}
 \input{tex/section_kinematics.tex}
+\section{Dynamics}
+The torque acting on a rigid body can be expressed as
+\begin{equation} \label{eqt:torque}
+    \vec{T} = \gls{sy:j} \gls{sy:omega_dot} + \gls{sy:omega} \times \gls{sy:j} \gls{sy:omega}
+\end{equation}
+The resulting angular acceleration from a given torque can thus be expressed as
+\begin{equation} \label{eqt:angular_acceleration}
+    \gls{sy:omega_dot} = \gls{sy:j}^{-1} \left( \vec{T} - \gls{sy:omega} \times \gls{sy:j} \gls{sy:omega} \right)
+\end{equation}
+When splitting the total torque into control and disturbance torques $\vec{T} = \gls{sy:t_c} + \gls{sy:t_d}$, the equation can be rewritten as
+\begin{equation} \label{eqt:torque_split}
+    \gls{sy:omega_dot} = \gls{sy:j}^{-1} \left( \gls{sy:t_d} - \gls{sy:omega} \times \gls{sy:j} \gls{sy:omega} \right)
+    + \gls{sy:j}^{-1} \gls{sy:t_c}
+\end{equation}
+
+
 \input{tex/section_controllers.tex}
 
 
