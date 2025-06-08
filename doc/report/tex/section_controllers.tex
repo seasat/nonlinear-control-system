@@ -278,7 +278,7 @@ The full inversion for quaternions becomes
 Where \gls{sy:ypr_dot} is calculated using \cref{eqt:omega_to_theta_dot} and \gls{sy:q_dot} is calculated using \cref{eqt:omega_to_q_dot}, the state derivatives according to \cref{eqt:ypr_rate_state_derivative,eqt:q_rate_state_derivative} and \gls{sy:omega_dot} according to the dynamic model ???.
 
 
-\subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
+\subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}} \label{sec:tss_controller}
 Using the time scale separation method, the system is split into two parts: a fast part and a slow part.
 Instead of a single double integrator loop, it uses two controllers each acting on a single integrator system.
 While ignoring coupling effects between the inner loop and the outer loop control variables, this significantly simplifies the model needed for both the inner and outer loop dynamic inversions.
@@ -361,6 +361,8 @@ An \gls{indi} controller can in principle act on the most general system
 \end{equation}
 
 Using the \gls{indi} method, the system is again split by time scale separation as described previously, with the assumption of the inner loop running much faster than the outer.
+Thus, the linear controller is designed the same way as described in \cref{sec:tss_controller}.
+
 Instead of inverting the control output $\gls{sy:u}_2$ directly, a control correction is calculated incrementally.
 \begin{equation}
     \Delta \gls{sy:u} = \mat{G}^{-1} (\gls{sy:nu} - \gls{sy:x}_0)
