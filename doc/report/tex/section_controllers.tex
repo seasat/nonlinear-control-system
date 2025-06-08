@@ -122,7 +122,27 @@ Using quaternions:
 \end{equation}
 
 
-\subsection{\texorpdfstring{\acrlong{pd}}{Proportional Differential} Controller}
 \subsection{\texorpdfstring{\acrlong{ndi}}{Nonlinear Dynamic Inversion}}
+A nonlinear system is generally of the form 
+\begin{equation}
+    \gls{sy:x_dot} = f(\gls{sy:x}, \gls{sy:u})
+\end{equation}
+
+By modelling the system mathematically, we can invert the nonlinear behavior such that the system becomes linear from the view of an external controller.
+Using the attitude representation of choice as control variables, the controller calculates a desired attitude acceleration, controlling the spacecraft plant as if it were a simple double integrator.
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv} = \gls{sy:ypr} \\
+        \gls{sy:nu} = \ddot{\gls{sy:ypr}}
+    \end{gather}
+}
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv} = \gls{sy:q} \\
+        \gls{sy:nu} = \ddot{\gls{sy:q}}
+    \end{gather}
+}
+
+
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
 \subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
