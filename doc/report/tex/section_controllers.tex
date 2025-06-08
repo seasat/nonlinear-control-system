@@ -143,6 +143,43 @@ Using the attitude representation of choice as control variables, the controller
     \end{gather}
 }
 
+When using a \gls{pd} controller, the characteristic polynomial of the closed loop system consisting of the \gls{pd} controller and the dynamically inverted spacecraft as a plant is then 
+\begin{equation}
+    s^2 + \gls{sy:K}_d s + \gls{sy:K}_p
+\end{equation} 
+Since the components are decoupled following the inversion, the \gls{mimo} problem is treated as three \gls{siso} problems.
+The gains can be calculated using coefficient comparison for each component, resulting in diagonal control matrices.
+
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \gls{sy:K}_p = \begin{bmatrix}
+            1.245 & 0 & 0 \\
+            0 & 1.246 & 0 \\
+            0 & 0 & 0.01704
+        \end{bmatrix} \\
+        \gls{sy:K}_d = \begin{bmatrix}
+            22.42 & 0 & 0 \\
+            0 & 22.43 & 0 \\
+            0 & 0 & 0.3067
+        \end{bmatrix}
+    \end{gather}
+}
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \gls{sy:K}_p = \begin{bmatrix}
+            2.491 & 0 & 0 \\
+            0 & 2.492 & 0 \\
+            0 & 0 & 0.03408
+        \end{bmatrix} \\
+        \gls{sy:K}_d = \begin{bmatrix}
+            22.42 & 0 & 0 \\
+            0 & 22.43 & 0 \\
+            0 & 0 & 0.3067
+        \end{bmatrix}
+    \end{gather}
+}
+
+
 
 \subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}}
 \subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
