@@ -1,0 +1,28 @@
+\begin{tikzpicture}
+    \begin{axis}[
+        height=12cm,
+        axis equal,
+        axis lines = center, 
+        xlabel = {$x$},
+        ylabel = {$y$},
+        zlabel = {$z$},
+        ticks=none,
+        %enlargelimits=0.3,
+        view/h=135,
+        view/v=135,
+        scale uniformly strategy=units only,
+    ]
+    \addplot3[%
+        opacity = 0.5,
+        mesh,
+        draw = black,
+        samples = 21,
+        variable = \u,
+        domain = 60:120,
+    ]
+    ({cos(u)}, {sin(u)-1}, 0);
+    \addplot3[opacity = 0] (0, 1, 0);
+    \addplot3[opacity = 0] (1, 0, 0);
+    \addplot3[opacity = 0] (0, 0, 1);
+    \end{axis}
+\end{tikzpicture}

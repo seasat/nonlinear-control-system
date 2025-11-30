@@ -1,0 +1,391 @@
+
+\section{Controller Design}
+A second order linear system has a characteristic polynomial of the form
+\begin{equation}
+    s^2 + 2 \gls{sy:zeta} \gls{sy:omega_0} s + \gls{sy:omega_0}^2
+\end{equation}
+
+To ensure comparability of the controller performances, all controllers are designed to have the same natural frequency $\gls{sy:omega_0} = 0.1$ and damping ratio $\gls{sy:zeta} = 0.9$.
+
+
+\subsection{State Space}
+The system can be represented in state space form, where the state vector depends on the attitude representation used.
+The control problem is a second order system, where the controller acts on the torque which is in turn integrated twice to obtain the attitude, which is the control variable.
+As such both the attitude and the angular velocity form part of the state vector.
+
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} =
+    \begin{bmatrix}
+        \gls{sy:ypr_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} =
+    \begin{bmatrix}
+        \gls{sy:q_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+\end{equation}
+}
+
+\gls{sy:omega_dot} is defined by the dynamics of the system and calculated through \cref{eqt:angular_acceleration}.
+\gls{sy:ypr_dot} and \gls{sy:q_dot} arise from the kinematics of the system and are calculated through \cref{eqt:omega_to_theta_dot,eqt:omega_to_q_dot}.
+Both cases are highly nonlinear systems, to which different control strategies are subsequently applied.
+
+
+\subsection{Linear Controller}
+A linear controller is designed using a linear system, where the state vector derivative is a linear combination of both the state vector itself and the control input (see \cref{eqt:state_space_linear}).
+\begin{equation} \label{eqt:state_space_linear}
+    \gls{sy:x_dot} = \mat{A} \gls{sy:x} + \mat{B} \gls{sy:u}
+\end{equation}
+
+One possible solution to obtaining a linear model of a nonlinear system is to linearize it around the operation point, which in this case in the nadir pointing with no angular velocity.
+The linearization uses a Taylor expansion that is then truncated after the first order term.
+
+Specifically, this results in the following approximations: $\sin{x_i} \approx x_i$, $\cos{x_i} \approx 1$ and $x_i x_j \approx 0$.
+This results in the following linear descriptions of the system around the operation point $\gls{sy:x} = \vec{0}$ and $\gls{sy:u} = \vec{0}$:
+
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} = 
+    \begin{bmatrix}
+        0 & 0 & \gls{sy:mean_motion} & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        \gls{sy:roll} \\
+        \gls{sy:pitch} \\
+        \gls{sy:yaw} \\
+        \omega_1 \\
+        \omega_2 \\
+        \omega_3
+    \end{bmatrix}
+    + \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \gls{sy:t_c}
+\end{equation}
+}
+\parbox{.49\linewidth}{
+\begin{equation}
+    \gls{sy:x_dot} = 
+    \begin{bmatrix}
+        0 & 0 & 0 & 0.5 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0.5 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0.5 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        q_1 \\
+        q_2 \\
+        q_3 \\
+        \omega_1 \\
+        \omega_2 \\
+        \omega_3
+    \end{bmatrix}
+    + \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \gls{sy:t_c}
+\end{equation}
+}
+
+This is evidently heavily linearized and misses much of the behavior of the system.
+It does however allow for the design of a controller that will perform according to the specifications for small angles, angular velocities and torques.
+Using state feedback control, the control output is defined as 
+\begin{equation}
+    \gls{sy:u} = -\gls{sy:K} \gls{sy:x}
+\end{equation}
+
+Using the \texttt{place} function of Python's \texttt{control} package, the gain matrix \gls{sy:K} can be calculated such that the closed loop poles of the system are at the desired locations.
+
+The resulting gains for Euler angles:
+\begin{equation}
+    \gls{sy:K} = \begin{bmatrix}
+        1.245&	0.000&	0.02377&	22.42&	0.000&	0.1320 \\
+        0.000	&1.246	&0.000&	0.000&	22.43&	0.000 \\
+        0.000	&0.000	&0.01704&	0.000&	0.000&	0.3067 \\
+    \end{bmatrix}
+\end{equation}
+
+Using quaternions:
+\begin{equation}
+    \gls{sy:K} = \begin{bmatrix}
+        2.491&	0.000&	0.000&	22.42&	0.000&	0.000\\
+        0.000&	2.492&	0.000&	0.000& 22.43&	0.000\\
+        0.000&	0.000& 	0.03408&	0.000&	0.000&	0.3067\\	
+    \end{bmatrix}
+\end{equation}
+
+
+\subsection{\texorpdfstring{\acrlong{ndi}}{Nonlinear Dynamic Inversion}}
+A nonlinear system is generally of the form 
+\begin{equation}
+    \gls{sy:x_dot} = f(\gls{sy:x}, \gls{sy:u})
+\end{equation}
+
+By modelling the system mathematically, we can invert the nonlinear behavior such that the system becomes linear from the view of an external controller.
+Using the attitude representation of choice as control variables, the controller calculates a desired attitude acceleration, controlling the spacecraft plant as if it were a simple double integrator.
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv} = \gls{sy:ypr} \\
+        \gls{sy:nu} = \ddot{\gls{sy:ypr}}
+    \end{gather}
+}
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv} = \gls{sy:q} \\
+        \gls{sy:nu} = \ddot{\gls{sy:q}}
+    \end{gather}
+}
+
+When using a \gls{pd} controller, the characteristic polynomial of the closed loop system consisting of the \gls{pd} controller and the dynamically inverted spacecraft as a plant is then independent of the attitude representation used:
+\begin{equation}
+    s^2 + \gls{sy:K}_d s + \gls{sy:K}_p
+\end{equation} 
+Since the components are decoupled following the inversion, the \gls{mimo} problem is treated as three \gls{siso} problems.
+The gains can be calculated using coefficient comparison for each component, resulting in diagonal control matrices.
+
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \gls{sy:K}_p = \begin{bmatrix}
+            0.01000 & 0 & 0 \\
+            0 & 0.01000 & 0 \\
+            0 & 0 & 0.01000
+        \end{bmatrix}
+    \end{gather}
+}
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \gls{sy:K}_d = \begin{bmatrix}
+            0.1800 & 0 & 0 \\
+            0 & 0.1800 & 0 \\
+            0 & 0 & 0.1800
+        \end{bmatrix}
+    \end{gather}
+}
+
+The key to this controller design performing as expected is the correct inversion of the system.
+The inversion is performed according to the formula
+\begin{equation} \label{eqt:ndi_inversion}
+    \gls{sy:u} = \mat{M}^{-1}(\gls{sy:x}) \left( \gls{sy:nu} - l(\gls{sy:x}) \right) 
+\end{equation}
+
+$l$ performs the conversion of the state vector components to the virtual control parameter, in this case the attitude acceleration.
+
+\parbox{.49\textwidth}{
+\begin{equation}
+    \ddot{\gls{sy:ypr}} =
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        \gls{sy:ypr_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+    + \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1} 
+    \end{bmatrix} \gls{sy:t_d}
+\end{equation}}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \ddot{\gls{sy:q}} =
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        \gls{sy:q_dot} \\
+        \gls{sy:omega_dot}
+    \end{bmatrix}
+    + \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix} \gls{sy:t_c}
+\end{equation}}
+
+$M$ describes the how the control input affects the virtual control output.
+In this case, how the control torques affect the attitude acceleration.
+
+\parbox{.49\textwidth}{
+\begin{equation}
+    \mat{M} = \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:t_c}} =
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+\end{equation}}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \mat{M} = \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:t_c}} =
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+\end{equation}}
+
+The full inversion for Euler angles thus becomes
+\begin{equation}
+    \gls{sy:t_c} = \left( 
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \right)^{-1}
+    \left(
+        \ddot{\gls{sy:ypr}}_c -
+        \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            \gls{sy:ypr_dot} \\
+            \gls{sy:omega_dot}
+        \end{bmatrix}
+        + \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            0 \\
+            \gls{sy:j}^{-1} 
+        \end{bmatrix} \gls{sy:t_d}
+    \right)
+\end{equation}
+The full inversion for quaternions becomes
+\begin{equation}
+    \gls{sy:t_c} = \left( 
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+    \begin{bmatrix}
+        0 \\
+        \gls{sy:j}^{-1}
+    \end{bmatrix}
+    \right)^{-1}
+    \left(
+        \ddot{\gls{sy:q}}_c -
+        \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            \gls{sy:q_dot} \\
+            \gls{sy:omega_dot}
+        \end{bmatrix}
+        + \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}}
+        \begin{bmatrix}
+            0 \\
+            \gls{sy:j}^{-1} 
+        \end{bmatrix} \gls{sy:t_d}
+    \right)
+\end{equation}
+
+Where \gls{sy:ypr_dot} is calculated using \cref{eqt:omega_to_theta_dot} and \gls{sy:q_dot} is calculated using \cref{eqt:omega_to_q_dot}, the state derivatives according to \cref{eqt:ypr_rate_state_derivative,eqt:q_rate_state_derivative} and \gls{sy:omega_dot} according to the dynamic model \cref{eqt:angular_acceleration}.
+
+
+\subsection{\texorpdfstring{\acrlong{tss}}{Time Scale Separation}} \label{sec:tss_controller}
+Using the time scale separation method, the system is split into two parts: a fast part and a slow part.
+Instead of a single double integrator loop, it uses two controllers each acting on a single integrator system.
+While ignoring coupling effects between the inner loop and the outer loop control variables, this significantly simplifies the model needed for both the inner and outer loop dynamic inversions.
+While the dynamics of the inner loop are much faster than the outer loop, these effects can be ignored leading to a stable system.
+
+Applying the TSS principle to the problem, the virtual control variables of the outer loop become the attitude rates:
+
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv}_2 = \gls{sy:ypr} \\
+        \gls{sy:nu}_2 = \dot{\gls{sy:ypr}}
+    \end{gather}
+}
+\parbox{.49\textwidth}{
+    \begin{gather}
+        \vec{cv}_2 = \gls{sy:q} \\
+        \gls{sy:nu}_2 = \dot{\gls{sy:q}}
+    \end{gather}
+}
+
+While for the inner loop, the virtual control variable is in both cases the angular acceleration:
+\begin{gather}
+    \gls{sy:u}_2 = \vec{cv}_1 = \gls{sy:omega} \\
+    \gls{sy:nu}_1 = \dot{\gls{sy:omega}} \\
+    \gls{sy:u}_1 = \gls{sy:t_c}
+\end{gather}
+
+The characteristic polynomial of the closed loop system then becomes
+\begin{equation}
+    s^2 + \gls{sy:K}_1 s + \gls{sy:K}_1 \gls{sy:K}_2
+\end{equation}
+And the gains can again be calculated using coefficient comparison for each component, resulting in diagonal control matrices.
+\begin{gather}
+    k_1 = 2 \gls{sy:omega_0} \gls{sy:zeta} \\
+    k_2 = \frac{\gls{sy:omega_0}}{2 \gls{sy:zeta}}   
+\end{gather}
+
+\parbox{.49\textwidth}{
+\begin{gather}
+    \gls{sy:K}_1 = \begin{bmatrix}
+        0.1800 & 0 & 0 \\
+        0 & 0.1800 & 0 \\
+        0 & 0 & 0.1800
+    \end{bmatrix}
+\end{gather}
+}
+\parbox{.49\textwidth}{
+\begin{gather}
+    \gls{sy:K}_2 = \begin{bmatrix}
+        0.05556 & 0 & 0 \\
+        0 & 0.05556 & 0 \\
+        0 & 0 & 0.05556
+    \end{bmatrix}
+\end{gather}}
+
+To calculate the control outputs for both loops, the dynamic inversion (\cref{eqt:ndi_inversion}) is then applied to the virtual control outputs of the proportional controllers.
+
+\parbox{.49\textwidth}{
+\begin{equation}
+    \gls{sy:u}_2 = \gls{sy:omega}(\gls{sy:nu}_2) = \gls{sy:omega}(\gls{sy:ypr_dot})
+\end{equation}}
+\parbox{.49\textwidth}{
+\begin{equation}
+    \gls{sy:u}_2 = \gls{sy:omega}(\gls{sy:nu}_2) = \gls{sy:t_c}(\gls{sy:q_dot})
+\end{equation}}
+
+The equations for the inversion are given by inverting the relationships \cref{eqt:omega_to_theta_dot,eqt:omega_to_q_dot}.
+
+For the inner loop the dynamic model is used for the inversion.
+\begin{equation}
+    \gls{sy:u}_1 = \gls{sy:t_c}(\gls{sy:nu}_1) = \gls{sy:t_c}(\gls{sy:omega_dot})
+\end{equation}
+Which is given by inverting the relationship \cref{eqt:angular_acceleration}.
+
+
+\subsection{\texorpdfstring{\acrlong{indi}}{Incremental Dynamic Inversion}}
+An \gls{indi} controller can in principle act on the most general system 
+\begin{equation}
+    \gls{sy:x_dot} = f(\gls{sy:x}, \gls{sy:u})
+\end{equation}
+
+Using the \gls{indi} method, the system is again split by time scale separation as described previously, with the assumption of the inner loop running much faster than the outer.
+Thus, the linear controller is designed the same way as described in \cref{sec:tss_controller}.
+
+Instead of inverting the control output $\gls{sy:u}_2$ directly, a control correction is calculated incrementally.
+\begin{equation}
+    \Delta \gls{sy:u} = \mat{G}^{-1} (\gls{sy:nu} - \gls{sy:x}_0)
+\end{equation}
+
+$\gls{sy:x}_0$ instead of a modelled value is obtained through observation or a measurement.
+In this case, this assumes being able to measure the angular accelerations which is for example possible using a gyroscope or differential processing of attitude measurements.
+This conveniently includes all non-linear effects of the system, does however introduce measurement errors.
+
+In this case, the control torque increment becomes
+\begin{equation}
+    \Delta \gls{sy:t_c} = \gls{sy:j} (\gls{sy:t_c}_\text{target} - \gls{sy:t_c}_\text{current})
+\end{equation}
+and the control output becomes
+\begin{equation}
+    \gls{sy:t_c} = \gls{sy:t_c}_\text{current} + \Delta \gls{sy:t_c}
+\end{equation}
+

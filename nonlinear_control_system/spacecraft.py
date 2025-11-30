@@ -1,11 +1,11 @@
 import numpy as np
 
-from attitude import Attitude, AngularVelocity
+from attitude import Attitude
 from orbit import Orbit
 
 
 class Spacecraft:
-    def __init__(self, inertia_tensor: np.matrix, attitude: Attitude, angular_velocity: AngularVelocity, orbit: Orbit) -> None:
+    def __init__(self, inertia_tensor: np.matrix, attitude: Attitude, angular_velocity: np.ndarray, orbit: Orbit) -> None:
         """
         Initialize the Spacecraft class with an inertia tensor and attitude in form of a quaternion.
 
@@ -21,7 +21,7 @@ class Spacecraft:
         self.angular_velocity = angular_velocity
         self.orbit = orbit
     
-    def set_state(self, attitude: Attitude, angular_velocity: AngularVelocity) -> None:
+    def set_state(self, attitude: Attitude, angular_velocity: np.ndarray) -> None:
         """
         Set the state of the spacecraft.
 
@@ -29,7 +29,7 @@ class Spacecraft:
         :param angular_velocity: The new angular velocity of the spacecraft.
         """
         assert isinstance(attitude, Attitude), "Attitude must be an Attitude object"
-        assert isinstance(angular_velocity, AngularVelocity), "Angular velocity must be an AngularVelocity object"
+        assert angular_velocity.shape == (3, 1), "Angular velocity must be a 3x1 ndarray"
 
         self.attitude = attitude
         self.angular_velocity = angular_velocity

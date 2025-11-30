@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+    \pgfmathsetmacro{\x}{1}
+    \pgfmathsetmacro{\y}{1}
+    \pgfmathsetmacro{\z}{1}
+    \pgfmathsetmacro{\h}{2}    
+
+    \draw(0, 0, 0) -- ++(-\x, 0, 0) -- ++(0, -\y, 0) -- ++(\x, 0, 0) -- cycle; % x-y plane
+    \draw(0, 0, 0) -- ++(0, 0, -\z) -- ++(0, -\y, 0) -- ++(0, 0, \z) -- cycle; % y-z plane
+    \draw(0, 0, 0) -- ++(-\x, 0, 0) -- ++(0, 0, -\z) -- ++(\x, 0, 0) -- cycle; % x-z plane
+
+    \draw(0, 0, \h) -- ++(0, \y, 0) -- ++(0, 0, -\z) -- ++(0, -\y, 0) -- cycle; % y-z plane top
+\end{tikzpicture}

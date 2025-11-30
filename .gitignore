@@ -198,5 +198,13 @@ cython_debug/
 *.acn
 *.acr
 *.alg
+*.syg
+*.slg
+*.syi
 # svg
 svg-inkscape/
+# tikz
+*.bbl-SAVE-ERROR
+*.bcf-SAVE-ERROR
+*.md5
+*.auxlock

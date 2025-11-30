@@ -1,0 +1,218 @@
+\section{Kinematics}
+\subsection{Orbit Kinematics}
+Treated in this exercise is a spacecraft in a circular orbit of \glsdesc{sy:h} \qty{700}{\km} around Earth.
+The orbital frequency or \glsdesc{sy:mean_motion} is calculated using \cref{eqt:mean_motion}.
+\begin{equation} \label{eqt:mean_motion}
+    \gls{sy:mean_motion} = \sqrt{\frac{\gls{sy:mu_earth}}{\gls{sy:r}^3}} = \sqrt{\frac{\gls{sy:mu_earth}}{(\gls{sy:r}_E + h)^3}}
+\end{equation}
+
+Using $\gls{sy:mu_earth} = \qty{3.98600442e14}{\meter^3\per\second^2}$ and $\gls{sy:r}_E = \qty{6.378137e6}{\m}$, the mean motion is calculated to be $\gls{sy:mean_motion} = \qty{1.060206e-3}{\per\second}$.
+
+As such, the rotation rate of the \gls{lvlh} frame with respect ot the inertial frame is $\gls{sy:omega} = \gls{sy:mean_motion} \gls{sy:c2}$.
+Depending on the attitude representation used, this results in \cref{eqt:omega_lvlh}.
+\begin{equation} \label{eqt:omega_lvlh}
+    \gls{sy:omega}_{\gls{lvlh}} = n \begin{bmatrix}
+        \cos{\gls{sy:roll}} \sin{\gls{sy:yaw}} \\
+        \sin{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}} + \cos{\gls{sy:roll}} \cos{\gls{sy:yaw}} \\
+        \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}} - \sin{\gls{sy:roll}} \cos{\gls{sy:yaw}}
+    \end{bmatrix}
+    =
+    n \begin{bmatrix}
+        2 (q_1 q_2 + q_3 q_4) \\
+        1 - 2 (q_1^2 + q_3^2) \\
+        2 (q_1 q_3 - q_1 q_4)
+    \end{bmatrix}
+\end{equation}
+
+
+\subsection{Yaw Pitch Roll Rates}
+\begin{multline} \label{eqt:theta_dot_to_omega_inertial}
+    \gls{sy:omega}^I = \begin{bmatrix} \omega_1 \\ \omega_2 \\ \omega_3 \end{bmatrix}
+    =
+    \begin{bmatrix} \gls{sy:roll_dot} \\ 0 \\ 0 \\ \end{bmatrix}
+    + \gls{sy:c1}(\gls{sy:roll})
+    \begin{bmatrix} 0 \\ \gls{sy:pitch_dot} \\ 0 \\ \end{bmatrix}
+    + \gls{sy:c1}{\gls{sy:roll}} \gls{sy:c2}(\gls{sy:pitch})
+    \begin{bmatrix} 0 \\ 0 \\ \gls{sy:yaw_dot} \end{bmatrix}
+    \\
+    =
+    \begin{bmatrix}
+        1 & 0 & -\sin{\gls{sy:pitch}} \\
+        0 & \cos{\gls{sy:roll}} & \sin{\gls{sy:roll}} \cos{\gls{sy:pitch}} \\
+        0 & -\sin{\gls{sy:roll}} & \cos{\gls{sy:roll}} \cos{\gls{sy:pitch}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \gls{sy:roll_dot} \\
+        \gls{sy:pitch_dot} \\
+        \gls{sy:yaw_dot}
+    \end{bmatrix}
+\end{multline}
+\begin{equation} \label{eqt:omega_to_theta_dot}
+    \gls{sy:ypr_dot}
+    =
+    \begin{bmatrix}
+        \gls{sy:roll_dot} \\
+        \gls{sy:pitch_dot} \\
+        \gls{sy:yaw_dot}
+    \end{bmatrix}
+    =
+    \frac{1}{\cos{\gls{sy:pitch}}}
+    \begin{bmatrix}
+        \cos{\gls{sy:pitch}} & \sin{\gls{sy:roll}} \sin{\gls{sy:pitch}} & \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \\ 
+        0 & \cos{\gls{sy:roll}} \cos{\gls{sy:pitch}} & -\sin{\gls{sy:roll}} \cos{\gls{sy:pitch}} \\
+        0 & \sin{\gls{sy:roll}} & \cos{\gls{sy:roll}}
+    \end{bmatrix}
+    \gls{sy:omega}
+    + \frac{\gls{sy:mean_motion}}{\cos{\gls{sy:pitch}}}
+    \begin{bmatrix}
+        \sin{\gls{sy:yaw}} \\
+        \cos{\gls{sy:pitch}} \sin{\gls{sy:yaw}} \\
+        \sin{\gls{sy:pitch}} \sin{\gls{sy:yaw}}
+    \end{bmatrix}
+\end{equation}
+
+For system dynamics using Euler angles are described using a state vector $\gls{sy:x} = \begin{bmatrix} \gls{sy:roll} & \gls{sy:pitch} & \gls{sy:yaw} & \omega_1 & \omega_2 & \omega_3 \end{bmatrix}^T$.
+To predict the impact of changes in both changes in attitude components and angular rates on the derivative vector in \cref{eqt:omega_to_theta_dot}, the derivative matrix with respect to the state vector is calculated using the \gls{ac:cas} \texttt{TI-Nspire CAS} with the results given in \cref{eqt:ypr_rate_state_derivative}.
+\begin{equation}
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:ypr}} =
+    \begin{bmatrix}
+        (\cos{\gls{sy:roll}} \omega_2 - \sin{\gls{sy:roll}} \omega_3) \tan{\gls{sy:pitch}}
+        &
+        \frac{\sin{\gls{sy:roll}} \omega_2 + \cos{\gls{sy:roll}} \omega_3 + \gls{sy:mean_motion} \sin{\gls{sy:yaw}} \sin{\gls{sy:pitch}}}{\cos^2{\gls{sy:pitch}}} 
+        &
+        \gls{sy:mean_motion} \frac{\sin{\gls{sy:yaw}}}{\cos{\gls{sy:pitch}}}
+        \\
+        -\sin{\gls{sy:roll}} \omega_2 - \cos{\gls{sy:roll}} \omega_3
+        &
+        0
+        &
+        -\gls{sy:mean_motion} \sin{\gls{sy:yaw}} 
+        \\
+        \frac{\cos{\gls{sy:roll}} \omega_2 - \sin{\gls{sy:roll}} \omega_3}{\cos{\gls{sy:pitch}}}
+        &
+        \frac{(\sin{\gls{sy:roll}} \omega_2 + \cos{\gls{sy:roll}} \omega_3) \sin{\gls{sy:roll}} + \gls{sy:mean_motion} \sin{\gls{sy:yaw}}}{\cos^2{\gls{sy:pitch}}}
+        &
+        \gls{sy:mean_motion} \tan{\gls{sy:pitch}} \cos{\gls{sy:yaw}}
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:omega}} =
+    \begin{bmatrix}
+        1 & \sin{\gls{sy:roll}} \tan{\gls{sy:pitch}} & \cos{\gls{sy:roll}} \tan{\gls{sy:pitch}}
+        \\
+        0 & \cos{\gls{sy:roll}} & -\sin{\gls{sy:roll}}
+        \\
+        0 & \frac{\sin{\gls{sy:roll}}}{\cos{\gls{sy:pitch}}} & \frac{\cos{\gls{sy:roll}}}{\cos{\gls{sy:pitch}}} \\
+    \end{bmatrix}
+\end{equation}
+\begin{equation} \label{eqt:ypr_rate_state_derivative}
+    \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:x}}  =
+    \begin{bmatrix}
+        \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:ypr}} &
+        \frac{\mathrm{d} \gls{sy:ypr_dot}}{\mathrm{d} \gls{sy:omega}}
+    \end{bmatrix}
+\end{equation}
+
+
+\subsection{Quaternion Rates}
+\begin{equation} \label{eqt:omega_to_q_dot}
+    \gls{sy:q_dot} = \begin{bmatrix}
+        \dot{q}_1 \\
+        \dot{q}_2 \\
+        \dot{q}_3 \\
+        \dot{q}_4
+    \end{bmatrix}
+    =
+    \frac{1}{2} \begin{bmatrix}
+        q_4 & -q_3 & q_2 & q_1 \\
+        q_3 & q_4 & -q_1 & q_2 \\
+        -q_2 & q_1 & q_4 & q_3 \\
+        -q_1 & -q_2 & -q_3 & q_4
+    \end{bmatrix}
+    \left(
+        \begin{bmatrix}
+            \omega_1 \\
+            \omega_2 \\
+            \omega_3 \\
+            0
+        \end{bmatrix}
+        - n \begin{bmatrix}
+            2 (q_1 q_2 + q_3 q_4) \\
+            1 - 2 (q_1^2 + q_3^2) \\
+            2 (q_1 q_3 - q_1 q_4) \\
+            0
+        \end{bmatrix}
+    \right)
+\end{equation}
+
+The use of the extended body angular rates vector as well as the extended \gls{lvlh} rotation rate vector allows for square matrix that can be used to invert the relationship.
+Body axes angular rates can then be calculated following \cref{eqt:omega_to_q_dot}.
+\begin{equation} \label{eqt:q_dot_to_omega}
+    \begin{bmatrix}
+        \omega_1 \\
+        \omega_2 \\
+        \omega_3 \\
+        0
+    \end{bmatrix}
+    =
+    2 \begin{bmatrix}
+        q_4 & q_3 & -q_2 & -q_1 \\
+        -q_3 & q_4 & q_1 & -q_2 \\
+        q_2 & -q_1 & q_4 & -q_3 \\
+        q_1 & q_2 & q_3 & q_4
+    \end{bmatrix}
+    \gls{sy:q_dot}
+    - n \begin{bmatrix}
+        2 (q_1 q_2 + q_3 q_4) \\
+        1 - 2 (q_1^2 + q_3^2) \\
+        2 (q_1 q_3 - q_1 q_4) \\
+        0
+    \end{bmatrix}
+\end{equation}
+
+Using the state vector $\gls{sy:x} = \begin{bmatrix} q_1 & q_2 & q_3 & q_4 & \omega_1 & \omega_2 & \omega_3 \end{bmatrix}^T$, the derivative matrix with respect to the state vector is calculated from \cref{eqt:omega_to_q_dot} using the \gls{ac:cas} \texttt{TI-Nspire CAS} with the results given in \cref{eqt:q_rate_state_derivative}.
+\begin{equation} \label{eqt:q_rate_state_derivative}
+    \frac{\mathrm{d} \gls{sy:q_dot}}{\mathrm{d} \gls{sy:x}} =
+    \frac{1}{2} A = \frac{1}{2} \begin{bmatrix}
+        A_{11} & A_{12} & A_{13} & A_{14} & q_4 & -q_3 & q_2 \\
+        A_{21} & A_{22} & A_{23} & A_{24} & q_3 & q_4 & -q_1 \\
+        A_{31} & A_{32} & A_{33} & A_{34} & -q_2 & q_1 & q_4 \\
+        A_{41} & A_{42} & A_{43} & A_{44} & -q_1 & -q_2 & -q_3
+    \end{bmatrix}
+\end{equation}
+\begin{align*}
+    A_{11} &= -\frac{q_1}{q_4} \omega_1 + \frac{q_1}{q_3} \omega_2 - \frac{q_1}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_1}{q_3}
+    &
+    A_{12} &= -\frac{q_2}{q_4} \omega_1+\frac{q_2}{q_3} \omega_2+\omega_3- \gls{sy:mean_motion} \frac{q_2}{q_3}
+    \\
+    A_{13} &= -\frac{q_3}{q_4} \omega_1-\omega_2-\frac{q_3}{q_2} \omega_3 + \gls{sy:mean_motion}
+    &
+    A_{14} &= \omega_1+\frac{q_4}{q_3} \omega_2-\frac{q_4}{q_2} \omega_3 - \gls{sy:mean_motion} \frac{q_4}{q_3}       
+\end{align*}
+\begin{align*}
+    A_{21} &= -\frac{q_1}{q_3} \omega_1-\frac{q_1}{q_4} \omega_2-\omega_3- \gls{sy:mean_motion} \frac{q_1}{q_4}
+    &
+    A_{22} &= -\frac{q_2}{q_3} \omega_1-\frac{q_2}{q_4} \omega_2+\frac{q_2}{q_1} \omega_3- \gls{sy:mean_motion} \frac{q_2}{q_4}
+    \\
+    A_{23} &= \omega_1-\frac{q_3}{q_4} \omega_2+\frac{q_3^{12}}{q_1} \omega_3- \gls{sy:mean_motion} \frac{q_3}{q_4}
+    &
+    A_{24} &= -\frac{q_4}{q_3} \omega_1+\omega_2+\frac{q_4}{q_1} \omega_3 + \gls{sy:mean_motion}
+\end{align*}
+\begin{align*}
+    A_{31} &= \frac{q_1}{q_2} \omega_1+\omega_2-\frac{q_1}{q_4} \omega_3 - \gls{sy:mean_motion}
+    &
+    A_{32} &= -\omega_1-\frac{q_2}{q_1} \omega_2-\frac{q_2}{q_4} \omega_3+ \gls{sy:mean_motion} \frac{q_2}{q_1}
+    \\
+    A_{33} &= \frac{q_3}{q_2} \omega_1-\frac{q_3}{q_1} \omega_2-\frac{q_3}{q_4} \omega_3+ \gls{sy:mean_motion} \frac{q_3}{q_1}
+    &
+    A_{34} &= \frac{q_4}{q_2} \omega_1-\frac{q_4}{q_1} \omega_2+\omega_3+ \gls{sy:mean_motion} \frac{q_4}{q_1}
+\end{align*}
+\begin{align*}
+    A_{41} &= -\omega_1+\frac{q_1}{q_2} \omega_2+\frac{q_1}{q_3} \omega_3+ \gls{sy:mean_motion} \frac{q_1}{q_2}
+    &
+    A_{42} &= \frac{q_2}{q_1} \omega_1-\omega_2+\frac{q_2}{q_3} \omega_3- \gls{sy:mean_motion}
+    \\
+    A_{43} &= \frac{q_3}{q_1} \omega_1+\frac{q_3}{q_2} \omega_2-\omega_3+ \gls{sy:mean_motion} \frac{q_3}{q_2}
+    &
+    A_{44} &= \frac{q_4}{q_1} \omega_1+\frac{q_4}{q_2} \omega_2+\frac{q_4}{q_3} \omega_3+ \gls{sy:mean_motion} \frac{q_4}{q_2}
+\end{align*}

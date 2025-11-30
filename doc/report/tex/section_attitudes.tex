@@ -1,0 +1,256 @@
+
+\section{Attitude Representation}
+\subsection{\texorpdfstring{\acrlong{ac:dcm}}{Direction Cosine Matrix}}
+The \glsfull{sy:dcm} is a matrix that describes the linear transformation between two coordinate frames.
+In three dimension, $\gls{sy:dcm} \in \mathbb{R}^{3 \times 3}$ and the definition is given by \cref{eqt:dcm}.
+\begin{equation} \label{eqt:dcm}
+    \gls{sy:dcm} = \begin{bmatrix}
+        \gls{sy:dcm}_{11} & \gls{sy:dcm}_{12} & \gls{sy:dcm}_{13} \\
+        \gls{sy:dcm}_{21} & \gls{sy:dcm}_{22} & \gls{sy:dcm}_{23} \\
+        \gls{sy:dcm}_{31} & \gls{sy:dcm}_{32} & \gls{sy:dcm}_{33}
+    \end{bmatrix}
+\end{equation}
+
+A transformation matrix $\gls{sy:dcm}^{B/A}$ from frame $A$ to frame $B$ is constructed from the basis vectors of frame $A$ ($\gls{sy:a}_1$, $\gls{sy:a}_2$, $\gls{sy:a}_3$) as expressed in frame $B$ ($\gls{sy:b}_1$, $\gls{sy:b}_2$, $\gls{sy:b}_3$).
+In the case of both bases consisting of unit vectors, the \gls{ac:dcm} elements become equal to the cosine of the angle between each pair of basis vectors (see \cref{eqt:dcm_basis}), hence the name cosine matrix.
+\begin{equation} \label{eqt:dcm_basis}
+    \gls{sy:dcm}^{B/A} = \begin{bmatrix}
+        \gls{sy:b}_1 \cdot \gls{sy:a}_1 & \gls{sy:b}_1 \cdot \gls{sy:a}_2 & \gls{sy:b}_1 \cdot \gls{sy:a}_3 \\
+        \gls{sy:b}_2 \cdot \gls{sy:a}_1 & \gls{sy:b}_2 \cdot \gls{sy:a}_2 & \gls{sy:b}_2 \cdot \gls{sy:a}_3 \\
+        \gls{sy:b}_3 \cdot \gls{sy:a}_1 & \gls{sy:b}_3 \cdot \gls{sy:a}_2 & \gls{sy:b}_3 \cdot \gls{sy:a}_3
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \cos \theta_{11} & \cos \theta_{12} & \cos \theta_{13} \\
+        \cos \theta_{21} & \cos \theta_{22} & \cos \theta_{23} \\
+        \cos \theta_{31} & \cos \theta_{32} & \cos \theta_{33}
+    \end{bmatrix}
+\end{equation}
+
+
+\subsubsection*{Single Axis Rotations}
+For any single axis rotation about axis $i$ with angle $\theta_i$, the rotation axis remains unchanged leaving $\gls{sy:a}_i = \gls{sy:b}_i$.
+The resulting \glspl{ac:dcm} are given by \cref{eqt:c1,eqt:c2,eqt:c3}.
+
+\parbox{.49\textwidth}{
+\begin{equation} \label{eqt:c1}
+    \gls{sy:c1}(\gls{sy:roll}) = \begin{bmatrix}
+        1 & 0 & 0 \\
+        0 & \cos(\gls{sy:roll}) & \sin(\gls{sy:roll}) \\
+        0 & -\sin(\gls{sy:roll}) & \cos(\gls{sy:roll})
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.49\textwidth}{
+\begin{equation} \label{eqt:c2}
+    \gls{sy:c2}(\gls{sy:pitch}) = \begin{bmatrix}
+        \cos(\gls{sy:pitch}) & 0 & -\sin(\gls{sy:pitch}) \\
+        0 & 1 & 0 \\
+        \sin(\gls{sy:pitch}) & 0 & \cos(\gls{sy:pitch})
+    \end{bmatrix}
+\end{equation}
+}
+\begin{equation} \label{eqt:c3}
+    \gls{sy:c3}(\gls{sy:yaw}) = \begin{bmatrix}
+        \cos(\gls{sy:yaw}) & \sin(\gls{sy:yaw}) & 0 \\
+        -\sin(\gls{sy:yaw}) & \cos(\gls{sy:yaw}) & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+\end{equation}
+
+
+\subsection{Euler Angles}
+Euler angles are a set of three angles that represent an orientation, rotation or attitude as three successive, single axis rotations.
+The rotations can be performed about any axis in any order, so long as no two rotations are about the same axis.
+For each successive rotation is applied to the intermediate frame, resulting from the previous rotation.
+This leads to two intermediate frames being created $A \overset{i}{\rightarrow} A' \overset{j \neq i}{\rightarrow} A'' \overset{k \neq j}{\rightarrow} B$.
+
+Defining a triplet with rotation order $3 \rightarrow 2 \rightarrow 1$, any attitude can then be represented by a triplet of roll, pitch and yaw Euler angles (see \cref{eqt:ypr_attitude}).
+\begin{equation} \label{eqt:ypr_attitude}
+    \gls{sy:ypr} = \begin{bmatrix}
+        \gls{sy:roll} \\
+        \gls{sy:pitch} \\
+        \gls{sy:yaw}
+    \end{bmatrix}
+\end{equation}
+
+
+\subsubsection*{Euler Angles to DCM}
+Using a $3 \rightarrow 2 \rightarrow 1$ rotation sequence using the \glsfull{sy:yaw}, \glsfull{sy:pitch} and \glsfull{sy:roll}, the resulting \gls{ac:dcm} is given by \cref{eqt:dcm_euler}.
+\begin{gather} \label{eqt:dcm_euler}
+    \gls{sy:dcm} = \gls{sy:c1}(\gls{sy:roll}) \, \gls{sy:c2}(\gls{sy:pitch}) \, \gls{sy:c3}(\gls{sy:yaw}) \\
+    = \\ \begin{bmatrix}
+        \cos \gls{sy:pitch} \cos \gls{sy:yaw}
+        &
+        \cos \gls{sy:pitch} \sin \gls{sy:yaw}
+        & -\sin \gls{sy:pitch}
+        \\
+        \sin \gls{sy:roll} \sin \gls{sy:pitch} \cos \gls{sy:yaw} - \cos \gls{sy:roll} \sin \gls{sy:yaw}
+        &
+        \cos \gls{sy:roll} \cos \gls{sy:yaw} + \sin \gls{sy:roll} \sin \gls{sy:pitch} \sin \gls{sy:yaw}
+        &
+        \sin \gls{sy:roll} \cos \gls{sy:pitch}
+        \\
+        \sin \gls{sy:roll} \sin \gls{sy:yaw} + \cos \gls{sy:roll} \sin{\gls{sy:pitch}} \cos \gls{sy:yaw}
+        &
+        \cos{\gls{sy:roll}} \sin{\gls{sy:pitch}} \sin \gls{sy:yaw} - \sin \gls{sy:roll} \cos \gls{sy:yaw} 
+        &
+        \cos{\gls{sy:roll}} \cos \gls{sy:pitch}
+    \end{bmatrix}
+\end{gather}
+
+
+\subsection{Eigenaxis Rotations}
+For every rotation between two frames, there exists a unique axis of rotation, for which the coordinates are equal in both frames of reference (see \cref{eq:eigenaxis_definition}).
+\begin{equation} \label{eq:eigenaxis_definition}
+    \gls{sy:e} = e_1 \gls{sy:b}_1 + e_2 \gls{sy:b}_2 + e_3 \gls{sy:b}_3 = e_1 \gls{sy:a}_1 + e_2 \gls{sy:a}_2 + e_3 \gls{sy:a}_3
+\end{equation}
+
+Any rotation can then be described using the eigenaxis of the rotation and the angle of rotation about that axis.
+The \gls{ac:dcm} for a rotation about the eigenaxis $\gls{sy:e}$ with angle $\gls{sy:theta}$ is given by \cref{eqt:eigenaxis_dcm}.
+\begin{equation} \label{eqt:eigenaxis_dcm}
+    \gls{sy:dcm}(\gls{sy:e}, \gls{sy:theta}) = \begin{bmatrix}
+        \cos{\gls{sy:theta}} + e_1^2 (1 - \cos{\gls{sy:theta}}) 
+        &
+        e_1 e_2 (1 - \cos{\gls{sy:theta}}) + e_3 \sin{\gls{sy:theta}}
+        &
+        e_1 e_3 (1 - \cos{\gls{sy:theta}}) - e_2 \sin{\gls{sy:theta}}
+        \\
+        e_2 e_1 (1 - \cos{\gls{sy:theta}}) - e_3 \sin{\gls{sy:theta}}
+        &
+        \cos{\gls{sy:theta}} + e_2^2 (1 - \cos{\gls{sy:theta}})
+        &
+        e_2 e_3 (1 - \cos{\gls{sy:theta}}) + e_1 \sin{\gls{sy:theta}}
+        \\
+        e_3 e_1 (1 - \cos{\gls{sy:theta}}) + e_2 \sin{\gls{sy:theta}}
+        &
+        e_3 e_2 (1 - \cos{\gls{sy:theta}}) - e_1 \sin{\gls{sy:theta}}
+        &
+        \cos{\gls{sy:theta}} + e_3^2 (1 - \cos{\gls{sy:theta}})
+    \end{bmatrix}
+\end{equation}
+
+For subsequent rotations, the equivalent Eigenaxis rotation can be computed by solving $\gls{sy:dcm}(\gls{sy:e}, \gls{sy:theta}) = \gls{sy:dcm}(\gls{sy:e}_2, \gls{sy:theta}_2) \gls{sy:dcm}(\gls{sy:e}_1, \gls{sy:theta}_1)$.
+This results in the equivalent eigenaxis rotation given in \cref{eqt:eigenaxis_product}.
+\begin{equation} \label{eqt:eigenaxis_product}
+    \gls{sy:e} \sin{\frac{\gls{sy:theta}}{2}}
+    =
+    \gls{sy:e}_1 \sin{\frac{\gls{sy:theta}_1}{2}} \cos{\frac{\gls{sy:theta}_2}{2}}
+    + \gls{sy:e}_2 \sin{\frac{\gls{sy:theta}_2}{2}} \cos{\frac{\gls{sy:theta}_1}{2}}
+    + (\gls{sy:e}_1 \times \gls{sy:e}_2) \sin{\frac{\gls{sy:theta}_1}{2}} \sin{\frac{\gls{sy:theta}_2}{2}}
+\end{equation}
+
+
+\subsection{Quaternions}
+We define a quaternion \gls{sy:q} as a four-dimensional vector with one scalar and three vector components, as shown in \cref{eqt:quaternion}.
+\begin{equation} \label{eqt:quaternion}
+    \gls{sy:q} = \begin{bmatrix}
+        q_1 \\
+        q_2 \\
+        q_3 \\
+        q_4
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        e_1 \, \sin(\frac{\theta}{2}) \\
+        e_2 \, \sin(\frac{\theta}{2}) \\
+        e_3 \, \sin(\frac{\theta}{2}) \\
+        \cos(\frac{\theta}{2})
+    \end{bmatrix}
+\end{equation}
+Where \gls{sy:e} is the unit vector of the eigenaxis of the rotation and \gls{sy:theta} is the rotation angle.
+With $|\gls{sy:e}_i| = 1$, the components are not independent of each other and underlie the constraint of a unit norm $q_1^2 + q_2^2 + q_3^2 + q_4^2 = 1$.
+
+This definition allows for a representation of subsequent rotations as given in \cref{eqt:quaternion_product} without the use of trigonometric functions.
+\begin{equation} \label{eqt:quaternion_product}
+    \gls{sy:q}^B = \begin{bmatrix}
+         q_4^{B/A} &  q_3^{B/A} & -q_2^{B/A} & q_1^{B/A} \\
+        -q_3^{B/A} &  q_4^{B/A} &  q_1^{B/A} & q_2^{B/A} \\
+         q_2^{B/A} & -q_1^{B/A} &  q_4^{B/A} & q_3^{B/A} \\
+        -q_1^{B/A} & -q_2^{B/A} & -q_3^{B/A} & q_4^{B/A} 
+    \end{bmatrix}    
+    \,
+    \begin{bmatrix}
+        q_1^A \\
+        q_2^A \\
+        q_3^A \\
+        q_4^A
+    \end{bmatrix}
+\end{equation}
+
+
+\subsubsection*{Quaternions to DCM}
+Using this definition of quaternions, the corresponding \gls{sy:dcm} for a given quaternion can be expressed as shown in \cref{eqt:quaternion_to_dcm}. 
+\begin{equation} \label{eqt:quaternion_to_dcm}
+    \gls{sy:dcm} = \begin{bmatrix}
+        1 - 2(q_2^2 + q_3^2) & 2(q_1 q_2 + q_3 q_4) & 2(q_1 q_3 - q_2 q_4) \\
+        2(q_1 q_2 + q_3 q_4) & 1 - 2(q_1^2 + q_3^2) & 2(q_2 q_3 + q_1 q_4) \\
+        2(q_1 q_3 + q_2 q_4) & 2(q_2 q_3 - q_1 q_4) & 1 - 2(q_1^2 + q_2^2)
+    \end{bmatrix}
+\end{equation}
+
+Inversely, the quaternion can be calculated from the \glsdesc{sy:dcm} as shown in \cref{eqt:dcm_to_quaternion}.
+\begin{equation} \label{eqt:dcm_to_quaternion}
+    \gls{sy:q} = \frac{1}{4 q_4} \begin{bmatrix}
+        \gls{sy:dcm}_{23} - \gls{sy:dcm}_{32} \\
+        \gls{sy:dcm}_{31} - \gls{sy:dcm}_{13} \\
+        \gls{sy:dcm}_{12} - \gls{sy:dcm}_{21}
+    \end{bmatrix}
+\end{equation}
+
+This reveals a singularity for $q_4 = 0$, which occurs for rotations about the eigenaxis of $\pi$ radians, for which the quaternion becomes undefined.
+
+
+\subsubsection*{Single Axis Rotations}
+Using the definition of single axis rotation in \gls{ac:dcm} representation (\cref{eqt:c1,eqt:c2,eqt:c3}), together with the relationship between \gls{sy:dcm} and quaternions (\cref{eqt:quaternion_to_dcm}), we can derive the single axis rotation matrices in quaternion representation as shown in \cref{eqt:quaternion_c1,eqt:quaternion_c2,eqt:quaternion_c3}.
+
+\parbox{.32\textwidth}{
+\begin{equation} \label{eqt:quaternion_c1}
+    \gls{sy:q}^{C_1} = \begin{bmatrix}
+        \sin \frac{\gls{sy:roll}}{2} \\
+        0 \\
+        0 \\
+        \cos \frac{\gls{sy:roll}}{2}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.32\textwidth}{
+\begin{equation} \label{eqt:quaternion_c2}
+    \gls{sy:q}^{C_2} = \begin{bmatrix}
+        0 \\
+        \sin \frac{\gls{sy:pitch}}{2} \\
+        0 \\
+        \cos \frac{\gls{sy:pitch}}{2}
+    \end{bmatrix}
+\end{equation}
+}
+\parbox{.32\textwidth}{
+\begin{equation} \label{eqt:quaternion_c3}
+    \gls{sy:q}^{C_3} = \begin{bmatrix}
+        0 \\
+        0 \\
+        \sin \frac{\gls{sy:yaw}}{2} \\
+        \cos \frac{\gls{sy:yaw}}{2}
+    \end{bmatrix}
+\end{equation}
+}
+
+
+\subsubsection*{Euler Angles to Quaternions}
+Using the yaw $\rightarrow$ pitch $\rightarrow$ roll rotation sequence, the quaternion can be expressed as a function of the Euler angles using the single axis rotation quaternions (\cref{eqt:quaternion_c1,eqt:quaternion_c2,eqt:quaternion_c3}).
+The resulting quaternion as shown in \cref{eqt:ypr_to_quaternion}.
+\begin{equation} \label{eqt:ypr_to_quaternion}
+    \gls{sy:q} = \begin{bmatrix}
+        \sin \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2} 
+        - \cos \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+        \\
+        \cos \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2} 
+        + \sin \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+        \\
+        \cos \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+        - \sin \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2}
+        \\
+        \cos \frac{\gls{sy:roll}}{2} \cos \frac{\gls{sy:pitch}}{2} \cos \frac{\gls{sy:yaw}}{2}
+        + \sin \frac{\gls{sy:roll}}{2} \sin \frac{\gls{sy:pitch}}{2} \sin \frac{\gls{sy:yaw}}{2}
+    \end{bmatrix}
+\end{equation}
