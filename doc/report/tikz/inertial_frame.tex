@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+    \begin{axis}[
+        height=12cm,
+        axis equal,
+        axis lines = center, 
+        xlabel = {$x$},
+        ylabel = {$y$},
+        zlabel = {$z$},
+        ticks=none,
+        enlargelimits=0.3,
+        view/h=45,
+        scale uniformly strategy=units only,
+    ]
+    \addplot3[%
+        opacity = 0.5,
+        mesh,
+        draw = black,
+        z buffer = sort,
+        samples = 21,
+        variable = \u,
+        variable y = \v,
+        domain = 0:180,
+        y domain = 0:360,
+    ]
+    ({cos(u)*sin(v)}, {sin(u)*sin(v)}, {cos(v)});
+    \end{axis}
+\end{tikzpicture}

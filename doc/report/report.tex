@@ -1,0 +1,103 @@
+\documentclass[a4paper, listof=totoc]{scrreport}
+\usepackage{attitude_control}
+\input{tex/symbols.tex}
+
+\subject{Attitude Dynamics and Control (AE4313)}
+\title{Nonlinear Spacecraft Attitude Control System Design}
+\subtitle{Practical Exercise Project Assignment 2}
+\author{Lars Blümler\\6149065}
+\publishers{\includegraphics{tu_delft_logo.pdf}}
+
+
+\begin{document}
+% front matter
+\maketitle
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+%\begingroup
+    %\let\clearpage\relax
+    %\listoftables
+%\endgroup
+\clearpage
+
+
+% main matter
+\pagenumbering{arabic}
+\chapter{Methodology}
+\section{Coordinate Systems}
+\begin{figure}[!htb]
+    \centering
+    \captionbox{Inertial frame}{
+
+\input{tikz/inertial_frame.tex}
+   }
+   \captionbox{LVLH frame}{
+
+\input{tikz/lvlh_frame.tex}
+   }
+\end{figure}
+Three coordinate systems are used in this report: the inertial frame, the \gls{lvlh} frame, and the body frame.
+The inertial frame is supposed to be unaccelerated fixed to the center of Earth.
+The \gls{lvlh} frame is centered at the spacecraft and rotates with the spacecraft's orbit.
+The body frame is the reference frame used for by the spacecraft itself and thus rotates with the spacecraft's attitude.
+The attitude is then the transformation from the \gls{lvlh} frame to the body frame.
+
+
+\input{tex/section_attitudes.tex}
+\input{tex/section_kinematics.tex}
+\section{Dynamics}
+The torque acting on a rigid body can be expressed as
+\begin{equation} \label{eqt:torque}
+    \vec{T} = \gls{sy:j} \gls{sy:omega_dot} + \gls{sy:omega} \times \gls{sy:j} \gls{sy:omega}
+\end{equation}
+The resulting angular acceleration from a given torque can thus be expressed as
+\begin{equation} \label{eqt:angular_acceleration}
+    \gls{sy:omega_dot} = \gls{sy:j}^{-1} \left( \vec{T} - \gls{sy:omega} \times \gls{sy:j} \gls{sy:omega} \right)
+\end{equation}
+When splitting the total torque into control and disturbance torques $\vec{T} = \gls{sy:t_c} + \gls{sy:t_d}$, the equation can be rewritten as
+\begin{equation} \label{eqt:torque_split}
+    \gls{sy:omega_dot} = \gls{sy:j}^{-1} \left( \gls{sy:t_d} - \gls{sy:omega} \times \gls{sy:j} \gls{sy:omega} \right)
+    + \gls{sy:j}^{-1} \gls{sy:t_c}
+\end{equation}
+
+
+\input{tex/section_controllers.tex}
+
+
+
+\chapter{Results}
+\input{tex/results.tex}
+
+
+\chapter{Discussion}
+The NDI controller shows remarkable performance in the simulation.
+This is due to the fact that the NDI controller relies on its full model for the inversion, which in this case is the same as is being used for the simulation, thus achieving a perfect inversion.
+Normally, NDI would be limited by uncertainties in i.e. the attitude measurements, inertia matrix, and disturbance torques.
+
+This heavy model reliance is also clear when observing the performance using quaternions.
+A model error here leads to a divergence of the controller after the second attitude maneuver.
+While the error was unfortunately unable to be fixed due to the complex model, this highlights the weakness of a heavy model reliance.
+
+The state feedback controller on the other hand performs according to expectations well around the equilibrium point.
+It starts oscillating much heavier using off nadir maneuvers, which is expected as the controller is not designed for this.
+An alternative would be to use multiple controllers, one lineaerized around each attitude and switching between them.
+
+The TSS and INDI controllers both show a similar performance, with the INDI controller performing better in steady state divergence.
+Both controllers good performance in all attitude ranges show the advantages of the reduced model reliance while maintaining a good performance.
+
+Quaternion based control suffered from a steady state divergence in all controllers.
+This is most likely due to a wrong computation of the error quaternion as steady state convergence is seen in every case.
+This indicates that the error quaternion does indeed converge to zero, thus the steady state divergence is not due to a wrong control input, but rather a wrong error computation.
+
+
+
+% back matter
+\printglossary[type=\acronymtype]
+\begingroup
+    \let\clearpage\relax
+    \printglossary[type=symbols, style=long3col]
+\endgroup
+\printbibliography
+
+\end{document}

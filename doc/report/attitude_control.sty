@@ -1,0 +1,49 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{attitude_control}[2025/04/28 package for attitude control assignment report]
+
+% packages
+\RequirePackage[english]{babel}
+\RequirePackage{siunitx}
+\RequirePackage{graphicx}
+\RequirePackage{caption, subcaption}
+\RequirePackage[style=apa]{biblatex}
+\RequirePackage{parskip}
+\RequirePackage{booktabs}
+\RequirePackage{svg}
+\RequirePackage{csquotes}
+\RequirePackage{amssymb}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage[acronyms, toc, nomain]{glossaries}
+\RequirePackage{cleveref}
+
+% settings
+\graphicspath{{../../fig/}}
+\addbibresource{references.bib}
+\newglossary[slg]{symbols}{syi}{syg}{List of Symbols}
+\makeglossaries
+\pgfplotsset{compat=1.9}
+
+% commands
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}m{#1}}
+\renewcommand{\vec}[1]{\ensuremath{\underline{#1}}}
+\newcommand{\mat}[1]{\ensuremath{#1}}
+\newcommand{\glsfull}[1]{\glsdesc{#1} (\gls{#1})}
+
+% acronyms
+\newacronym{lvlh}{LVLH}{Local Vertical Local Horizontal}
+\newacronym{pd}{PD}{Proportional Differential}
+\newacronym{ndi}{NDI}{Nonlinear Dynamic Inversion}
+\newacronym{tss}{TSS}{Time Scale Separation}
+\newacronym{indi}{INDI}{Incremental Dynamic Inversion}
+\newacronym{acs}{ACS}{Attitude Control System}
+\newacronym{ac:dcm}{DCM}{Direction Cosine Matrix}
+\newacronym{ac:cas}{CAS}{Computer Algebra System}
+\newacronym{mimo}{MIMO}{Multiple Input Multiple Output}
+\newacronym{siso}{SISO}{Single Input Single Output}
+
+% package options
+\DeclareOption*{\PackageWarning{attitude_control}{Unknown option ‘\CurrentOption’}}
+\ProcessOptions\relax

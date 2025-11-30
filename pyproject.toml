@@ -1,0 +1,22 @@
+[project]
+name = "nonlinear_control"
+version = "0.1.0"
+authors = [
+    {name = "Lars Blümler", email = "lblumler@tudelft.nl"}
+]
+description = "Package to simulate a nonlinear control system for a spacecraft."
+readme = "README.md"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "control"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[pyproject.urls]
+repository = "https://github.com/seasat/nonlinear-control-system"
